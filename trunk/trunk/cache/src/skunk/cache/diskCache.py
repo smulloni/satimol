@@ -14,10 +14,10 @@ import errno
 import tempfile
 
 from skunk.cache.base import Cache
-from skunk.cache.log import debug
+from skunk.cache.log import debug, exception
 
 class DiskCache(Cache):
-    def __init__(self, path):
+    def __init__(self, path, safe=True):
         p=abspath(expanduser(path))
         if not exists(p):
             os.makedirs(p)
@@ -29,6 +29,7 @@ class DiskCache(Cache):
                 raise ValueError, \
                       "improper permissions for path: %s (%s)" % (path, p)
         self.path=p
+        self.safe=safe
 
     def _path_for_name(self, canonicalName):
         b=canonicalName.split('.')
@@ -53,7 +54,13 @@ class DiskCache(Cache):
                 return None
             else:
                 # some other problem
-                raise
+                if self.safe:
+                    exception("error trying to retrieve name %s, key %s, but soldiering on",
+                              canonicalName,
+                              cacheKey)
+                    return None
+                else:
+                    raise
         else:
             return cPickle.load(f)
 
@@ -66,13 +73,24 @@ class DiskCache(Cache):
             os.makedirs(dname)
         except OSError, e:
             if e.errno!=errno.EEXIST:
+                if self.safe:
+                    exception("error trying to create directory %s", dname)
+                else:
+                    raise
+        try:
+            fd, tempname=tempfile.mkstemp(suffix=".tmp",
+                                          dir=dname)
+            tempf=os.fdopen(fd, 'w')
+            cPickle.dump(entry, tempf)
+            tempf.close()
+            os.rename(tempname, p)
+        except:
+            if self.safe:
+                exception("error trying to store name %s, key %s, but soldiering on",
+                          canonicalName,
+                          cackeKey)
+            else:
                 raise
-        fd, tempname=tempfile.mkstemp(suffix=".tmp",
-                                      dir=dname)
-        tempf=os.fdopen(fd, 'w')
-        cPickle.dump(entry, tempf)
-        tempf.close()
-        os.rename(tempname, p)
         
     def invalidate(self, canonicalName):
         """
@@ -93,6 +111,8 @@ class DiskCache(Cache):
             if e.errno==2:
                 # original file doesn't exist
                 pass
+            else:
+                raise
 
     def pack(self):
         """
