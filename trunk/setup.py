@@ -3,17 +3,19 @@ ez_setup.use_setuptools()
 
 from setuptools import setup
 
-description="a templating system"
+description="caching and templating facilities from the SkunkWeb project"
 
 long_description="""
 
-skunk.stml is a standalone implementation of SkunkWeb's STML (Skunk
-Template Markup Language), a powerful componentized templating
-language.
+The skunk libraries include a caching system for memoizing callables,
+with in-memory, disk, or memcached backends, and a standalone
+implementation of SkunkWeb's STML (Skunk Template Markup Language), a
+powerful componentized templating language.
+
 
 """
 
-VERSION='0.2.0'
+VERSION='0.4.0'
 
 setup(author="Jacob Smullyan",
       author_email='smulloni@smullyan.org',
@@ -32,14 +34,13 @@ setup(author="Jacob Smullyan",
                    'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
                    'Topic :: Software Development :: Libraries :: Python Modules',
                    'Topic :: Text Processing :: Markup :: HTML',
-
       ],
       version=VERSION,
-      keywords="skunk skunkweb STML templating",
-      namespace_packages=['skunk'],
+      keywords="skunk skunkweb STML templating cache",
       packages=['skunk',
+                'skunk.cache',
                 'skunk.components',
                 'skunk.stml',
                 'skunk.vfs'],
-      install_requires= ['skunk.cache >= 4.0.1'],
-      package_dir={'' : 'src'})
+      package_dir={'' : 'src'},
+      test_suite='nose.collector')
