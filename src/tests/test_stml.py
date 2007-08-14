@@ -284,6 +284,20 @@ class CompTest(unittest.TestCase):
 
     def tearDown(self):
         os.unlink(self.fname)
+
+    def testSpacing1(self):
+        for i in range(10):
+            if i % 2:
+                self.f.write('%d\n' % i)
+            else:
+                self.f.write('\n')
+            
+        self.f.write('FIN\n')
+        self.f.close()
+        c=S.STMLFileComponent(self.fname,
+                              tagVocabulary=S.BaseTags)
+        res=c()
+        self.assertEquals(res, open(self.fname).read())
         
     def testComp01(self):
         self.f.write("<:for `range(x)`:>\n  <:val x:>\n<:/for:>\n\n")
@@ -533,6 +547,7 @@ class CompTest(unittest.TestCase):
         factory=C.ComponentFactory(handlers)
         comp=factory.createComponent(fname)
         res=comp({'compname' : self.fname})
+        print res
         self.failUnless('Hello from me!\n' in res)
         
     def testComp14(self):
@@ -559,6 +574,7 @@ class CompTest(unittest.TestCase):
         factory=C.ComponentFactory(handlers)
         comp=factory.createComponent(self.fname)
         res=comp({'compname' : fname})
+        print res
         self.failUnless('Hello from me!\n' in res)
         self.failUnless("x is 33" in res)
 
