@@ -13,10 +13,7 @@ language.
 
 """
 
-import sys
-sys.path.insert(0, 'src')
-import skunk.stml
-version=skunk.stml.__version__
+VERSION='0.2'
 
 setup(author="Jacob Smullyan",
       author_email='smulloni@smullyan.org',
@@ -26,9 +23,19 @@ setup(author="Jacob Smullyan",
       platforms='OS Independent',
       name="skunk.stml",
       url="http://code.google.com/p/satimol/",
-      version=version,
-      zip_safe=True,
+      classifiers=["Development Status :: 4 - Beta",
+                   "Intended Audience :: Developers",
+                   "License :: OSI Approved :: BSD License",
+                   "License :: OSI Approved :: GPL License",
+                   "Operating System :: OS Independent",
+                   "Programming Language :: Python",
+      ],
+      version=VERSION,
       keywords="skunk skunkweb STML templating",
       namespace_packages=['skunk'],
-      packages=['skunk', 'skunk.components', 'skunk.stml'],
+      packages=['skunk',
+                'skunk.components',
+                'skunk.stml',
+                'skunk.vfs'],
+      install_requres= ['skunk.cache >= 4.0.1'],
       package_dir={'' : 'src'})

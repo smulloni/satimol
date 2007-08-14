@@ -13,10 +13,7 @@ descendent of the SkunkWeb cache system.
 
 """
 
-import sys
-sys.path.insert(0, 'src')
-import skunk.cache
-version=skunk.cache.__version__
+VERSION='4.0.1'
 
 setup(author="Jacob Smullyan",
       author_email='smulloni@smullyan.org',
@@ -26,7 +23,7 @@ setup(author="Jacob Smullyan",
       platforms='OS Independent',
       name="skunk.cache",
       url="http://code.google.com/p/satimol/",
-      version=version,
+      version=VERSION,
       zip_safe=True,
       keywords="cache skunk skunkweb",
       namespace_packages=['skunk'],
