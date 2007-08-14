@@ -1,7 +1,7 @@
 import ez_setup
 ez_setup.use_setuptools()
 
-from setuptools import setup
+from setuptools import setup, Extension
 
 description="caching and templating facilities from the SkunkWeb project"
 
@@ -37,11 +37,15 @@ setup(author="Jacob Smullyan",
                    'Topic :: Text Processing :: Markup :: HTML',
       ],
       version=VERSION,
+      ext_modules=[Extension('skunk.util.signal_plus',
+                             ['src/skunk/util/signal_plus.c'])],
       keywords="skunk skunkweb STML templating cache",
       packages=['skunk',
                 'skunk.cache',
                 'skunk.components',
+                'skunk.date',
                 'skunk.stml',
+                'skunk.util',
                 'skunk.vfs'],
       package_dir={'' : 'src'},
       test_suite='nose.collector')
