@@ -13,7 +13,7 @@ language.
 
 """
 
-VERSION='0.2'
+VERSION='0.2.0'
 
 setup(author="Jacob Smullyan",
       author_email='smulloni@smullyan.org',
@@ -26,9 +26,13 @@ setup(author="Jacob Smullyan",
       classifiers=["Development Status :: 4 - Beta",
                    "Intended Audience :: Developers",
                    "License :: OSI Approved :: BSD License",
-                   "License :: OSI Approved :: GPL License",
+                   "License :: OSI Approved :: GNU General Public License (GPL)",
                    "Operating System :: OS Independent",
                    "Programming Language :: Python",
+                   'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
+                   'Topic :: Software Development :: Libraries :: Python Modules',
+                   'Topic :: Text Processing :: Markup :: HTML',
+
       ],
       version=VERSION,
       keywords="skunk skunkweb STML templating",
