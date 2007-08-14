@@ -1,0 +1,6 @@
+This directory exists solely to house resources
+shared by all skunk sub-packages, currently just 
+__init__.py (called "init.py" in this directory 
+and symlinked into other directories as appropriate).
+
+
