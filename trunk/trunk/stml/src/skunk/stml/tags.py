@@ -505,22 +505,18 @@ class CompargsTag(EmptyTag):
         codeStream.writeln(s)
 
 class CacheTag(EmptyTag):
+    default_expiration='30s'
     tagName="cache"
-    signature=Signature((('until', None), ('duration', None)))
-    modules=[('skunk.date.timeutil', '_timeutil')]
+    signature=Signature(('when', None))
+    modules=[('skunk.cache.timeconvert', '_timeconvert')]
     _top=True
 
     def genCode(self, codeStream):
-        args=[self._parsed_args[x] for x in ('until', 'duration')]
-        if args.count(None)!=1:
-            raise ValueError, \
-                  ("exactly one of 'until' and 'duration' arguments"
-                   "may be specified")
-        u, d=args
-        if u:
-            s="__expiration=__h._timeutil.convertUntil(%r)" % u
-        else:
-            s="__expiration=__h._timeutil.convertDuration(%r)" % d
+        when=self._parsed_args['when']
+        if when is None:
+            when=self.default_expiration
+
+        s="__expiration=__h._timeconvert.convert(%r)" % when
         codeStream.writeln(s)
     
 def _gettagclasses():
