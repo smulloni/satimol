@@ -41,5 +41,5 @@ setup(author="Jacob Smullyan",
                 'skunk.components',
                 'skunk.stml',
                 'skunk.vfs'],
-      install_requres= ['skunk.cache >= 4.0.1'],
+      install_requires= ['skunk.cache >= 4.0.1'],
       package_dir={'' : 'src'})

@@ -9,8 +9,7 @@ from os.path import (dirname,
 
 from skunk.vfs.pathutil import containedPaths
 from threading import RLock
-from skunk.util.decorators import with_lock
-
+from skunk.vfs.decutil import with_lock
 
 
 # constants for "vstat"
