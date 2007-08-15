@@ -8,7 +8,7 @@ from skunk.stml.parser import parse as stml_parse
 from skunk.stml.tags import BaseTags
 from skunk.stml.codeStream import PythonCodeOutputStream
 from skunk.stml.tagutils import import_into
-from skunk.cache.timeconvert import convert
+from skunk.util.timeconvert import convert
 
 class _namespaceholder:
     pass

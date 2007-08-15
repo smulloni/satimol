@@ -316,7 +316,7 @@ class RootNode(Node):
         
 
 
-def parse(s, tagVocabulary, pre=False):
+def parse(s, tagVocabulary, pre=True):
     """
     given a string containing STML and a tag vocabulary, returns a
     parsed RootNode.

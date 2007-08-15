@@ -82,8 +82,6 @@ p_NONWS=re.compile(r'[^\s]')
 p_PI=re.compile(r'(.*?)\?:>')
 p_PRE_PI=re.compile(r'\s*pre\s+(on|off)\s*')
 
-# whether to preserve formatting by default
-DEFAULT_PRE=0
 
 def _lineno(offset, linebrks):
     """
@@ -127,7 +125,7 @@ class STMLToken(object):
         return self.text or ""
         
 
-def lex(s, pre=False):
+def lex(s, pre=True):
     """
     tokenizes the STML string s, returning a generator which yields successive tokens.
     """
@@ -329,7 +327,7 @@ def lex(s, pre=False):
         raise StopIteration
 
         
-def dump_tokens(s, pre=False):
+def dump_tokens(s, pre=True):
     """
     tokenizes an STML string and returns all tokens as a list.
     """

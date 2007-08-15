@@ -508,7 +508,7 @@ class CacheTag(EmptyTag):
     default_expiration='30s'
     tagName="cache"
     signature=Signature(('when', None))
-    modules=[('skunk.cache.timeconvert', '_timeconvert')]
+    modules=[('skunk.util.timeconvert', '_timeconvert')]
     _top=True
 
     def genCode(self, codeStream):
