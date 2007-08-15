@@ -178,7 +178,7 @@ def getDefaultComponentFactory(compileCache=None,
     handlers={'file' : LocalFileComponentHandler(map),
               'callable' : CallableComponentHandler()}
     if defaultExpiration==_DEFAULT_EXPIRATION:
-        defaultExpiration=convert('30s')
+        defaultExpiration='30s'
     return ComponentFactory(handlers,
                             compileCache,
                             componentCache,
