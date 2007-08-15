@@ -251,9 +251,21 @@ class LocalFS(FS):
     writeable=True
 
     def __init__(self, root='/', followSymlinks=1):
-        self.root=normpath(root)
+        if isinstance(root, basestring):
+            root=normpath(root)
+        self._root=root
         self.followSymlinks=followSymlinks
 
+    def root():
+        def fget(self):
+            return getattr(self._root, 'root', self._root)
+        def fset(self, fsroot):
+            if isinstance(fsroot, basestring):
+                fsroot=normpath(fsroot)
+            self._root=fsroot
+        return fget, fset
+    root=property(*root())
+    
     def _resolvepath(self, path):
         norm=normpath('%s/%s' % (self.root, path))
         if norm < self.root:
