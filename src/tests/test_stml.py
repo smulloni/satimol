@@ -610,7 +610,7 @@ class CompTest(unittest.TestCase):
         self.failUnless('Hello from me!\n' in res)
         self.failUnless("x is 33" in res)
 
-    def testComp16(self):
+    def testPre01(self):
         self.f.write("""<:?pre off?:>
 <:call `
 def foo(x):
@@ -624,6 +624,14 @@ def foo(x):
         comp=factory.createComponent(self.fname)
         res=comp()
         self.failUnless(res=='200')
+
+    def testPre02(self):
+        self.f.write("<:?pre off?:>\n\n\n\nhi\n\n\n")
+        self.f.close()
+        factory=S.getDefaultComponentFactory()
+        comp=factory.createComponent(self.fname)
+        res=comp()
+        self.failUnless(res=='hi')
 
         
         

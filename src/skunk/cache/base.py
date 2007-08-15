@@ -7,7 +7,7 @@ import warnings
 
 from skunk.cache.log import debug
 from skunk.cache.exceptions import NotInCache, UnCacheable, BypassCache
-from skunk.cache.timeconvert import convert as time_convert
+from skunk.util.timeconvert import convert as time_convert
 
 _lookup_lock=RLock()
 _callable_lookup={}
