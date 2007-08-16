@@ -8,7 +8,7 @@ import sys
 maxint=sys.maxint
 from types import ModuleType
 
-from skunk.stml.tags import ValFormatRegistry
+from skunk.stml.valformat import ValFormatRegistry
 
 def safe_import(codeout, mod, as_name=None, hidden_ns='__h'):
     """
