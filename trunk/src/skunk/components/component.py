@@ -3,7 +3,18 @@ import re
 from types import CodeType
 
 from skunk.cache.policy import NO
+from skunk.context import Context
 from skunk.vfs import LocalFS
+
+
+def getComponentStack():
+    try:
+        stack=Context.componentStack
+    except AttributeError:
+        stack=[]
+        Context.componentStack=stack
+    return stack
+
 
 class ComponentHandlingException(Exception):
     pass
@@ -68,10 +79,10 @@ class Component(object):
                 componentCache=factory.componentCache
         self.componentCache=componentCache
         self.factory=factory
-        if factory:
-            self.componentStack=factory.componentStack
-        else:
-            self.componentStack=[]
+##         if factory:
+##             self.componentStack=factory.componentStack
+##         else:
+##             self.componentStack=[]
         self.extra_globals=extra_globals or {}
 
         # private
@@ -267,7 +278,8 @@ class Component(object):
     def _real_call(self, compArgs=None):
         code=self.getCompiledCode()
         ns=self.namespace
-        stack=self.componentStack
+        #stack=self.componentStack
+        stack=getComponentStack()
         
         self._current_args=compArgs or {}
         if compArgs:
@@ -446,4 +458,5 @@ __all__=['ReturnValue',
          'Component',
          'FileComponent',
          'StringOutputComponent',
-         'StringOutputFileComponent']
+         'StringOutputFileComponent',
+         'getComponentStack']

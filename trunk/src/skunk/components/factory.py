@@ -1,6 +1,6 @@
 from os.path import dirname
 
-from skunk.components.component import ComponentHandlingException
+from skunk.components.component import ComponentHandlingException, getComponentStack
 from skunk.vfs import LocalFS
 
 class ComponentFactory(object):
@@ -8,16 +8,16 @@ class ComponentFactory(object):
                  componentHandlers,
                  compileCache=None,
                  componentCache=None,
-                 componentStack=None,
+##                 componentStack=None,
                  fs=None,
                  extra_globals=None,
                  defaultExpiration=None):
         self.componentHandlers=componentHandlers
         self.compileCache=compileCache
         self.componentCache=componentCache
-        if componentStack is None:
-            componentStack=[]
-        self.componentStack=componentStack
+##         if componentStack is None:
+##             componentStack=[]
+##         self.componentStack=componentStack
         if fs is None:
             fs=LocalFS()
         self.fs=fs
@@ -42,7 +42,8 @@ class ComponentFactory(object):
                   'no way to handle %r' % handle
 
     def getCurrentDirectory(self):
-        s=self.componentStack
+        #s=self.componentStack
+        s=getComponentStack()
         i=len(s)-1
         while i >= 0:
             try:
