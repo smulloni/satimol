@@ -8,9 +8,37 @@ default template.
 
 """
 
+from skunk.stml.context import Context, Configuration as config
+from skunk.stml.log import exception
 from skunk.stml.signature import Signature
 from skunk.stml.tags import EmptyTag
 from skunk.stml.tagutils import get_temp_name
+from skunk.vfs import FileNotFoundException, VFSException
+
+
+def getConfiguredSlots(path=None, slot_conf_name='slotconf.pydcmp'):
+    if path is None:
+        path=current_component()
+    if slot_conf_name is None:
+        slot_conf_name=config.slotConfigFilename
+    elif not path.endswith('/'):
+        path=path+'/'
+    slots={}
+    conffiles=[pathjoin(path[:(x or 1)], slot_conf_name) \
+               for x, y in enumerate(path) if y=='/']
+        
+    for c in conffiles:
+        try:
+            newslots=datacomp(c, path=path)
+        except FileNotFoundException:
+            continue
+        except VFSException:
+            exception("error reading slot configuration")
+            continue
+        else:
+            slots.update(newslots)
+    return slots
+    
 
 class SlotTag(EmptyTag):
         
