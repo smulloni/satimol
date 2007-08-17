@@ -8,7 +8,7 @@ default template.
 
 """
 
-from skunk.stml.context import Context, Configuration as config
+from skunk.config import Configuration
 from skunk.stml.log import exception
 from skunk.stml.signature import Signature
 from skunk.stml.tags import EmptyTag
@@ -20,7 +20,7 @@ def getConfiguredSlots(path=None, slot_conf_name='slotconf.pydcmp'):
     if path is None:
         path=current_component()
     if slot_conf_name is None:
-        slot_conf_name=config.slotConfigFilename
+        slot_conf_name=Configuration.slotConfigFilename
     elif not path.endswith('/'):
         path=path+'/'
     slots={}
