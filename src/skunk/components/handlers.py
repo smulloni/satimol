@@ -63,8 +63,8 @@ class ComponentHandler(object):
         kls=self.getComponentClass(protocol,
                                    componentHandle,
                                    componentType)
-        #stack=factory.componentStack
-        stack=getComponentStack()
+
+        stack=ComponentStack
         if (not namespace) and componentType=='include':
             if not stack:
                 raise ComponentHandlingException,\

@@ -10,6 +10,7 @@ from skunk.stml.codeStream import PythonCodeOutputStream
 from skunk.stml.tagutils import import_into
 from skunk.util.timeconvert import convert
 
+
 class _namespaceholder:
     pass
 

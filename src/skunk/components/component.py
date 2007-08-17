@@ -1,19 +1,24 @@
 import cStringIO
 import re
+import threading
 from types import CodeType
 
 from skunk.cache.policy import NO
-from skunk.context import Context
 from skunk.vfs import LocalFS
 
+class _stack_context(threading.local):
+    def componentStack():
+        def fget(self):
+            try:
+                stack=self._stack
+            except AttributeError:
+                stack=[]
+                self._stack=stack
+            return stack
+        return fget
+    componentStack=property(componentStack())
 
-def getComponentStack():
-    try:
-        stack=Context.componentStack
-    except AttributeError:
-        stack=[]
-        Context.componentStack=stack
-    return stack
+ComponentStack=_stack_context().componentStack
 
 
 class ComponentHandlingException(Exception):
@@ -79,10 +84,6 @@ class Component(object):
                 componentCache=factory.componentCache
         self.componentCache=componentCache
         self.factory=factory
-##         if factory:
-##             self.componentStack=factory.componentStack
-##         else:
-##             self.componentStack=[]
         self.extra_globals=extra_globals or {}
 
         # private
@@ -279,7 +280,7 @@ class Component(object):
         code=self.getCompiledCode()
         ns=self.namespace
         #stack=self.componentStack
-        stack=getComponentStack()
+        stack=componentStack
         
         self._current_args=compArgs or {}
         if compArgs:
@@ -459,4 +460,4 @@ __all__=['ReturnValue',
          'FileComponent',
          'StringOutputComponent',
          'StringOutputFileComponent',
-         'getComponentStack']
+         'ComponentStack']
