@@ -47,7 +47,11 @@ class ScopeManager(object):
         codeObj=compile(s, filename, 'exec')
         if globals is None:
             globals={}
-        exec codeObj in globals, self.defaults
+        # suppress any keys that begin with an underscore            
+        env={}
+        exec codeObj in globals, env
+        for key in (k for k in env if not k.startswith('_')):
+            self.defaults[key]=env[key]
 
     def _process_matcher(self, matcher):
         overlay=self.overlay
