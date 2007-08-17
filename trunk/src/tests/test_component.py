@@ -97,7 +97,7 @@ class StackedComponentTest(unittest.TestCase):
         factory=ComponentFactory({'file' : LocalFileComponentHandler()})
         comp=factory.createComponent(self.fname)
         res=comp()
-        self.assertEquals(getComponentStack(), [])
+        self.assertEquals(ComponentStack, [])
         
 class FactoryTest(unittest.TestCase):
     def setUp(self):
