@@ -279,8 +279,7 @@ class Component(object):
     def _real_call(self, compArgs=None):
         code=self.getCompiledCode()
         ns=self.namespace
-        #stack=self.componentStack
-        stack=componentStack
+        stack=ComponentStack
         
         self._current_args=compArgs or {}
         if compArgs:
