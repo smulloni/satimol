@@ -4,38 +4,9 @@ import threading
 from types import CodeType
 
 from skunk.cache.policy import NO
-from skunk.vfs import LocalFS
-
-class _stack_context(threading.local):
-    def componentStack():
-        def fget(self):
-            try:
-                stack=self._stack
-            except AttributeError:
-                stack=[]
-                self._stack=stack
-            return stack
-        return fget
-    componentStack=property(componentStack())
-
-ComponentStack=_stack_context().componentStack
-
-
-class ComponentHandlingException(Exception):
-    pass
-
-class ComponentArgumentError(ValueError):
-    pass
-
-class ReturnValue(Exception):
-    """
-    An exception class for sending return values out of data components.
-    """
-    def value(self):
-        if self.args:
-            return self.args[0]
-    value=property(value, None, None, None)
-
+from skunk.config import Configuration
+from skunk.components.exceptions import ReturnValue, ComponentArgumentError
+from skunk.util.timeconvert import convert as time_convert
 
 class Component(object):
     """
@@ -51,18 +22,11 @@ class Component(object):
     used concurrently.  For these reasons, instances are intended
     to be created, used once, and then thrown away in normal use.
 
-    Normally, you don't create a Component directly, but create
-    instances by calling the createComponent() method of a
-    ComponentFactory.
     """
     def __init__(self,
                  code,
                  name=None,
-                 namespace=None,
-                 componentCache=None,
-                 compileCache=None,
-                 factory=None,
-                 extra_globals=None):
+                 namespace=None):
         if name is None:
             try:
                 name=code.__name__
@@ -74,17 +38,6 @@ class Component(object):
             self.namespace={}
         else:
             self.namespace=namespace
-
-        if compileCache is None:
-            if factory:
-                compileCache=factory.compileCache
-        self.compileCache=compileCache
-        if componentCache is None:
-            if factory:
-                componentCache=factory.componentCache
-        self.componentCache=componentCache
-        self.factory=factory
-        self.extra_globals=extra_globals or {}
 
         # private
         self._nocache=False
@@ -112,18 +65,18 @@ class Component(object):
         required=[]
         for a in args:
             if a in required or a==spillover:
-                raise ValueError, "duplicate argument: %s" % a
+                raise ValueError("duplicate argument: %s" % a)
             if a.startswith('**'):
                 if spillover:
-                    raise ValueError, "only one spillover argument allowed: %s" % a
+                    raise ValueError("only one spillover argument allowed: %s" % a)
                 spillover=a[2:]
                 if spillover in required:
-                    raise ValueError, "duplicate argument: %s" % a
+                    raise ValueError("duplicate argument: %s" % a)
             else:
                 required.append(a)
         for k, v in kwargs.items():
             if k in required or k == spillover:
-                raise ValueError, "duplicate argument: %s" % k
+                raise ValueError("duplicate argument: %s" % k)
         spilldict={}
         for n in compargs:
             if n in required:
@@ -133,87 +86,18 @@ class Component(object):
             elif spillover:
                 spilldict[n]=compargs[n]
             else:
-                raise ComponentArgumentError, "unexpected argument: %s" % n
+                raise ComponentArgumentError("unexpected argument: %s" % n)
         if required:
             if len(required)==1:
                 msg="expected argument not passed: %s" % required[0]
             else:
                 msg="expected arguments not passed: %s" % ", ".join(required)
-            raise ComponentArgumentError, msg
+            raise ComponentArgumentError(msg)
         if kwargs:
             self.namespace.update(kwargs)
         if spillover:
             self.namespace[spillover]=spilldict
         
-    def callComponent(self,
-                      componentHandle,
-                      compArgs=None,
-                      cachePolicy=NO,
-                      expiration=None,
-                      componentType=None,
-                      namespace=None,
-                      componentCache=None):
-        """
-        convenience method for calling a component
-        from within this one.
-        """
-        if not self.factory:
-            raise ComponentHandlingException, \
-                  "cannot call nested component without component factory"
-        comp=self.factory.createComponent(componentHandle,
-                                          componentType,
-                                          namespace,
-                                          componentCache)
-        if expiration is None:
-            expiration=self.factory.defaultExpiration
-        return comp(compArgs, cachePolicy, expiration)
-                      
-    def callStringComponent(self,
-                            componentHandle,
-                            compArgs=None,
-                            cachePolicy=NO,
-                            expiration=None,
-                            namespace=None,
-                            componentCache=None):
-        """
-        convenience method for calling a string component
-        from within this one 
-        """
-        return self.callComponent(componentHandle,
-                                  compArgs,
-                                  cachePolicy,
-                                  expiration,
-                                  'string',
-                                  namespace,
-                                  componentCache)
-
-    def callDataComponent(self,
-                          componentHandle,
-                          compArgs=None,
-                          cachePolicy=NO,
-                          expiration=None,
-                          namespace=None,
-                          componentCache=None):
-        """
-        convenience method for calling a data component
-        from within this one 
-        """        
-        return self.callComponent(componentHandle,
-                                  compArgs,
-                                  cachePolicy,
-                                  expiration,
-                                  'data',
-                                  namespace,
-                                  componentCache)
-
-    def callIncludeComponent(self, componentHandle):
-        """
-        convenience method for calling an include component
-        from within this one 
-        """        
-        return self.callComponent(componentHandle, componentType='include')
-
-
     def getCode(self):
         """
         returns the code object the component wraps.
@@ -232,7 +116,7 @@ class Component(object):
         code=self.getCode()
         if isinstance(code, CodeType):
             return code
-        cache=self.compileCache
+        cache=ComponentContext.compileCache
         if cache:
             return cache.getCompiledCode(self)
         else:
@@ -263,7 +147,7 @@ class Component(object):
                  compArgs=None,
                  cachePolicy=NO,
                  expiration=None):
-        cache=self.componentCache
+        cache=ComponentContext.componentCache
         if self._nocache or cachePolicy==NO or not cache:
             return self._real_call(compArgs)
         else:
@@ -279,7 +163,7 @@ class Component(object):
     def _real_call(self, compArgs=None):
         code=self.getCompiledCode()
         ns=self.namespace
-        stack=ComponentStack
+        stack=ComponentContext.componentStack
         
         self._current_args=compArgs or {}
         if compArgs:
@@ -288,19 +172,9 @@ class Component(object):
         # add self to component stack
         stack.append(self)
         
-        # add self to namespace as COMPONENT, saving the previous
-        # value, if any.  Most of the time (almost always except with
-        # includes) ns will be an empty dict, so I check with has_key
-        # rather than catching KeyError (which is faster when that is
-        # the expectation).
-        if ns.has_key('COMPONENT'):
-            oldcomp=(ns['COMPONENT'],)
-        else:
-            oldcomp=None
-        ns['COMPONENT']=self
         ns.setdefault('ReturnValue', ReturnValue)
         # any special values you want to add to components in this stack
-        ns.update(self.extra_globals)
+        ns.update(ComponentContext.extra_globals)
         # sub-class specific component namespace munging
         ns=self._precall(ns)
         val=None        
@@ -315,21 +189,14 @@ class Component(object):
         # the stack when we are done. 
         stack.pop()
         
-        # restore the previous component to the namespace, for the
-        # sake of includes
-        if oldcomp:
-            ns['COMPONENT']=oldcomp[0]
-        else:
-            del ns['COMPONENT']
-        
         return self._postcall(val, ns)
 
     def expiration(self):
-        exp=self.namespace.get('__expiration')
-        if (exp is None) and self.factory:
-              exp=self.factory.defaultExpiration
+        exp=self.namespace.get('__expiration',
+                               ComponentContext.defaultExpiration)
+        if not isinstance(exp, (int,float,long)):
+            exp=time_convert(exp)
         return exp
-    
     expiration=property(expiration,
                         None,
                         None,
@@ -344,34 +211,19 @@ class FileComponent(Component):
     """
     def __init__(self,
                  filename,
-                 namespace=None,
-                 componentCache=None,
-                 compileCache=None,
-                 fs=None,
-                 factory=None,
-                 extra_globals=None):
+                 namespace=None):
         Component.__init__(self,
                            code=None,
                            name=filename,
-                           namespace=namespace,
-                           componentCache=componentCache,
-                           compileCache=compileCache,
-                           factory=factory,
-                           extra_globals=extra_globals)
+                           namespace=namespace)
         self.__file__=self.filename=filename
-        if fs is None:
-            if factory:
-                fs=factory.fs
-            else:
-                fs=LocalFS()
-        self.fs=fs
 
-    def __lastmodified__(self):
-        return self.fs.getmtime(self.filename)
-    __lastmodified__=property(__lastmodified__,
-                              None,
-                              None,
-                              "last modification time of the underlying file")
+    def __lastmodified__():
+        def fget(self):
+            return os.path.getmtime(self.filename)
+        return fget, None, None, "last modification time of the underlying file"
+    __lastmodified__=property(*__lastmodified__())
+
 
     def getCode(self):
         if not self._code:
@@ -379,7 +231,7 @@ class FileComponent(Component):
         return self._code
 
     def _get_code_raw(self):
-        return self.fs.open(self.__file__).read()
+        return open(self.__file__).read()
         
 class StringOutputComponentMixin(object):
     """
@@ -388,7 +240,7 @@ class StringOutputComponentMixin(object):
     """
     def __init__(self, streamName):
         if not isValidIdentifierPat.match(streamName):
-            raise ValueError, "not a valid identifier: %s" % streamName
+            raise ValueError("not a valid identifier: %s" % streamName)
         self._streamName=streamName
         
     def _precall(self, namespace):
@@ -411,20 +263,13 @@ class StringOutputComponent(StringOutputComponentMixin, Component):
                  code,
                  name=None,
                  namespace=None,
-                 componentCache=None,
-                 compileCache=None,
-                 factory=None,
-                 extra_globals=None,
                  streamName='OUTPUT'):
         StringOutputComponentMixin.__init__(self, streamName)
         Component.__init__(self,
                            code=code,
                            name=name,
-                           namespace=namespace,
-                           componentCache=componentCache,
-                           compileCache=compileCache,
-                           factory=factory,
-                           extra_globals=extra_globals)
+                           namespace=namespace)
+
 
 
 class StringOutputFileComponent(StringOutputComponentMixin, FileComponent):
@@ -436,27 +281,30 @@ class StringOutputFileComponent(StringOutputComponentMixin, FileComponent):
     def __init__(self,
                  filename,
                  namespace=None,
-                 componentCache=None,
-                 compileCache=None,
-                 fs=None,
-                 factory=None,
-                 extra_globals=None,
                  streamName="OUTPUT"):
         StringOutputComponentMixin.__init__(self, streamName)
         FileComponent.__init__(self,
                                filename=filename,
-                               namespace=namespace,
-                               componentCache=componentCache,
-                               compileCache=compileCache,
-                               fs=fs,
-                               factory=factory,
-                               extra_globals=extra_globals)
+                               namespace=namespace)
+
+class _component_context(threading.local):
+    def componentStack():
+        def fget(self):
+            try:
+                return self._componentStack
+            except AttributeError:
+                stack=[]
+                self._componentStack=stack
+                return stack
             
-__all__=['ReturnValue',
-         'ComponentHandlingException',
-         'ComponentArgumentError',
-         'Component',
+        return fget
+    componentStack=property(componentStack())
+
+componentStack=_component_context().componentStack
+            
+__all__=['Component',
          'FileComponent',
          'StringOutputComponent',
          'StringOutputFileComponent',
-         'ComponentStack']
+         'componentStack']
+

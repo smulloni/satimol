@@ -1,12 +1,12 @@
 from os.path import splitext, dirname, join as pathjoin
 
-from skunk.components.component import *
+from skunk.components.objects import *
 
 class ComponentHandler(object):
     """
     abstract base class for component handlers
     """
-    protocols=[]
+    protocols=()
 
     def getComponentClass(self,
                           protocol,
@@ -26,32 +26,20 @@ class ComponentHandler(object):
         raise ValueError, "cannot infer component type"
 
     def instantiateComponent(self,
-                             factory,
                              kls,
                              componentHandle,
                              namespace,
-                             componentCache,
-                             compileCache,
-                             extra_globals,
                              **extra):
         return kls(componentHandle,
-                   factory=factory,
                    namespace=namespace,
-                   componentCache=componentCache,
-                   compileCache=compileCache,
-                   extra_globals=extra_globals,
                    **extra)
 
     
     def createComponent(self,
-                        factory,
                         protocol,
                         componentHandle,
                         componentType,
                         namespace=None,
-                        componentCache=None,
-                        compileCache=None,
-                        extra_globals=None,
                         **extra):
         if protocol not in self.protocols:
             raise ValueError, "unsupported protocol: %s" % protocol
@@ -64,23 +52,16 @@ class ComponentHandler(object):
                                    componentHandle,
                                    componentType)
 
-        stack=ComponentStack
+        stack=componentStack
         if (not namespace) and componentType=='include':
             if not stack:
                 raise ComponentHandlingException,\
                       "include not possible without something on component stack!"
             namespace=stack[-1].namespace
 
-        if extra_globals is None:
-            extra_globals=factory.extra_globals
-
-        return self.instantiateComponent(factory,
-                                         kls,
+        return self.instantiateComponent(kls,
                                          componentHandle,
                                          namespace,
-                                         componentCache,
-                                         compileCache,
-                                         extra_globals,
                                          **extra)
 
 
@@ -88,7 +69,7 @@ class CallableComponentHandler(ComponentHandler):
     """
     A component handler for generic callables.
     """
-    protocols=['callable']
+    protocols=('callable',)
 
     def getComponentClass(self,
                           protocol,
@@ -105,13 +86,9 @@ class CallableComponentHandler(ComponentHandler):
         raise ValueError, "unknown component type: %s" % componentType
 
     def instantiateComponent(self,
-                             factory,
                              kls,
                              componentHandle,
                              namespace,
-                             componentCache,
-                             compileCache,
-                             extra_globals,
                              **extra):
         if isinstance(componentHandle, tuple):
             name=componentHandle[0]
@@ -124,27 +101,21 @@ class CallableComponentHandler(ComponentHandler):
         return kls(code=componentHandle,
                    name=name,
                    namespace=namespace,
-                   componentCache=componentCache,
-                   compileCache=compileCache,
-                   factory=factory,
-                   extra_globals=extra_globals
                    **extra)
 
 
-DEFAULT_FILE_COMPONENT_SUFFIX_MAP={'.pycomp' : ('string',StringOutputFileComponent),
-                                   '.pydcmp' : ('data', FileComponent),
-                                   '.pyinc' : ('include', StringOutputFileComponent)}
+DEFAULT_FILE_COMPONENT_SUFFIX_MAP={
+    '.pycomp' : ('string', StringOutputFileComponent),
+    '.pydcmp' : ('data',  FileComponent),
+    '.pyinc' : ('include', StringOutputFileComponent)
+    }
 
-class LocalFileComponentHandler(ComponentHandler):
+class FileComponentHandler(ComponentHandler):
     """
     a component handler for file components.
     """
-    protocols=['file']
+    protocols=('file',)
     
-    def __init__(self, suffixMap=None):
-        if suffixMap is None:
-            suffixMap=DEFAULT_FILE_COMPONENT_SUFFIX_MAP
-        self.suffixMap=suffixMap
 
     def getComponentClass(self,
                           protocol,
@@ -158,7 +129,7 @@ class LocalFileComponentHandler(ComponentHandler):
             
 
     def _lookup_suffix(self, handle):
-        return self.suffixMap.get(splitext(handle)[1], (None, None))
+        return Configuration.componentFileSuffixMap.get(splitext(handle)[1], (None, None))
     
     def inferComponentType(self, componentHandle):
         compType=self._lookup_suffix(componentHandle)[0]
@@ -169,35 +140,30 @@ class LocalFileComponentHandler(ComponentHandler):
                   "cannot infer component type from file name %r" % componentHandle
 
     def instantiateComponent(self,
-                             factory,
                              kls,
                              componentHandle,
                              namespace,
-                             componentCache,
-                             compileCache,
-                             extra_globals,
                              **extra):
-        componentHandle=self.rectifyRelativePath(componentHandle, factory)
+        componentHandle=self.rectifyRelativePath(componentHandle)
         return kls(componentHandle,
                    namespace=namespace,
-                   componentCache=componentCache,
-                   compileCache=compileCache,
-                   factory=factory,
-                   extra_globals=extra_globals,
                    **extra)
 
-    def rectifyRelativePath(self, path, factory):
+    def rectifyRelativePath(self, path):
         if path.startswith('/'):
             return path
-        cwd=factory.getCurrentDirectory()
+        cwd=getCurrentDirectory()
         if not cwd:
             raise ComponentHandlingException, \
                   ("cannot invoke a component with a relative path without a "
                    "prior file context")
         return pathjoin(cwd, path)
 
+defaultComponentHandlers=dict(callable=CallableComponentHandler(),
+                              file=FileComponentHandler())
 
 __all__=['ComponentHandler',
-         'LocalFileComponentHandler',
+         'FileComponentHandler',
          'CallableComponentHandler',
-         'DEFAULT_FILE_COMPONENT_SUFFIX_MAP']
+         'DEFAULT_FILE_COMPONENT_SUFFIX_MAP',
+         'defaultComponentHandlers']
