@@ -4,6 +4,7 @@ import random
 import tempfile
 import shutil
 
+from skunk.config import Configuration as Cfg
 from skunk.components import *
 
 someCode="""\
@@ -12,16 +13,17 @@ raise ReturnValue, a*(x**y)
 
 class BasicComponentTest(unittest.TestCase):
     def setUp(self):
-        self.comp1=Component(code=someCode, name='testcomponent')
         self.tmpdir=tempfile.mkdtemp()
-        self.comp2=Component(code=someCode,
-                             compileCache=CompileCache(self.tmpdir),
-                             name='testcomponent')
+        Cfg.setDefaults(compileCacheRoot=self.tmpdir)
+        self.comp1=Component(code=someCode, name='testcomponent')
 
     def tearDown(self):
         shutil.rmtree(self.tmpdir)
+        Cfg.reset()
         
     def testCallNoCompileCache(self):
+        Cfg.load_dict(dict(useCompileMemoryCache=False,
+                           compileCacheRoot=None))
         comp=self.comp1
         d={'a' : 3,
            'x' : 2,
@@ -30,12 +32,13 @@ class BasicComponentTest(unittest.TestCase):
         assert value==(3*(2**5))
 
     def testCallWithCompileCache(self):
-         comp=self.comp2
-         d={'a' : 3,
-            'x' : 2,
-            'y' : 5}
-         value=comp(d)
-         assert value==(3*(2**5))
+        Cfg.load_dict(dict(useCompileMemoryCache=True))
+        comp=self.comp1
+        d={'a' : 3,
+           'x' : 2,
+           'y' : 5}
+        value=comp(d)
+        assert value==(3*(2**5))
 
 class StringOutputFileComponentTest(unittest.TestCase):
     def setUp(self):
@@ -82,10 +85,8 @@ class StackedComponentTest(unittest.TestCase):
            print >> OUTPUT, "iteration %d" % i
            if  i in hits:
                # get current component file
-               name=COMPONENT.name
-               comp=COMPONENT.factory.createComponent(name)
-               print >> OUTPUT, comp({'m' : m/2,
-                                      'c' : c/2})
+               name=ComponentContext.componentStack[-1].name
+               print >> OUTPUT, stringcomp(name, m=m/2, c=c/2)
         
         print >> OUTPUT, '###################'
         """
@@ -94,14 +95,12 @@ class StackedComponentTest(unittest.TestCase):
         s='\n'.join([x[i:] for x in s.split('\n')])
         self.f.write(s)
         self.f.close()
-        factory=ComponentFactory({'file' : LocalFileComponentHandler()})
-        comp=factory.createComponent(self.fname)
-        res=comp()
-        self.assertEquals(ComponentStack, [])
+        res=stringcomp(self.fname)
+        self.assertEquals(ComponentContext.componentStack, [])
         
 class FactoryTest(unittest.TestCase):
     def setUp(self):
-        handlers={'file' : LocalFileComponentHandler(),
+        handlers={'file' : FileComponentHandler(),
                   'callable' : CallableComponentHandler()}
         self.factory=ComponentFactory(handlers)
         fd, self.fname=tempfile.mkstemp(suffix=".pycomp")

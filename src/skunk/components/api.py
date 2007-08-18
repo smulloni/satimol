@@ -6,7 +6,7 @@ from skunk.cache import NO
 from skunk.components.exceptions import ComponentHandlingException
 from skunk.config import Configuration
 
-def _parse_handle(componentHandle):
+def _parse_handle(handle):
     if isinstance(handle, basestring):
         try:
             protocol, handle=handle.split('://', 1)
@@ -33,8 +33,9 @@ def call_component(comp,
     if not handler:
         msg="no handler installed for protocol %r" % protocol
         raise ComponentHandlingException(msg)
-    component=handler.createComponent(comp)
-    return component(cache=cache, **compargs)
+    component=handler.createComponent(protocol, comp, comptype)
+    return component(compargs,
+                     cachePolicy=cache)
                      
     
 def stringcomp(comp, cache=NO, **kwargs):

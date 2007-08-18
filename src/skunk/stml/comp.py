@@ -117,19 +117,13 @@ class STMLComponent(STMLComponentMixin, StringOutputComponent):
                  stmlcode,
                  name=None,
                  namespace=None,
-                 componentCache=None,
-                 compileCache=None,
                  factory=None,
-                 extra_globals=None,
                  tagVocabulary=None):
         STMLComponentMixin.__init__(self, tagVocabulary)
         StringOutputComponent.__init__(self,
                                        code=stmlcode,
                                        name=name,
-                                       componentCache=componentCache,
-                                       compileCache=compileCache,
-                                       factory=factory,
-                                       extra_globals=extra_globals)
+                                       factory=factory)
 
     def _precall(self, namespace):
         namespace=STMLComponentMixin._precall(self, namespace)
@@ -139,21 +133,13 @@ class STMLFileComponent(STMLComponentMixin, StringOutputFileComponent):
     def __init__(self,
                  filename,
                  namespace=None,
-                 componentCache=None,
-                 compileCache=None,
-                 fs=None,
                  factory=None,
-                 extra_globals=None,
                  tagVocabulary=None):
         STMLComponentMixin.__init__(self, tagVocabulary)
         StringOutputFileComponent.__init__(self,
                                            filename,
                                            namespace=namespace,
-                                           componentCache=componentCache,
-                                           compileCache=compileCache,
-                                           fs=fs,
-                                           factory=factory,
-                                           extra_globals=extra_globals)
+                                           factory=factory)
 
     def _precall(self, namespace):
         namespace=STMLComponentMixin._precall(self, namespace)
@@ -168,22 +154,19 @@ DEFAULT_STML_FILE_COMPONENT_SUFFIX_MAP={
 
 DEFAULT_STML_FILE_COMPONENT_SUFFIX_MAP.update(DEFAULT_FILE_COMPONENT_SUFFIX_MAP)
 
-_DEFAULT_EXPIRATION=object()
+
 
 def getDefaultComponentFactory(compileCache=None,
                                componentCache=None,
-                               fs=None,
                                extra_globals=None,
-                               defaultExpiration=_DEFAULT_EXPIRATION):
+                               defaultExpiration='30s'):
     map=DEFAULT_STML_FILE_COMPONENT_SUFFIX_MAP
-    handlers={'file' : LocalFileComponentHandler(map),
+    handlers={'file' : FileComponentHandler(map),
               'callable' : CallableComponentHandler()}
-    if defaultExpiration==_DEFAULT_EXPIRATION:
-        defaultExpiration='30s'
+
     return ComponentFactory(handlers,
                             compileCache,
                             componentCache,
-                            fs=fs,
                             extra_globals=extra_globals,
                             defaultExpiration=defaultExpiration)
         

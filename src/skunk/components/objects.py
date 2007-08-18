@@ -1,10 +1,12 @@
 import cStringIO
+import os
 import re
 import threading
 from types import CodeType
 
 from skunk.cache.policy import NO
 from skunk.config import Configuration
+from skunk.components.context import ComponentContext
 from skunk.components.exceptions import ReturnValue, ComponentArgumentError
 from skunk.util.timeconvert import convert as time_convert
 
@@ -174,7 +176,9 @@ class Component(object):
         
         ns.setdefault('ReturnValue', ReturnValue)
         # any special values you want to add to components in this stack
-        ns.update(ComponentContext.extra_globals)
+        eg=Configuration.componentExtraGlobals
+        if eg:
+            ns.update(Configuration.componentExtraGlobals)
         # sub-class specific component namespace munging
         ns=self._precall(ns)
         val=None        
@@ -193,7 +197,7 @@ class Component(object):
 
     def expiration(self):
         exp=self.namespace.get('__expiration',
-                               ComponentContext.defaultExpiration)
+                               Configuration.defaultCacheExpiration)
         if not isinstance(exp, (int,float,long)):
             exp=time_convert(exp)
         return exp
@@ -287,24 +291,10 @@ class StringOutputFileComponent(StringOutputComponentMixin, FileComponent):
                                filename=filename,
                                namespace=namespace)
 
-class _component_context(threading.local):
-    def componentStack():
-        def fget(self):
-            try:
-                return self._componentStack
-            except AttributeError:
-                stack=[]
-                self._componentStack=stack
-                return stack
-            
-        return fget
-    componentStack=property(componentStack())
-
-componentStack=_component_context().componentStack
             
 __all__=['Component',
          'FileComponent',
          'StringOutputComponent',
-         'StringOutputFileComponent',
-         'componentStack']
+         'StringOutputFileComponent']
+
 

@@ -87,7 +87,7 @@ class CompileCache(object):
         return code
 
     def _retrieve(self, name):
-        name='%s%s' % self.componentRoot, name
+        name='%s%s' % (self.componentRoot, name)
         use_mem=self.useMemory
         cacheroot=self.cacheroot
         if (not use_mem) and (not cacheroot):
@@ -108,7 +108,7 @@ class CompileCache(object):
                 return cachemod, code
 
     def _store(self, name, code):
-        name='%s%s' % self.componentRoot, name
+        name='%s%s' % (self.componentRoot, name)
         use_mem=self.useMemory
         cacheroot=self.cacheroot
         if (not use_mem) and (not cacheroot):
