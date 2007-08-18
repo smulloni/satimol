@@ -1,6 +1,9 @@
 from os.path import splitext, dirname, join as pathjoin
 
+from skunk.config import Configuration
+from skunk.components.context import ComponentContext
 from skunk.components.objects import *
+
 
 class ComponentHandler(object):
     """
@@ -52,7 +55,7 @@ class ComponentHandler(object):
                                    componentHandle,
                                    componentType)
 
-        stack=componentStack
+        stack=ComponentContext.componentStack
         if (not namespace) and componentType=='include':
             if not stack:
                 raise ComponentHandlingException,\

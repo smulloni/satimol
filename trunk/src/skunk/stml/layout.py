@@ -15,15 +15,17 @@ from skunk.stml.tags import EmptyTag
 from skunk.stml.tagutils import get_temp_name
 from skunk.vfs import FileNotFoundException, VFSException
 
+Configuration.mergeDefaults(slotConfigFilename='slotconf.pydcmp')
 
-def getConfiguredSlots(path=None, slot_conf_name='slotconf.pydcmp'):
+
+def getConfiguredSlots(path=None) 
     if path is None:
         path=current_component()
-    if slot_conf_name is None:
-        slot_conf_name=Configuration.slotConfigFilename
+
     elif not path.endswith('/'):
         path=path+'/'
     slots={}
+    slot_conf_name=Configuration.slotConfigFilename
     conffiles=[pathjoin(path[:(x or 1)], slot_conf_name) \
                for x, y in enumerate(path) if y=='/']
         

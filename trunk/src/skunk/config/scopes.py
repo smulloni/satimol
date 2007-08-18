@@ -52,6 +52,12 @@ class ScopeManager(object):
         self._load_string(s, globals)
         self._mash()
 
+    def load_dict(self, d):
+        for k in d:
+            if not k.startswith('_'):
+                self.userconfig[k]=d[k]
+        self._mash()
+
     def _load_string(s, globals=None, filename='<config>'):
         codeObj=compile(s, filename, 'exec')
         if globals is None:
