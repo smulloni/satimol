@@ -5,6 +5,7 @@ class ScopeManager(object):
     def __init__(self):
         self.data=local()
         self.defaults={}
+        self.userconfig={}
         self.scopes={}
         self.matchers=[]
         self.overlay={}
@@ -14,12 +15,16 @@ class ScopeManager(object):
         self.defaults.update(kw)
         self._mash()
 
+    def setDefaults(self, **kw):
+        self.defaults.update(kw)
+        self._mash()
+
     def _mash(self):
         d=self.defaults.copy()
+        d.update(self.userconfig)
         d.update(self.overlay)
         self.data.__dict__.clear()
         self.data.__dict__.update(d)
-
 
     def trim(self):
         self.overlay.clear()
@@ -40,10 +45,14 @@ class ScopeManager(object):
             f=os.path.abspath(f)
             fp=open(f)
             stuff=fp.read()
-            self.load_string(stuff, globals, f)
+            self._load_string(stuff, globals, f)
+        self._mash()
 
+    def loads(self, s, globals=None):
+        self._load_string(s, globals)
+        self._mash()
 
-    def load_string(s, globals=None, filename='<config>'):
+    def _load_string(s, globals=None, filename='<config>'):
         codeObj=compile(s, filename, 'exec')
         if globals is None:
             globals={}
@@ -51,7 +60,11 @@ class ScopeManager(object):
         env={}
         exec codeObj in globals, env
         for key in (k for k in env if not k.startswith('_')):
-            self.defaults[key]=env[key]
+            self.userconfig[key]=env[key]
+
+    def reset(self):
+        self.userconfig.clear()
+        self.trim()
 
     def _process_matcher(self, matcher):
         overlay=self.overlay
