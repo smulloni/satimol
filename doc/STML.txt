@@ -1,12 +1,12 @@
 .. -*-rst-*-
 
-The STOAT STML User's Manual
-============================
+STML User's Manual
+==================
 
 :Author: Jacob Smullyan
 :Contact: smulloni@smullyan.org
-:Date: August 23, 2004
-:Copyright: 2004, Jacob Smullyan
+:Date: August 18, 2007
+:Copyright: 2004, 2007 Jacob Smullyan
 
 .. contents:: Table of Contents
 .. sectnum::
@@ -14,19 +14,18 @@ The STOAT STML User's Manual
 Introduction
 ------------
 
-  *The version of STML described here is Stoat Template Markup
-  Language, a largely but not completely backwards-compatible variant
-  of SkunkWeb's Skunk Template Markup Language.  The most important
-  differences between this implementation and SkunkWeb's will be noted
-  below.*
+  *The version of STML described here is largely but not completely
+  backwards-compatible variant of the version implemented in SkunkWeb
+  3 (hereafter called "STML3").  The most important differences will
+  be noted below.*
 
 STML is an extensible, tag-based templating language based on (and
 compiled to) Python, especially well-suited for dynamic generation of
 HTML or XML in web applications.  It is tightly wedded to the
-``stoats.components`` library, which permits code to be broken up into
+``skunk.components`` library, which permits code to be broken up into
 separate reusable components that can be invoked with arguments like
 functions, returning string output or arbitrary Python data, and the
-``stoats.cache`` library, which permits the return values of such
+``skunk.cache`` library, which permits the return values of such
 invocations to be cached in a highly flexible and easily controlled
 manner.
 
@@ -142,10 +141,9 @@ This is equivalent to the following Python::
 
 \
 
-  *Skunk STML's ``<:default:>`` tag assigned a value to a variable
-  either if the variable was undefined, or if it was equal to
-  ``None``.  This special treatment of ``None`` has been removed in
-  Stoat STML.*
+  *STML3's ``<:default:>`` tag assigned a value to a variable either
+  if the variable was undefined, or if it was equal to ``None``.  This
+  special treatment of ``None`` has been removed in skunk.stml.*
 
 ``<:del:>``
 ~~~~~~~~~~~
@@ -202,9 +200,9 @@ STML namespace (actually, the global, not the local namespace
 that STML code is executed in) under the name ``OUTPUT``.
 
 
-  *Skunk STML does not accept arbitrary callables for ``fmt``, and has
+  *STML3 does not accept arbitrary callables for ``fmt``, and has
   slightly different keys in its equivalent ValFormatRegistry.  Also,
-  while Skunk STML also has an output stream called OUTPUT, it is not
+  while STML3 also has an output stream called OUTPUT, it is not
   directly available in the global namespace.*
 
 ``<:import:>``
@@ -271,15 +269,12 @@ tag outputs nothing, but the resulting string is stored in a variable
 with the name you specified.
 
 ``<:spool:>`` is provided for convenience and backwards compatibility
-with Skunk STML; it is equivalent to ``<:filter:>``, except that the
+with STML3; it is equivalent to ``<:filter:>``, except that the
 ``name`` attribute is required, and hence always assigns a string
 value to a variable.
 
-  *In Skunk STML, there is no ``<:filter:>`` tag, and ``<:spool:>`` has
-  no ``filter`` attribute.  Also, in later versions, it has an
-  optional parameter, `comments`, which can be used to suppress
-  component comments in SkunkWeb, a feature not supported in Stoat
-  STML.*
+  *In STML3, there is no ``<:filter:>`` tag, and ``<:spool:>`` has
+  no ``filter`` attribute.*
 
 Flow Control
 ------------
@@ -395,9 +390,9 @@ by the STML lexer.  Any text between the tags will be ignored.  Therefore,
 ``<:*`` is better suited for temporarily commenting out blocks of STML
 that may be syntactically incorrect.
 
-  *Skunk STML also included a ``<:doc:>`` tag for the purpose of adding
-  documentation to templates.  Stoat STML does not currently support
-  that feature.*
+  *STML3 also included a ``<:doc:>`` tag for the purpose of adding
+  documentation to templates.*
+
 
 Component Tags
 --------------
@@ -431,19 +426,14 @@ used.  This will compare the component arguments used in a
 particular call with a signature given in the tag.
 
 The ``<:cache:>`` tag sets the expiration for the component, in case
-if is called with a ``CachePolicy`` that honors it.  It can be called
-with either an ``until`` or a ``duration`` argument. [add documentation
+it is called with a ``CachePolicy`` that honors it. [add documentation
 of the formats accepted for this -- TO BE DONE.]
 
    
-  *Skunk STML also includes a ``<:return:>`` tag which can be used to
-  return values from data components written in STML.  Stoat STML does
-  not support writing data components in STML, and hence does not
+  *STML3 also includes a ``<:return:>`` tag which can be used to
+  return values from data components written in STML.  ``skunk.stml``
+  does not support writing data components in STML, and hence does not
   implement ``<:return:>``.*
-
-  *Skunk STML did not implement the component cache using a ``CachePolicy``
-  class.*
-
 
 Using Other Tag Libraries
 -------------------------
@@ -480,7 +470,7 @@ importable Python modules, and specified by their ``__name__``
 attribute.
 
 
-  *Skunk STML does not have a ``<:use:>`` tag, and does not permit 
+  *STML3 does not have a ``<:use:>`` tag, and does not permit 
   colons in tag names.*
 
 
