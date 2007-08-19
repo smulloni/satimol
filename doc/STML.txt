@@ -1,0 +1,487 @@
+.. -*-rst-*-
+
+The STOAT STML User's Manual
+============================
+
+:Author: Jacob Smullyan
+:Contact: smulloni@smullyan.org
+:Date: August 23, 2004
+:Copyright: 2004, Jacob Smullyan
+
+.. contents:: Table of Contents
+.. sectnum::
+
+Introduction
+------------
+
+  *The version of STML described here is Stoat Template Markup
+  Language, a largely but not completely backwards-compatible variant
+  of SkunkWeb's Skunk Template Markup Language.  The most important
+  differences between this implementation and SkunkWeb's will be noted
+  below.*
+
+STML is an extensible, tag-based templating language based on (and
+compiled to) Python, especially well-suited for dynamic generation of
+HTML or XML in web applications.  It is tightly wedded to the
+``stoats.components`` library, which permits code to be broken up into
+separate reusable components that can be invoked with arguments like
+functions, returning string output or arbitrary Python data, and the
+``stoats.cache`` library, which permits the return values of such
+invocations to be cached in a highly flexible and easily controlled
+manner.
+
+The Structure of STML Tags
+--------------------------
+
+STML tags are delimited by the character sequences ``<:`` and ``:>``.
+Between these delimiters, the first word is the tag name which
+identifies what tag is being called::
+
+  <:halt:>
+
+The tag name may be followed by a number of tag attributes::
+
+  <:val expr=`3` fmt="plain":>
+
+In the above, the first attribute has the name ``expr`` and the value
+```3```, and the second the name ``fmt`` and the value ``"plain"``.
+The value ```3```, written between backticks, is a Python expression,
+and is equivalent to the Python value ``3``.  Any valid Python
+expression (without backticks) may be used wherever STML accepts
+expressions, and are always written between backticks [#backtick]_.
+The value ``"plain"`` is a simply a string; it would be equivalent to
+write ```"plain"```, ```'plain'```, ``'plain'``, or (since in this
+case the string between quotes contains no whitespace) simply the bare
+word ``plain``.
+
+.. [#backtick] Python itself uses backticks as a synonym for the
+   ``repr`` builtin function, but this syntax is deprecated in any
+   case and is not supported in STML.  String literals inside Python
+   expressions currently may not contain backticks either, but this
+   can be circumvented if necessary by used the hex escape ``'\x60'``.
+
+STML tags usually expect attributes in a default order, and if when
+using the tag you write the attributes in that order, you can leave
+out the attribute names. The following is equivalent to the previous
+example::
+
+  <:val `3` plain:>
+
+(Note that this is a bit different than markup languages like HTML and
+XML, in which attribute order, unlike element order, is not
+significant.)  However, if you specify the attribute names, you can
+state them in any order::
+
+  <:val fmt=plain expr=`3`:>
+
+Some attributes are optional and are defined as having default values;
+in this example, ``fmt`` is optional, and the default value is
+equivalent to ``plain``, so you could simply write::
+
+  <:val `3`:>
+
+Some tags accept arbitrary keyword arguments::
+
+  <:component foo.comp 
+              x=`y/2.0` 
+              d=`range(4)` 
+              p="this could go on and on...":>
+
+Again along the lines of SGML-based markup like HTML and XML, STML
+tags are of two basic syntactical types: block and empty.  Block tags
+open a block which will be parsed in the context of the tag, and must
+be closed by a matching tag with the same tagName, but preceded by a
+forward slash.  For instance, the template below has one block tag and
+one empty tag::
+
+  <:filter:>
+     This is some text inside a block.
+  <:/filter:>
+  <:break:>
+
+
+Setting and Showing Things
+--------------------------
+
+
+``<:set:>``
+~~~~~~~~~~~
+
+::
+
+    <:set name value:>
+
+
+The ``<:set:>`` tag, assigns a value to a variable::
+
+  <:set x "hello":>
+
+This is exactly equivalent to the following Python:: 
+
+  x="hello"
+
+``<:default:>``
+~~~~~~~~~~~~~~~
+
+::
+
+    <:default name value:>
+
+
+The ``<:default:>`` tag assigns a value to a variable if the variable
+is currently undefined, and otherwise does nothing::
+
+ <:default x `myObj`:>
+
+This is equivalent to the following Python::
+
+  try:
+      x
+  except NameError:
+      x=myObj
+
+\
+
+  *Skunk STML's ``<:default:>`` tag assigned a value to a variable
+  either if the variable was undefined, or if it was equal to
+  ``None``.  This special treatment of ``None`` has been removed in
+  Stoat STML.*
+
+``<:del:>``
+~~~~~~~~~~~
+
+:: 
+
+ <:del name:>
+
+The ``<:del:>`` tag deletes the Python object with the name ``name``.
+The above precisely equivalent to the Python statement::
+
+  del name
+
+\
+
+
+``<:call:>``
+~~~~~~~~~~~~
+
+::
+
+  <:call expr:>
+
+
+The ``<:call:>`` tag is an escape hatch which enables you to directly
+execute a Python expression::
+
+  <:call `x=4`:>
+
+The Python equivalent of any given ``<:call:>`` tag is the expression 
+being called.
+
+
+``<:val:>``
+~~~~~~~~~~~
+
+::
+
+    <:val:> expr fmt=`None`:>
+
+
+The ``<:val:>`` tag prints the value of the expression passed to the
+output stream, optionally passing it through a format function::
+
+   <:val `myVar` fmt=xml:>
+
+The optional ``fmt`` attribute may be a callable that takes one
+argument and returns a string, or a string that is a key in the global
+dictionary `stoat.templating.stml.ValFormatRegistry`.  The default
+formatter is the "plain" formatter (``str``).
+
+The output stream that ``<:val:>`` writes to is available in the
+STML namespace (actually, the global, not the local namespace
+that STML code is executed in) under the name ``OUTPUT``.
+
+
+  *Skunk STML does not accept arbitrary callables for ``fmt``, and has
+  slightly different keys in its equivalent ValFormatRegistry.  Also,
+  while Skunk STML also has an output stream called OUTPUT, it is not
+  directly available in the global namespace.*
+
+``<:import:>``
+~~~~~~~~~~~~~~
+
+:: 
+
+  <:import module [names] [as=name]:>
+
+The ``<:import:>`` tag is the equivalent of Python's ``import``
+statement.  The following table shows various forms of the tag
+with the corresponding Python code.
+
+  ===================================  ===================================
+                Python                                 STML		   
+  ===================================  ===================================
+    ``import M``	                ``<:import M:>``	   
+  -----------------------------------  -----------------------------------
+    ``import M as C``                   ``<:import M as=C:>``  
+  -----------------------------------  -----------------------------------
+    ``from M import X``                 ``<:import M X:>``
+  -----------------------------------  -----------------------------------
+    ``from M import X, Y``              ``<:import M "X, Y":>``
+  -----------------------------------  -----------------------------------
+    ``from M import X as C``            ``<:import M X as=C:>``
+  -----------------------------------  -----------------------------------
+    ``from M import *``                 ``<:import M *:>``
+  -----------------------------------  -----------------------------------
+    ``import M1, M2``                   ``<:import "M1, M2":>``
+  -----------------------------------  -----------------------------------
+    ``import M1 as C, M2, M3 as C``     ``<:import "M1 as C, M2, M3 as C":>``
+  ===================================  ===================================
+ 
+
+``<:filter:>`` and ``<:spool:>``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+    <:filter name=`None` fmt=`None`:><:/filter:>
+    <:spool name fmt=`None`:><:/spool:>
+
+
+The previous tags are all empty tags; ``<:filter:>`` and ``<:spool:>``
+are block tags.  
+
+``<:filter:>`` enables you to filter the output resulting from a block
+of text, which may include other tags, through an arbitrary filter,
+and either directly output the filtered result, or save it in a
+variable.  It takes two attributes, `name` and `filter`, both of which
+are optional.  If you use neither, ``<:filter:>`` does nothing.  If
+you use just ``filter``, ``<:filter:>`` is essentially a block version
+of the ``<:val:>`` tag::
+
+  <:filter fmt=`str.upper`:>
+     this will get output in upper case.
+  <:/filter:>
+
+What is output here (ignoring whitespace) will be ``"THIS WILL GET
+OUTPUT IN UPPER CASE."``.
+
+If you use ``name``, with or without a filter, the block inside the
+tag outputs nothing, but the resulting string is stored in a variable
+with the name you specified.
+
+``<:spool:>`` is provided for convenience and backwards compatibility
+with Skunk STML; it is equivalent to ``<:filter:>``, except that the
+``name`` attribute is required, and hence always assigns a string
+value to a variable.
+
+  *In Skunk STML, there is no ``<:filter:>`` tag, and ``<:spool:>`` has
+  no ``filter`` attribute.  Also, in later versions, it has an
+  optional parameter, `comments`, which can be used to suppress
+  component comments in SkunkWeb, a feature not supported in Stoat
+  STML.*
+
+Flow Control
+------------
+
+::
+
+  <:if expr:>
+  [<:elif expr:>] ...
+  [<:else:>]
+  <:/if:>
+
+  <:try:>
+  <:except [exc]:>
+  [<:else:>]
+  <:/try:>
+  
+  <:try:>
+  <:finally:>
+  <:/try:>
+  
+  <:raise [exc]:>
+
+  <:for expr [name=sequence_item]:>
+  [<:break:>]
+  [<:continue:>]
+  [<:else:>]
+  <:/for:>
+
+  <:while expr :>
+  [<:break:>]
+  [<:continue:>]
+  [<:else:>]
+  <:/while:>
+
+STML's flow control facilities mirror those of Python itself almost exactly.  The following
+Python::
+
+  try:
+      v==0
+      while not v:
+          for i in p:
+              try:
+                  v=i.value
+              except AttributeError:
+                  continue
+              else:
+                  break 
+          else:
+              break
+      if v > m:
+          do_bigger()
+      elif v==m:
+          do_the_same()
+      else:
+          do_smaller()   
+  finally:
+     cleanup()
+
+would be translated into STML as::
+
+  <:try:>
+     <:set v `0`:>
+     <:while `not v`:>
+       <:for `p` i:>
+          <:try:>
+             <:set v `i.value`:>
+          <:except `AttributeError`:>
+             <:continue:>
+          <:else:>
+            <:break:>
+          <:/try:>
+       <:else:>
+          <:break:>
+       <:/for:>
+     <:/while:>
+     <:if `v>m`:>
+        <:call `do_bigger`:>
+     <:elif `v==m`:>
+        <:call `do_the_same()`:>
+     <:else:>
+        <:call `do_smaller()`:>
+     <:/if:>
+  <:finally:>
+     <:call `cleanup()`:>
+  <:/try:>
+
+The major differences to note are:
+
+  * indentation is not significant in STML (although, as in all languages,
+    careful indentation helps legibility).  
+  * ``<:try:>``, ``<:for:>``, and ``<:while:>`` are block tags, and must be closed
+    like any other block tag.
+  * instead of Python's ``for sequence_item in sequence``, STML drops the ``in``,
+    reverses the ``sequence_item`` and ``sequence``, and makes ``sequence_item`` optional
+    (it defaults to `"sequence_item"`).
+
+
+Comments
+--------
+
+::
+
+  <:* ... *:>
+  <:#:><:/#:>
+  <:comment:><:/comment:>
+
+The three comment tags are of two types.  ``<:#:>`` and
+``<:comment:>`` are synonymous; they are regular STML block tags that
+generate no code, but any stml within the tags will be parsed and must
+be well-formed.  The ``<:*`` and ``*:>`` tags are not, strictly
+speaking, tag at all, but a special comment syntax supported directly
+by the STML lexer.  Any text between the tags will be ignored.  Therefore,
+``<:*`` is better suited for temporarily commenting out blocks of STML
+that may be syntactically incorrect.
+
+  *Skunk STML also included a ``<:doc:>`` tag for the purpose of adding
+  documentation to templates.  Stoat STML does not currently support
+  that feature.*
+
+Component Tags
+--------------
+
+::
+
+  <:component compname [arg1=value arg2=value ...] [__args__= argdict] [cache=no|yes|old|force] :>
+  <:datacomp varname compname [arg1=value arg2=value ...] [__args__= argdict] [cache=no|yes|old|force] :>
+  <:include compname:>
+  <:compargs [arg1 arg2...] [arg3=val3 arg4=val4 ...]:>
+  <:cache until="datespec"| duration="timespec":>
+  <:halt:>
+
+The ``<:component:>`` tag calls string components and outputs the
+results (to the output stream ``OUTPUT`` in the current namespace).
+The ``<:datacomp:>`` tag calls data components and places the returned
+value in ``varname``.  ``<:include:>`` calls an include component and
+outputs the results (to ``OUTPUT``).
+
+String and data components accept component arguments, and can be
+cached; includes cannot.  Component arguments can be passed by keyword
+in the component tag, or as a dictionary with the reserved keyword
+``__args__``.  The desired cache policy can be specified with the
+reserved keyword ``cache``; acceptable values are
+``stoat.cache.CachePolicy`` instances and the strings ``'no'``,
+``'yes'``, ``'old'``, ``'force'``.
+
+To ensure that the correct component arguments have been passed to a
+component, and to set default values, the ``<:compargs:>`` tag may be
+used.  This will compare the component arguments used in a
+particular call with a signature given in the tag.
+
+The ``<:cache:>`` tag sets the expiration for the component, in case
+if is called with a ``CachePolicy`` that honors it.  It can be called
+with either an ``until`` or a ``duration`` argument. [add documentation
+of the formats accepted for this -- TO BE DONE.]
+
+   
+  *Skunk STML also includes a ``<:return:>`` tag which can be used to
+  return values from data components written in STML.  Stoat STML does
+  not support writing data components in STML, and hence does not
+  implement ``<:return:>``.*
+
+  *Skunk STML did not implement the component cache using a ``CachePolicy``
+  class.*
+
+
+Using Other Tag Libraries
+-------------------------
+::
+
+  <:use tagdict [prefix=name]:>
+
+STML may be extended by other tag libraries.  A tag library is simply
+a mapping of tag names to tag classes (including just those tags which
+should appear at the top level and that do not need to be nested in
+another tag).
+
+The STML parser may be invoked with an extended set of tags that
+incorporates other libraries, but it may also be desirable to extend
+the vocabulary of available tags within an STML component; the
+``<:use:>`` tag accomplishes this.  Tags imported by this means are
+only available within the component, subsequent to the ``<:use:>``
+call; they are not inherited by any nested components and do not
+affect the global tag dictionary.
+
+For clarity, or to prevent name conflicts between tag names in
+different libraries, it is possible to specify a prefix when using a
+tag library.  In use, the namespace will look like an xml namespace
+prefix::
+
+  <:use stoat.web.Tags prefix=web:>
+  <:web:args foo=`1`:>
+
+The ``<:use:>`` tag does not generate any code at runtime; the
+inclusion of the tag library happens at parse time.  Therefore, the
+``tagdict`` argument must be a string, not a Python expression (which
+only has meaning at runtime).  Tag libraries must be defined in
+importable Python modules, and specified by their ``__name__``
+attribute.
+
+
+  *Skunk STML does not have a ``<:use:>`` tag, and does not permit 
+  colons in tag names.*
+
+
+
