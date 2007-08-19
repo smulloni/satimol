@@ -5,6 +5,7 @@ import tempfile
 
 import skunk.stml as S
 import skunk.components as C
+from skunk.config import Configuration
 
 class SignatureTest(unittest.TestCase):
 
@@ -542,11 +543,8 @@ class CompTest(unittest.TestCase):
         f.close()
         suffixes=C.DEFAULT_FILE_COMPONENT_SUFFIX_MAP.copy()
         suffixes['.comp']=('string', S.STMLFileComponent)
-        handlers={'file' : C.LocalFileComponentHandler(suffixes),
-                  'callable' : C.CallableComponentHandler()}
-        factory=C.ComponentFactory(handlers)
-        comp=factory.createComponent(fname)
-        res=comp({'compname' : self.fname})
+        Configuration.load_dict(dict(componentFileSuffixMap=suffixes))
+        res=C.stringcomp(fname, compname=self.fname)
         print res
         self.failUnless('Hello from me!\n' in res)
         
@@ -569,11 +567,8 @@ class CompTest(unittest.TestCase):
         suffixes=C.DEFAULT_FILE_COMPONENT_SUFFIX_MAP.copy()
         suffixes['.comp']=('string', S.STMLFileComponent)
         suffixes['.inc']=('include', S.STMLFileComponent)
-        handlers={'file' : C.LocalFileComponentHandler(suffixes),
-                  'callable' : C.CallableComponentHandler()}
-        factory=C.ComponentFactory(handlers)
-        comp=factory.createComponent(self.fname)
-        res=comp({'compname' : fname})
+        Configuration.load_dict(dict(componentFileSuffixMap=suffixes))        
+        res=C.stringcomp(self.fname, compname=fname)
         print res
         self.failUnless('Hello from me!\n' in res)
         self.failUnless("x is 33" in res)
@@ -598,15 +593,17 @@ class CompTest(unittest.TestCase):
         Done.
         """)
         self.f.close()
-        suffixes=C.DEFAULT_FILE_COMPONENT_SUFFIX_MAP.copy()
-        suffixes['.comp']=('string', S.STMLFileComponent)
-        suffixes['.inc']=('include', S.STMLFileComponent)
-        handlers={'file' : C.LocalFileComponentHandler(suffixes),
-                  'callable' : C.CallableComponentHandler()}
-        factory=C.ComponentFactory(handlers)
-        comp=factory.createComponent(self.fname)
-        res=comp({'compname' : fname,
-                  'dcompname' : dfname})
+##         suffixes=C.DEFAULT_FILE_COMPONENT_SUFFIX_MAP.copy()
+##         suffixes['.comp']=('string', S.STMLFileComponent)
+##         suffixes['.inc']=('include', S.STMLFileComponent)
+##         Configuration.load_dict(dict(componentFileSuffixMap=suffixes))
+        res=C.stringcomp(self.fname, compname=fname, dcompname=dfname)
+##         handlers={'file' : C.FileComponentHandler(suffixes),
+##                   'callable' : C.CallableComponentHandler()}
+##         factory=C.ComponentFactory(handlers)
+##         comp=factory.createComponent(self.fname)
+##         res=comp({'compname' : fname,
+##                   'dcompname' : dfname})
         self.failUnless('Hello from me!\n' in res)
         self.failUnless("x is 33" in res)
 
@@ -620,17 +617,19 @@ def foo(x):
 """)
 
         self.f.close()
-        factory=S.getDefaultComponentFactory()
-        comp=factory.createComponent(self.fname)
-        res=comp()
+##         factory=S.getDefaultComponentFactory()
+##         comp=factory.createComponent(self.fname)
+##         res=comp()
+        res=C.stringcomp(self.fname)
         self.failUnless(res=='200')
 
     def testPre02(self):
         self.f.write("<:?pre off?:>\n\n\n\nhi\n\n\n")
         self.f.close()
-        factory=S.getDefaultComponentFactory()
-        comp=factory.createComponent(self.fname)
-        res=comp()
+##         factory=S.getDefaultComponentFactory()
+##         comp=factory.createComponent(self.fname)
+##         res=comp()
+        res=C.stringcomp(self.fname)
         self.failUnless(res=='hi')
 
         

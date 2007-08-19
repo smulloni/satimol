@@ -409,7 +409,8 @@ class UseTag(EmptyTag):
 
 class ComponentTagBase(EmptyTag):
     modules=[('skunk.stml', 'stml'),
-             ('skunk.cache', 'cache')]
+             ('skunk.cache', 'cache'),
+             ('skunk.components', 'components')]
     _top=True
 
     def _marshal_args(self):
@@ -442,9 +443,8 @@ class StringComponentTag(ComponentTagBase):
         compArgs=self._marshal_args()
         namespace=self._parsed_args['namespace']
         expiration=self._parsed_args['expiration']
-        s=('OUTPUT.write(COMPONENT.callStringComponent('
-           'componentHandle=%r, compArgs=%r, '
-           'cachePolicy=__h.cache.decode(%r), '
+        s=('OUTPUT.write(__h.components.call_component('
+           '%r, %r, "string", __h.cache.decode(%r), '
            'expiration=%r, namespace=%r))') % \
            (handle, compArgs, cachePolicy, expiration, namespace)
         codeStream.writeln(s)
@@ -468,9 +468,8 @@ class DataComponentTag(ComponentTagBase):
         compArgs=self._marshal_args()
         namespace=self._parsed_args['namespace']
         expiration=self._parsed_args['expiration']
-        s=('%s=COMPONENT.callDataComponent('
-           'componentHandle=%r, compArgs=%r, cachePolicy=__h.cache.decode(%r), '
-           'expiration=%r, namespace=%r)') % \
+        s=('%s=__h.components.call_component('
+           '%r, %r, __h.cache.decode(%r), %r, %r)') % \
            (varname, handle, compArgs, cachePolicy, expiration, namespace)
         codeStream.writeln(s)
 
@@ -481,7 +480,7 @@ class IncludeComponentTag(ComponentTagBase):
 
     def genCode(self, codeStream):
         handle=self._parsed_args['name']
-        s='OUTPUT.write(COMPONENT.callIncludeComponent(%r))' % handle
+        s='OUTPUT.write(__h.components.include(%r))' % handle
         codeStream.writeln(s)
 
 
