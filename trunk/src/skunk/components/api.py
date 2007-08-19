@@ -2,7 +2,7 @@
 Top-level routines for calling components.
 """
 
-from skunk.cache import NO
+from skunk.cache import NO, decode
 from skunk.components.context import ComponentContext
 from skunk.components.exceptions import ComponentHandlingException
 from skunk.config import Configuration
@@ -25,7 +25,9 @@ def _parse_handle(handle):
 def call_component(comp,
                    compargs=None,
                    comptype=None,
-                   cache=NO):
+                   cache=NO,
+                   expiration=None,
+                   namespace=None):
     """
     call a component of any type.
     """
@@ -34,23 +36,25 @@ def call_component(comp,
     if not handler:
         msg="no handler installed for protocol %r" % protocol
         raise ComponentHandlingException(msg)
-    component=handler.createComponent(protocol, comp, comptype)
+    component=handler.createComponent(protocol, comp, comptype, namespace)
     return component(compargs,
-                     cachePolicy=cache)
+                     cachePolicy=decode(cache),
+                     expiration=expiration)
+
                      
     
-def stringcomp(comp, cache=NO, **kwargs):
+def stringcomp(comp, cache=NO, expiration=None, namespace=None, **kwargs):
     """
     call a string component.
     """
-    return call_component(comp, kwargs, 'string', cache)
+    return call_component(comp, kwargs, 'string', cache, expiration, namespace)
     
 
-def datacomp(comp, cache=NO, **kwargs):
+def datacomp(comp, cache=NO, expiration=None, namespace=None, **kwargs):
     """
     call a data component.
     """
-    return call_component(comp, kwargs, 'data', cache)
+    return call_component(comp, kwargs, 'data', cache, expiration, namespace)
 
 def include(comp):
     """

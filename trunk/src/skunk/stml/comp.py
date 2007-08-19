@@ -1,14 +1,17 @@
 from skunk.components import (StringOutputComponent,
                               StringOutputFileComponent, 
-                              ComponentFactory,
                               DEFAULT_FILE_COMPONENT_SUFFIX_MAP, 
-                              LocalFileComponentHandler,
+                              FileComponentHandler,
                               CallableComponentHandler)
+from skunk.config import Configuration
 from skunk.stml.parser import parse as stml_parse
 from skunk.stml.tags import BaseTags
 from skunk.stml.codeStream import PythonCodeOutputStream
 from skunk.stml.tagutils import import_into
 from skunk.util.timeconvert import convert
+
+
+
 
 
 class _namespaceholder:
@@ -117,13 +120,11 @@ class STMLComponent(STMLComponentMixin, StringOutputComponent):
                  stmlcode,
                  name=None,
                  namespace=None,
-                 factory=None,
                  tagVocabulary=None):
         STMLComponentMixin.__init__(self, tagVocabulary)
         StringOutputComponent.__init__(self,
                                        code=stmlcode,
-                                       name=name,
-                                       factory=factory)
+                                       name=name)
 
     def _precall(self, namespace):
         namespace=STMLComponentMixin._precall(self, namespace)
@@ -133,13 +134,11 @@ class STMLFileComponent(STMLComponentMixin, StringOutputFileComponent):
     def __init__(self,
                  filename,
                  namespace=None,
-                 factory=None,
                  tagVocabulary=None):
         STMLComponentMixin.__init__(self, tagVocabulary)
         StringOutputFileComponent.__init__(self,
                                            filename,
-                                           namespace=namespace,
-                                           factory=factory)
+                                           namespace=namespace)
 
     def _precall(self, namespace):
         namespace=STMLComponentMixin._precall(self, namespace)
@@ -154,27 +153,13 @@ DEFAULT_STML_FILE_COMPONENT_SUFFIX_MAP={
 
 DEFAULT_STML_FILE_COMPONENT_SUFFIX_MAP.update(DEFAULT_FILE_COMPONENT_SUFFIX_MAP)
 
-
-
-def getDefaultComponentFactory(compileCache=None,
-                               componentCache=None,
-                               extra_globals=None,
-                               defaultExpiration='30s'):
-    map=DEFAULT_STML_FILE_COMPONENT_SUFFIX_MAP
-    handlers={'file' : FileComponentHandler(map),
-              'callable' : CallableComponentHandler()}
-
-    return ComponentFactory(handlers,
-                            compileCache,
-                            componentCache,
-                            extra_globals=extra_globals,
-                            defaultExpiration=defaultExpiration)
-        
+Configuration.setDefaults(
+    componentFileSuffixMap=DEFAULT_STML_FILE_COMPONENT_SUFFIX_MAP)
 
 __all__=['STMLComponentMixin',
          'STMLComponent',
          'STMLFileComponent',
-         'DEFAULT_STML_FILE_COMPONENT_SUFFIX_MAP',
-         'getDefaultComponentFactory']
+         'DEFAULT_STML_FILE_COMPONENT_SUFFIX_MAP']
+
 
 
