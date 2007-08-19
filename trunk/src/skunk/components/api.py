@@ -3,6 +3,7 @@ Top-level routines for calling components.
 """
 
 from skunk.cache import NO
+from skunk.components.context import ComponentContext
 from skunk.components.exceptions import ComponentHandlingException
 from skunk.config import Configuration
 
@@ -58,8 +59,25 @@ def include(comp):
     return call_component(comp, comptype='include')
 
 
+def getCurrentComponent():
+    stack=ComponentContext.componentStack
+    if stack:
+        return stack[-1]
+
+def getCurrentDirectory():
+    for c in reversed(ComponentContext.componentStack):
+        try:
+            f=c.filename
+        except AttributeError:
+            continue
+        else:
+            return dirname(f)
+    
+
 
 __all__=['call_component',
          'stringcomp',
          'datacomp',
-         'include']
+         'include',
+         'getCurrentComponent',
+         'getCurrentDirectory']
