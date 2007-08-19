@@ -56,8 +56,9 @@ word ``plain``.
 .. [#backtick] Python itself uses backticks as a synonym for the
    ``repr`` builtin function, but this syntax is deprecated in any
    case and is not supported in STML.  String literals inside Python
-   expressions currently may not contain backticks either, but this
-   can be circumvented if necessary by used the hex escape ``'\x60'``.
+   expressions currently may not contain backticks either in STML, but
+   this can be circumvented if necessary by used the hex escape
+   ``'\x60'``.
 
 STML tags usually expect attributes in a default order, and if when
 using the tag you write the attributes in that order, you can leave
