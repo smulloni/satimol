@@ -52,6 +52,21 @@ class ScopeManager(object):
         self._load_string(s, globals)
         self._mash()
 
+    def load_kw(self, **kw):
+        self.load_dict(kw)
+
+    def keys(self):
+        return self.data.__dict__.keys()
+
+    def items(self):
+        return self.data.__dict__.items()
+
+    def __iter__(self):
+        return self.data.__dict__.__iter__()
+
+    def iteritems(self):
+        return self.data.__dict__.iteritems()
+
     def load_dict(self, d):
         for k in d:
             if not k.startswith('_'):
