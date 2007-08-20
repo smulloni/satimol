@@ -135,7 +135,7 @@ class FileComponentHandler(ComponentHandler):
         return Configuration.componentFileSuffixMap.get(splitext(handle)[1], (None, None))
     
     def inferComponentType(self, componentHandle):
-        compType=self._lookup_suffix(componentHandle)[0]
+        compType=self._lookup_suffix(componentHandle)[0] 
         if compType:
             return compType
         else:
