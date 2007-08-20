@@ -5,7 +5,7 @@ STML User's Manual
 
 :Author: Jacob Smullyan
 :Contact: jsmullyan@gmail.com
-:Date: August 18, 2007
+:Date: August 20, 2007
 :Copyright: 2004, 2007 Jacob Smullyan
 
 .. contents:: Table of Contents
@@ -435,6 +435,45 @@ of the formats accepted for this -- TO BE DONE.]
   return values from data components written in STML.  ``skunk.stml``
   does not support writing data components in STML, and hence does not
   implement ``<:return:>``.*
+
+Logging
+-------
+::
+
+  <:debug msg [arg1 args2 ...]:> 
+  <:info msg [arg1 args2 ...]:> 
+  <:warn msg [arg1 args2 ...]:> 
+  <:error msg [arg1 args2 ...]:> 
+  <:exception msg [arg1 args2 ...]:> 
+
+
+STML's log tags using Python's ``logging`` module to call the standard
+log methods (``debug``, ``info``, ``warn``, ``error``, and
+``exception``) on the user logger, which by default is named ``USER``
+(a different name can be assign by setting the configuration variable
+``userLogger``). 
+
+::
+
+  <:debug "attempting precarious function call":>
+  <:info "received request from IP %s" `ip`:>
+  <:warn "possible breakin attempt: %s %s" `ip` `user`:>
+  <:error "that wasn't supposed to happen":>
+  <:exception "exception handling order:":>
+
+To access the logger programmatically::
+
+  from skunk.userlogger import getUserLogger
+  logger=getUserLogger()
+  logger.setLevel(logging.DEBUG)
+  logger.debug("hello from Python")
+
+Or as a shortcut for logging from Python components::
+
+  # imports debug, info, warn, error, exception
+  from skunk.userlogger import *
+  debug("I think I'm about to make a boo-boo....")
+  error("Darn, I was right!")
 
 Using Other Tag Libraries
 -------------------------

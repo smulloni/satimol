@@ -12,12 +12,6 @@ from types import ModuleType
 from skunk.config import Configuration
 from skunk.stml.valformat import ValFormatRegistry
 
-Configuration.mergeDefaults(userLogger='USER')
-
-def getUserLogger():
-    """returns the logger used for user logging in STML"""
-    return logging.getLogger(Configuration.userLogger)
-
 def safe_import(codeout, mod, as_name=None, hidden_ns='__h'):
     """
     imports (in the generated code) the stated module into the given
@@ -135,5 +129,5 @@ __all__=['write_val',
          'get_formatter',
          'get_temp_name',
          'safe_import',
-         'import_into',
-         'getUserLogger']
+         'import_into']
+

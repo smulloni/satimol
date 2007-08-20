@@ -519,13 +519,13 @@ class CacheTag(EmptyTag):
 class _logTagMixin(object):
 
     signature=Signature(('msg',), 'args')
-    modules=[('skunk.stml', 'stml')]
+    modules=[('skunk.userlogger', 'userlogger')]
     _top=True
 
     def genCode(self, codeStream):
         msg=self._parsed_args['msg']
         args=self._parsed_args['args']
-        codeStream.writeln('__h.stml.getUserLogger().%s(%r, *%r)' % \
+        codeStream.writeln('__h.userlogger.getUserLogger().%s(%r, *%r)' % \
                            (self.tagName, msg, args))
 
 
