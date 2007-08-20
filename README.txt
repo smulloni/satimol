@@ -10,6 +10,7 @@ Satimol are the skunk libraries from the skunkweb project, including:
 * skunk.cache_, a useful cache for memoization.
 * skunk.stml_, an implementation of STML (Skunk Template Markup Language).
 
+and other things.
 
 skunk.cache
 ===========
@@ -45,9 +46,5 @@ To be explained.
 skunk.stml
 ==========
 
-To be done.
-
-
-
-
-
+See stml.txt in the doc/ directory for everything you might
+want to know about STML.
