@@ -1,7 +1,7 @@
 from os.path import splitext, dirname, join as pathjoin
 
 from skunk.config import Configuration
-from skunk.components.api import getCurrentDirectory
+from skunk.components.api import getCurrentDirectory, rectifyRelativePath
 from skunk.components.context import ComponentContext
 from skunk.components.objects import *
 
@@ -148,20 +148,10 @@ class FileComponentHandler(ComponentHandler):
                              componentHandle,
                              namespace,
                              **extra):
-        componentHandle=self.rectifyRelativePath(componentHandle)
+        componentHandle=rectifyRelativePath(componentHandle)
         return kls(componentHandle,
                    namespace=namespace,
                    **extra)
-
-    def rectifyRelativePath(self, path):
-        if path.startswith('/'):
-            return path
-        cwd=getCurrentDirectory()
-        if not cwd:
-            raise ComponentHandlingException, \
-                  ("cannot invoke a component with a relative path without a "
-                   "prior file context")
-        return pathjoin(cwd, path)
 
 defaultComponentHandlers=dict(callable=CallableComponentHandler(),
                               file=FileComponentHandler())

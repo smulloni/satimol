@@ -77,6 +77,15 @@ def getCurrentDirectory():
         else:
             return dirname(f)
     
+def rectifyRelativePath(path):
+    if path.startswith('/'):
+        return path
+    cwd=getCurrentDirectory()
+    if not cwd:
+        raise ComponentHandlingException(
+            "cannot invoke a component with a relative path without a "
+            "prior file context")
+    return os.path.join(cwd, path)
 
 
 __all__=['call_component',
@@ -84,4 +93,5 @@ __all__=['call_component',
          'datacomp',
          'include',
          'getCurrentComponent',
-         'getCurrentDirectory']
+         'getCurrentDirectory',
+         'rectifyRelativePath']

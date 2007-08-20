@@ -1,29 +1,94 @@
 """
-<:slot:> and <:calltemplate:> tags.
-
-While the rest of this package has managed to avoid, so far, any
-references to configuration, it is no longer possible for that to be
-the case.  We need to know here a document root; we need to know a
-default template.
-
+<:slot:> and <:calltemplate:> tags, ported from Skunk3's layout service.
 """
 
 import errno
+import threading
 
+from skunk.components import (getCurrentDirectory,
+                              ComponentHandlingException,
+                              rectifyRelativePath)
 from skunk.config import Configuration
-from skunk.stml.log import exception
+from skunk.stml.log import exception, warn
 from skunk.stml.signature import Signature
-from skunk.stml.tags import EmptyTag
+from skunk.stml.tags import EmptyTag, BaseTags
 from skunk.stml.tagutils import get_temp_name
 
-Configuration.mergeDefaults(slotConfigFilename='slotconf.pydcmp')
+Configuration.mergeDefaults(slotConfigFilename='slotconf.pydcmp',
+                            defaultTemplateFilename='template.stml',
+                            skinDir='/comp/skins',
+                            defaultSkin='default'
+                            )
+_slotlocal=threading.local()
+def get_slot_stack():
+    try:
+        return _slotlocal.stack
+    except AttributeError:
+        stack=[]
+        _slotlocal.stack=stack
+        return stack
+    
+def push_slot(slotname):
+    get_slot_stack().append(slotname)
 
+def pop_slot(slotname):
+    try:
+        return get_slot_stack().pop()
+    except IndexError:
+        warn('pop_slot() called when stack is empty!')
+        return None
 
-def getConfiguredSlots(path=None) 
+def getCurrentSlot():
+    try:
+        return get_slot_stack()[-1]
+    except IndexError:
+        return None
+
+class ComponentSlot(object):
+    '''a wrapper around a component call'''
+    def __init__(self,
+                 compname,
+                 comptype=None,
+                 cache=False,
+                 expiration=None,
+                 namespace=None,
+                 **extra):
+        self.compname=rectifyRelativePath(compname)
+        self.comptype=comptype
+        self.cache=cache
+        self.expiration=expiration
+        self.namespace=namespace
+        self.extra=extra
+
+    def __call__(self, **kw):
+        cache=kw.pop('cache', self.cache)
+        kwargs.update(self.extra)
+        call_component(compname,
+                       compargs=kwargs,
+                       comptype=self.comptype,
+                       cache=cache,
+                       expiration=self.expiration,
+                       namespace=self.namespace)
+        
+
+def getTemplatePath(template=None):
+    if template is None:
+        template=Configuration.defaultTemplateFilename
+    return getSkinComponentPath(template)
+
+def getSkinComponentPath(compname):
+    return os.path.join(Configuration.skinDir,
+                        Configuration.defaultSkin,
+                        compname)
+
+def getConfiguredSlots(path=None):
     if path is None:
-        path=current_component()
+        path=getCurrentDirectory()
+        if path is None:
+            raise ComponentHandlingException(
+                "no file component on component stack and no path provided")
 
-    elif not path.endswith('/'):
+    if not path.endswith('/'):
         path=path+'/'
     slots={}
     slot_conf_name=Configuration.slotConfigFilename
@@ -51,43 +116,49 @@ class SlotTag(EmptyTag):
                         None,
                         'kwargs')
 
+
     def genCode(self, codeStream):
         name=self._parsed_args['name']
         slotmap=self._parsed_args['slotmap']
         kwargs=self._parsed_args['kwargs']
         slotvar=get_temp_name()
-        codeStream.writeln("%s=%s.get(%s, '')" % (slotvar, slotmap, name))
-        codeStream.writeln("if callable(%s):" % slotvar)
-        codeStream.indent()
-        codeStream.writeln("OUTPUT.write(%s(**%r))" % (slotvar, kwargs))
-        codeStream.dedent()
-        codeStream.writeln("elif %s:" % slotvar)
-        codeStream.indent()
-        codeStream.writeln("OUTPUT.write(%s)" % slotvar)
-        codeStream.dedent()
-        codeStream.writeln("del %s" % slotvar)
+        
+        wl=codeStream.writeln
+        ind=codeStream.indent
+        ded=codeStream.dedent
+        
+        wl("%s=%s.get(%s, '')" % (slotvar, slotmap, name))
+        wl('push_slot(%r)' % name)
+        wl('try:')
+        ind()
+        wl("if callable(%s):" % slotvar)
+        ind()
+        wl("OUTPUT.write(%s(**%r))" % (slotvar, kwargs))
+        ded()
+        wl("elif %s:" % slotvar)
+        ind()
+        wl("OUTPUT.write(%s)" % slotvar)
+        ded()
+        wl("del %s" % slotvar)
+        ded()
+        wl('finally:')
+        ind()
+        wl('pop_slot(%r)' % name)
+        ded()
+        
                            
 class CallTemplateTag(EmptyTag):
     signature=Signature((('template', None), ('slotmap', 'SLOTS')),
                         None,
                         'kwargs')
+    modules=[('skunk.stml', 'stml'),
+             ('skunk.components', 'components')]
     
     def genCode(self, codeStream):
         template=self._parsed_args['template']
         slotmap=self._parsed_args['slotmap']
         kwargs=self._parsed_args['kwargs']
 
-        """
-        if template is None:
-            tempvar=getTemplatePath()
-        else:
-            tempvar=template
-        try:
-            SLOTS
-        except NameError:
-            SLOTS=getConfiguredSlots()
-        
-        """
         t=get_temp_name()
         g=get_temp_name()
         K=get_temp_name()
@@ -99,7 +170,7 @@ class CallTemplateTag(EmptyTag):
 
         wr("if %s is None:" % template)
         indent()
-        wr("%s=__h.slotutils.getTemplatePath()" % t)
+        wr("%s=__h.stml.getTemplatePath()" % t)
         dedent()
         wr("else:")
         indent()
@@ -112,7 +183,7 @@ class CallTemplateTag(EmptyTag):
         dedent()
         wr("except NameError:")
         indent()
-        wr("%s=__h.slotutils.getConfiguredSlots()" % slotmap)
+        wr("%s=__h.stml.getConfiguredSlots()" % slotmap)
         dedent()
         
         wr('%s=globals()' % g)
@@ -136,6 +207,16 @@ class CallTemplateTag(EmptyTag):
         indent()
         wr("%s.update(%r)" % (slotmap, kw))
         dedent()
-        wr("OUTPUT.write(COMPONENT.callIncludeComponent(%s))" % template)
+        wr("OUTPUT.write(__h.components.include(%s))" % template)
         wr("del %s" % template)
         
+BaseTags[CallTemplateTag.tagName]=CallTemplateTag
+BaseTags[SlotTag.tagName]=SlotTag
+
+
+__all__=['getTemplatePath',
+         'getConfiguredSlots',
+         'getSkinComponentPath',
+         'CallTemplateTag',
+         'SlotTag',
+         'ComponentSlot']
