@@ -1,3 +1,5 @@
+import cStringIO
+import logging
 import os
 import unittest
 import random
@@ -593,17 +595,8 @@ class CompTest(unittest.TestCase):
         Done.
         """)
         self.f.close()
-##         suffixes=C.DEFAULT_FILE_COMPONENT_SUFFIX_MAP.copy()
-##         suffixes['.comp']=('string', S.STMLFileComponent)
-##         suffixes['.inc']=('include', S.STMLFileComponent)
-##         Configuration.load_dict(dict(componentFileSuffixMap=suffixes))
         res=C.stringcomp(self.fname, compname=fname, dcompname=dfname)
-##         handlers={'file' : C.FileComponentHandler(suffixes),
-##                   'callable' : C.CallableComponentHandler()}
-##         factory=C.ComponentFactory(handlers)
-##         comp=factory.createComponent(self.fname)
-##         res=comp({'compname' : fname,
-##                   'dcompname' : dfname})
+
         self.failUnless('Hello from me!\n' in res)
         self.failUnless("x is 33" in res)
 
@@ -617,21 +610,51 @@ def foo(x):
 """)
 
         self.f.close()
-##         factory=S.getDefaultComponentFactory()
-##         comp=factory.createComponent(self.fname)
-##         res=comp()
         res=C.stringcomp(self.fname)
         self.failUnless(res=='200')
 
     def testPre02(self):
         self.f.write("<:?pre off?:>\n\n\n\nhi\n\n\n")
         self.f.close()
-##         factory=S.getDefaultComponentFactory()
-##         comp=factory.createComponent(self.fname)
-##         res=comp()
         res=C.stringcomp(self.fname)
         self.failUnless(res=='hi')
 
+    def testLog1(self):
+        self.f.write('hi there <:debug "about to compile the borkoscape":>')
+        self.f.close()
+        logger=S.getUserLogger()
+        logger.setLevel(logging.DEBUG)
+        sio=cStringIO.StringIO()
+        logger.addHandler(logging.StreamHandler(sio))
+        res=C.stringcomp(self.fname)
+        self.failUnless('hi there' in res)
+        v=sio.getvalue()
+        self.failUnless('borkoscape' in v)
+
+    def testLog2(self):
+        self.f.write('hi there <:info "ding dong %s" `4`:>')
+        self.f.close()
+        logger=S.getUserLogger()
+        logger.setLevel(logging.DEBUG)
+        sio=cStringIO.StringIO()
+        logger.addHandler(logging.StreamHandler(sio))
+        res=C.stringcomp(self.fname)
+        self.failUnless('hi there' in res)
+        v=sio.getvalue()
+        self.failUnless('ding dong 4' in v)
+
+    def testLog3(self):
+        self.f.write('hi there <:try:><:raise `ValueError`:><:except:><:exception "ding dong %s" `4`:><:/try:>')
+        self.f.close()
+        logger=S.getUserLogger()
+        logger.setLevel(logging.DEBUG)
+        sio=cStringIO.StringIO()
+        logger.addHandler(logging.StreamHandler(sio))
+        res=C.stringcomp(self.fname)
+        self.failUnless('hi there' in res)
+        v=sio.getvalue()
+        print v
+        self.failUnless('ding dong 4' in v)
         
         
 if __name__=='__main__':
