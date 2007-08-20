@@ -497,11 +497,12 @@ class CompargsTag(EmptyTag):
     tagName='compargs'
     signature=Signature((), 'args', 'kwargs')
     _top=True
+    modules=[('skunk.components', 'components')]
 
     def genCode(self, codeStream):
         args=self._parsed_args['args']
         kwargs=self._parsed_args['kwargs']
-        s="COMPONENT.check_args(%r, %r)" % (args, kwargs)
+        s="__h.components.getCurrentComponent().check_args(%r, %r)" % (args, kwargs)
         codeStream.writeln(s)
 
 class CacheTag(EmptyTag):

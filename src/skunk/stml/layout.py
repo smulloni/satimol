@@ -3,6 +3,7 @@
 """
 
 import errno
+import os
 import threading
 
 from skunk.components import (getCurrentDirectory,
@@ -111,10 +112,11 @@ def getConfiguredSlots(path=None):
     
 
 class SlotTag(EmptyTag):
-        
+    tagName='slot'
     signature=Signature(('name',('slotmap', 'SLOTS')),
                         None,
                         'kwargs')
+    modules=[('skunk.stml.layout', '_layout')]
 
 
     def genCode(self, codeStream):
@@ -128,7 +130,7 @@ class SlotTag(EmptyTag):
         ded=codeStream.dedent
         
         wl("%s=%s.get(%s, '')" % (slotvar, slotmap, name))
-        wl('push_slot(%r)' % name)
+        wl('__h._layout.push_slot(%r)' % name)
         wl('try:')
         ind()
         wl("if callable(%s):" % slotvar)
@@ -143,11 +145,12 @@ class SlotTag(EmptyTag):
         ded()
         wl('finally:')
         ind()
-        wl('pop_slot(%r)' % name)
+        wl('__h._layout.pop_slot(%r)' % name)
         ded()
         
                            
 class CallTemplateTag(EmptyTag):
+    tagName='calltemplate'
     signature=Signature((('template', None), ('slotmap', 'SLOTS')),
                         None,
                         'kwargs')
