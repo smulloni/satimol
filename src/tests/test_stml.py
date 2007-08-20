@@ -8,6 +8,7 @@ import tempfile
 import skunk.stml as S
 import skunk.components as C
 from skunk.config import Configuration
+from skunk.userlogger import getUserLogger
 
 class SignatureTest(unittest.TestCase):
 
@@ -622,7 +623,7 @@ def foo(x):
     def testLog1(self):
         self.f.write('hi there <:debug "about to compile the borkoscape":>')
         self.f.close()
-        logger=S.getUserLogger()
+        logger=getUserLogger()
         logger.setLevel(logging.DEBUG)
         sio=cStringIO.StringIO()
         logger.addHandler(logging.StreamHandler(sio))
@@ -634,7 +635,7 @@ def foo(x):
     def testLog2(self):
         self.f.write('hi there <:info "ding dong %s" `4`:>')
         self.f.close()
-        logger=S.getUserLogger()
+        logger=getUserLogger()
         logger.setLevel(logging.DEBUG)
         sio=cStringIO.StringIO()
         logger.addHandler(logging.StreamHandler(sio))
@@ -646,7 +647,7 @@ def foo(x):
     def testLog3(self):
         self.f.write('hi there <:try:><:raise `ValueError`:><:except:><:exception "ding dong %s" `4`:><:/try:>')
         self.f.close()
-        logger=S.getUserLogger()
+        logger=getUserLogger()
         logger.setLevel(logging.DEBUG)
         sio=cStringIO.StringIO()
         logger.addHandler(logging.StreamHandler(sio))
