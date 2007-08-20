@@ -193,8 +193,8 @@ output stream, optionally passing it through a format function::
 
 The optional ``fmt`` attribute may be a callable that takes one
 argument and returns a string, or a string that is a key in the global
-dictionary `stoat.templating.stml.ValFormatRegistry`.  The default
-formatter is the "plain" formatter (``str``).
+dictionary `skunk.stml.ValFormatRegistry`.  The default formatter is
+the "plain" formatter (``str``).
 
 The output stream that ``<:val:>`` writes to is available in the
 STML namespace (actually, the global, not the local namespace
@@ -418,7 +418,7 @@ cached; includes cannot.  Component arguments can be passed by keyword
 in the component tag, or as a dictionary with the reserved keyword
 ``__args__``.  The desired cache policy can be specified with the
 reserved keyword ``cache``; acceptable values are
-``stoat.cache.CachePolicy`` instances and the strings ``'no'``,
+``skunk.cache.CachePolicy`` instances and the strings ``'no'``,
 ``'yes'``, ``'old'``, ``'force'``.
 
 To ensure that the correct component arguments have been passed to a
