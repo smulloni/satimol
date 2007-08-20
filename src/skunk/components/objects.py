@@ -8,6 +8,7 @@ from skunk.cache.policy import NO
 from skunk.config import Configuration
 from skunk.components.context import ComponentContext
 from skunk.components.exceptions import ReturnValue, ComponentArgumentError
+from skunk.util.pathutil import translate_path
 from skunk.util.timeconvert import convert as time_convert
 
 class Component(object):
@@ -220,11 +221,17 @@ class FileComponent(Component):
                            code=None,
                            name=filename,
                            namespace=namespace)
-        self.__file__=self.filename=filename
+        self.filename=filename
+
+    def __file__():
+        def fget(self):
+            return translate_path(Configuration.componentRoot, self.filename)
+        return fget
+    __file__=property(__file__())
 
     def __lastmodified__():
         def fget(self):
-            return os.path.getmtime(self.filename)
+            return os.path.getmtime(self.__file__)
         return fget, None, None, "last modification time of the underlying file"
     __lastmodified__=property(*__lastmodified__())
 

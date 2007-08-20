@@ -105,24 +105,26 @@ class StackedComponentTest(unittest.TestCase):
         res=stringcomp(self.fname)
         self.assertEquals(ComponentContext.componentStack, [])
         
-## class FactoryTest(unittest.TestCase):
-##     def setUp(self):
-##         handlers={'file' : FileComponentHandler(),
-##                   'callable' : CallableComponentHandler()}
-##         self.factory=ComponentFactory(handlers)
-##         fd, self.fname=tempfile.mkstemp(suffix=".pycomp")
-##         self.f=os.fdopen(fd, 'w')
-
-##     def tearDown(self):
-##         os.unlink(self.fname)
+def test_componentRoot1():
+    tmpdir=tempfile.mkdtemp()
+    Cfg.load_kw(componentRoot=tmpdir)
+    try:
+        fname=os.path.join(tmpdir, 'index.stml')
+        fp=open(fname, 'w')
+        fp.write('\n'.join([
+            "<:default kong Chubby:>",
+            "Hello <:val `kong`:>"
+            "<:component /nougat.comp cache=yes:>"
+            ]))
+        fp.close()
+        fp=open(os.path.join(tmpdir, 'nougat.comp'), 'w')
+        fp.write('SERVES YOU RIGHT')
+        fp.close()
+        res=stringcomp('/index.stml', kong='Kong')
+        assert 'Hello Kong' in res
+    finally:
+        Cfg.reset()
+        shutil.rmtree(tmpdir)
         
-##     def test01(self):
-##         self.f.write("print >> OUTPUT, 'Hello World'\n")
-##         self.f.close()
-##         comp=self.factory.createComponent(self.fname)
-##         res=comp()
-##         self.assertEquals(res, "Hello World\n")
-        
-                   
 if __name__=='__main__':
     unittest.main()

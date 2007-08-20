@@ -1,7 +1,7 @@
 from os.path import normpath
 
 def translate_path(root, path):
-    if (not path) or path=='/'
+    if (not path) or path=='/':
         return root
     if not path.startswith('/'):
         path='/%s' % path

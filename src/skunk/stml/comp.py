@@ -148,7 +148,7 @@ class STMLFileComponent(STMLComponentMixin, StringOutputFileComponent):
 DEFAULT_STML_FILE_COMPONENT_SUFFIX_MAP={
     '.comp' : ('string', STMLFileComponent),
     '.inc' : ('include', STMLFileComponent),
-    '.stml' : ('string', STMLFileComponent)
+    '.stml' : ('string', STMLFileComponent),
     }
 
 DEFAULT_STML_FILE_COMPONENT_SUFFIX_MAP.update(DEFAULT_FILE_COMPONENT_SUFFIX_MAP)
