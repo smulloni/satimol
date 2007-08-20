@@ -1,3 +1,4 @@
+from skunk.config import Configuration
 from skunk.stml.exceptions import STMLSyntaxError
 from skunk.stml.parser import Expr, Node
 from skunk.stml.signature import Signature
@@ -504,19 +505,45 @@ class CompargsTag(EmptyTag):
         codeStream.writeln(s)
 
 class CacheTag(EmptyTag):
-    default_expiration='30s'
     tagName="cache"
     signature=Signature(('when', None))
-    modules=[('skunk.util.timeconvert', '_timeconvert')]
+    modules=[('skunk.util.timeconvert', 'timeconvert'),
+             ('skunk.config',  'config')]
     _top=True
 
     def genCode(self, codeStream):
         when=self._parsed_args['when']
-        if when is None:
-            when=self.default_expiration
-
-        s="__expiration=__h._timeconvert.convert(%r)" % when
+        s="__expiration=__h.timeconvert.convert(%r or __h.config.Configuration.defaultCacheExpiration)" % when
         codeStream.writeln(s)
+
+class _logTagMixin(object):
+
+    signature=Signature(('msg',), 'args')
+    modules=[('skunk.stml', 'stml')]
+    _top=True
+
+    def genCode(self, codeStream):
+        msg=self._parsed_args['msg']
+        args=self._parsed_args['args']
+        codeStream.writeln('__h.stml.getUserLogger().%s(%r, *%r)' % \
+                           (self.tagName, msg, args))
+
+
+class DebugTag(_logTagMixin,EmptyTag):
+    tagName='debug'
+
+class InfoTag(_logTagMixin,EmptyTag):
+    tagName='info'
+
+class WarnTag(_logTagMixin,EmptyTag):
+    tagName='warn'
+
+class ErrorTag(_logTagMixin,EmptyTag):
+    tagName='error'
+
+class ExceptionTag(_logTagMixin,EmptyTag):
+    tagName='exception'
+    
     
 def _gettagclasses():
     return [(k, v) for k, v in globals().items() if k.endswith('Tag') and v.tagName]
