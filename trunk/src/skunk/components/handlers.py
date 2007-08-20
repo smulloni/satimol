@@ -1,6 +1,7 @@
 from os.path import splitext, dirname, join as pathjoin
 
 from skunk.config import Configuration
+from skunk.components.api import getCurrentDirectory
 from skunk.components.context import ComponentContext
 from skunk.components.objects import *
 
