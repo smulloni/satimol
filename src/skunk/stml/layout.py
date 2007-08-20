@@ -8,12 +8,13 @@ default template.
 
 """
 
+import errno
+
 from skunk.config import Configuration
 from skunk.stml.log import exception
 from skunk.stml.signature import Signature
 from skunk.stml.tags import EmptyTag
 from skunk.stml.tagutils import get_temp_name
-from skunk.vfs import FileNotFoundException, VFSException
 
 Configuration.mergeDefaults(slotConfigFilename='slotconf.pydcmp')
 
@@ -32,11 +33,13 @@ def getConfiguredSlots(path=None)
     for c in conffiles:
         try:
             newslots=datacomp(c, path=path)
-        except FileNotFoundException:
-            continue
-        except VFSException:
-            exception("error reading slot configuration")
-            continue
+        except IOError, oy:
+            if oy.errno==errno.ENOENT:
+                # file doesn't exist
+                pass
+            else:
+                exception("error reading slot configuration")
+                continue
         else:
             slots.update(newslots)
     return slots
