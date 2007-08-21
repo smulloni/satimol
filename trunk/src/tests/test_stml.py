@@ -537,70 +537,79 @@ class CompTest(unittest.TestCase):
         self.f.write("Hello from me!\n")
         self.f.close()
         fd, fname=tempfile.mkstemp(suffix=".comp")
-        f=os.fdopen(fd, 'w')
-        f.write("""
-        I'm going to call a component now.
-        <:component `compname`:>
-        Done.
-        """)
-        f.close()
-        suffixes=C.DEFAULT_FILE_COMPONENT_SUFFIX_MAP.copy()
-        suffixes['.comp']=('string', S.STMLFileComponent)
-        Configuration.load_dict(dict(componentFileSuffixMap=suffixes))
-        res=C.stringcomp(fname, compname=self.fname)
-        print res
-        self.failUnless('Hello from me!\n' in res)
+        try:
+            f=os.fdopen(fd, 'w')
+            f.write("""
+            I'm going to call a component now.
+            <:component `compname`:>
+            Done.
+            """)
+            f.close()
+            suffixes=C.DEFAULT_FILE_COMPONENT_SUFFIX_MAP.copy()
+            suffixes['.comp']=('string', S.STMLFileComponent)
+            Configuration.load_dict(dict(componentFileSuffixMap=suffixes))
+            res=C.stringcomp(fname, compname=self.fname)
+            print res
+            self.failUnless('Hello from me!\n' in res)
+        finally:
+            os.unlink(fname)
         
     def testComp14(self):
 
         fd, fname=tempfile.mkstemp(suffix=".inc")
-        f=os.fdopen(fd, 'w')
-        f.write("""
-        Hello from me!
-        <:set x `33`:>
-        """)
-        f.close()        
-        self.f.write("""
-        I'm going to call a component now.
-        <:include `compname`:>
-        x is <:val `x`:>.
-        Done.
-        """)
-        self.f.close()
-        suffixes=C.DEFAULT_FILE_COMPONENT_SUFFIX_MAP.copy()
-        suffixes['.comp']=('string', S.STMLFileComponent)
-        suffixes['.inc']=('include', S.STMLFileComponent)
-        Configuration.load_dict(dict(componentFileSuffixMap=suffixes))        
-        res=C.stringcomp(self.fname, compname=fname)
-        print res
-        self.failUnless('Hello from me!\n' in res)
-        self.failUnless("x is 33" in res)
-
+        try:
+            f=os.fdopen(fd, 'w')
+            f.write("""
+            Hello from me!
+            <:set x `33`:>
+            """)
+            f.close()        
+            self.f.write("""
+            I'm going to call a component now.
+            <:include `compname`:>
+            x is <:val `x`:>.
+            Done.
+            """)
+            self.f.close()
+            suffixes=C.DEFAULT_FILE_COMPONENT_SUFFIX_MAP.copy()
+            suffixes['.comp']=('string', S.STMLFileComponent)
+            suffixes['.inc']=('include', S.STMLFileComponent)
+            Configuration.load_dict(dict(componentFileSuffixMap=suffixes))        
+            res=C.stringcomp(self.fname, compname=fname)
+            print res
+            self.failUnless('Hello from me!\n' in res)
+            self.failUnless("x is 33" in res)
+        finally:
+            os.unlink(fname)
 
     def testComp15(self):
         fd, fname=tempfile.mkstemp(suffix=".inc")
-        f=os.fdopen(fd, 'w')
         dfd, dfname=tempfile.mkstemp(suffix='.pydcmp')
-        df=os.fdopen(dfd, 'w')
-        f.write("""
-        Hello from me!
-        <:datacomp x  `dcompname`:>
-        """)
-        f.close()
-        df.write("raise ReturnValue, 33\n")
-        df.close()
-        self.f.write("""
-        I'm going to call a component now.
-        <:include `compname`:>
-        x is <:val `x`:>.
-        Done.
-        """)
-        self.f.close()
-        res=C.stringcomp(self.fname, compname=fname, dcompname=dfname)
+        try:
+            f=os.fdopen(fd, 'w')
+            df=os.fdopen(dfd, 'w')
+            f.write("""
+            Hello from me!
+            <:datacomp x  `dcompname`:>
+            """)
+            f.close()
+            df.write("raise ReturnValue, 33\n")
+            df.close()
+            self.f.write("""
+            I'm going to call a component now.
+            <:include `compname`:>
+            x is <:val `x`:>.
+            Done.
+            """)
+            self.f.close()
+            res=C.stringcomp(self.fname, compname=fname, dcompname=dfname)
 
-        self.failUnless('Hello from me!\n' in res)
-        self.failUnless("x is 33" in res)
-
+            self.failUnless('Hello from me!\n' in res)
+            self.failUnless("x is 33" in res)
+        finally:
+            os.unlink(fname)
+            os.unlink(dfname)
+            
     def testPre01(self):
         self.f.write("""<:?pre off?:>
 <:call `
