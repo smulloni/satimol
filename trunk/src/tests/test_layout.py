@@ -12,11 +12,12 @@ from skunk.util.pathutil import translate_path
 class TestLayout(object):
 
     def __init__(self):
-        self.componentRoot=tempfile.mkdtemp()
         logging.basicConfig(level=logging.DEBUG)
         
-    def setup(self):
+    def setUp(self):
+        self.componentRoot=tempfile.mkdtemp()
         Cfg.load_kw(componentRoot=self.componentRoot)
+
 
     def tearDown(self):
         shutil.rmtree(self.componentRoot)
@@ -50,13 +51,10 @@ class TestLayout(object):
         fp=open(os.path.join(translate_path(Cfg.componentRoot, d), 'slotconf.pydcmp'), 'w')
         fp.write("raise ReturnValue(dict(head='HEAD', main='MAIN', foot='FOOT'))\n")
         fp.close()
-
         fp=C.docroot_open('/nougat/frenchie.stml', 'w')
         fp.write("<:calltemplate:>")
         fp.close()
-        slots=S.getConfiguredSlots('/nougat/')
-        res=C.stringcomp('/nougat/frenchie.stml', SLOTS=S.getConfiguredSlots('/nougat/'))
-        print res
+        res=C.stringcomp('/nougat/frenchie.stml') 
         assert 'HEAD' in res
         assert 'MAIN' in res
         assert 'FOOT' in res
