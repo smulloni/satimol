@@ -63,7 +63,7 @@ class CompileCache(object):
 
     def componentRoot():
         def fget(self):
-            if self._componentRoot != _default:
+            if self._componentRoot == _default:
                 return Configuration.componentRoot
             return self._componentRoot
         return fget
