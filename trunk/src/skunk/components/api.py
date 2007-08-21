@@ -2,6 +2,8 @@
 Top-level routines for calling components.
 """
 
+import os
+
 from skunk.cache import NO, decode
 from skunk.components.context import ComponentContext
 from skunk.components.exceptions import ComponentHandlingException
@@ -76,7 +78,7 @@ def getCurrentDirectory():
         except AttributeError:
             continue
         else:
-            return dirname(f)
+            return os.path.dirname(f)
     
 def rectifyRelativePath(path):
     if path.startswith('/'):
