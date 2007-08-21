@@ -5,7 +5,7 @@
 Overview
 ========
 
-Satimol are the skunk libraries from the skunkweb project, including:
+Satimol are the libraries from the skunkweb project, including:
 
 * skunk.cache_, a useful cache for memoization.
 * skunk.stml_, an implementation of STML (Skunk Template Markup Language).
