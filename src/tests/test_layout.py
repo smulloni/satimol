@@ -16,7 +16,9 @@ class TestLayout(object):
         
     def setUp(self):
         self.componentRoot=tempfile.mkdtemp()
-        Cfg.load_kw(componentRoot=self.componentRoot)
+        Cfg.load_kw(componentRoot=self.componentRoot,
+                    useCompileMemoryCache=False)
+
 
 
     def tearDown(self):
