@@ -1,5 +1,16 @@
 #! /usr/bin/env python
 
+"""
+This is a script for looking at the compiled Python form of STML templates.
+
+  python -m skunk/stml/cc mycomponent.comp | less
+
+will work nicely for you; or
+
+  python -m skunk/stml/cc -o outfile.py mycomponent.comp
+
+"""
+
 import optparse
 import os
 import sys
