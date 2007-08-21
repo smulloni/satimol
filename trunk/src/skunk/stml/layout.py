@@ -8,6 +8,7 @@ import threading
 
 from skunk.components import (getCurrentDirectory,
                               ComponentHandlingException,
+                              datacomp,
                               rectifyRelativePath)
 from skunk.config import Configuration
 from skunk.stml.log import exception, warn
@@ -93,6 +94,7 @@ def getConfiguredSlots(path=None):
         path=path+'/'
     slots={}
     slot_conf_name=Configuration.slotConfigFilename
+    pathjoin=os.path.join
     conffiles=[pathjoin(path[:(x or 1)], slot_conf_name) \
                for x, y in enumerate(path) if y=='/']
         
@@ -208,10 +210,10 @@ class CallTemplateTag(EmptyTag):
         wr("del %s, %s, %s" % (g, k, K))
         wr("if %r: " % kwargs)
         indent()
-        wr("%s.update(%r)" % (slotmap, kw))
+        wr("%s.update(%r)" % (slotmap, kwargs))
         dedent()
-        wr("OUTPUT.write(__h.components.include(%s))" % template)
-        wr("del %s" % template)
+        wr("OUTPUT.write(__h.components.include(%s))" % t)
+        wr("del %s" % t)
         
 BaseTags[CallTemplateTag.tagName]=CallTemplateTag
 BaseTags[SlotTag.tagName]=SlotTag

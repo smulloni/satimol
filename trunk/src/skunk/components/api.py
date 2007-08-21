@@ -6,6 +6,7 @@ from skunk.cache import NO, decode
 from skunk.components.context import ComponentContext
 from skunk.components.exceptions import ComponentHandlingException
 from skunk.config import Configuration
+from skunk.util.pathutil import translate_path
 
 def _parse_handle(handle):
     if isinstance(handle, basestring):
@@ -87,6 +88,10 @@ def rectifyRelativePath(path):
             "prior file context")
     return os.path.join(cwd, path)
 
+def docroot_open(path, flags='r'):
+    realpath=translate_path(Configuration.componentRoot, path)
+    return open(realpath, flags)
+
 
 __all__=['call_component',
          'stringcomp',
@@ -94,4 +99,5 @@ __all__=['call_component',
          'include',
          'getCurrentComponent',
          'getCurrentDirectory',
-         'rectifyRelativePath']
+         'rectifyRelativePath',
+         'docroot_open']
