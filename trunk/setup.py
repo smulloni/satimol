@@ -48,5 +48,10 @@ setup(author="Jacob Smullyan",
                 'skunk.stml',
                 'skunk.util',
                 'skunk.vfs'],
+      entry_points= {
+    'console_scripts' : [
+    'stmlcc = skunk.stml.cc:main'
+    ]
+    },
       package_dir={'' : 'src'},
       test_suite='nose.collector')

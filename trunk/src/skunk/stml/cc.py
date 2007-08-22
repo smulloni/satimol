@@ -23,7 +23,9 @@ def cc(file, fp):
     f=STMLFileComponent(file)
     fp.write(f.getCode())
 
-def main(args):
+def main(args=None):
+    if args is None:
+        args=sys.argv[1:]
     p=optparse.OptionParser(usage="usage: %prog [-o outfile] infile")
     p.add_option('-o', '--output',
                  dest='outfile',
