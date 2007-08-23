@@ -37,9 +37,18 @@ Configuration.mergeDefaults(
     # options for serving static files with x-sendfile 
     staticFileUseXSendFile=False,
     staticFileXSendFileHeader='X-Sendfile',
-    staticFileXSendFileHeaderPathTranslated=False
+    staticFileXSendFileHeaderPathTranslated=False,
+    errorHandlers=webob.exc.status_map
     )
-                            
+
+def get_http_exception(status, *args, **kwargs):
+    handlerclass=Configuration.errorHandlers[status]
+    handler=handlerclass(*args, **kwargs)
+    return handler
+
+def handle_error(status, environ, start_response, *args, **kwargs):
+    handler=get_http_exception(status, *args, **kwargs)
+    return handler(environ, start_response)
 
 class FileIterable(object):
     
@@ -97,7 +106,7 @@ class PuntingWSGIMiddleware(object):
             return response(environ, start_response)
         if self.next_app:
             return self.next_app(environ, start_response)
-        return self.handle_error(httplib.NOT_FOUND)
+        return handle_error(httplib.NOT_FOUND, environ, start_response)
             
         
 class FileServerMixin(object):
@@ -136,9 +145,9 @@ class FileServerMixin(object):
             s=os.stat(realpath)
         except IOError, oy:
             if oy.errno==errno.ENOENT:
-                return path, realpath, (), httplib.NOT_FOUND
+                raise get_http_exception(httplib.NOT_FOUND)
             elif oy.errno==errno.EACCES:
-                raise webob.exc.HTTPForbidden()
+                raise get_http_exception(httplib.FORBIDDEN)
             # anything else?
             else:
                 # let a more general 500 handler clean up
@@ -158,68 +167,64 @@ class FileServerMixin(object):
                         # directories without index documents.)
 
                         if not path.endswith('/'):
-                            raise webob.exc.HTTPMovedPermanently(add_slash=True)
+                            raise get_http_exception(httplib.MOVED_PERMANENTLY, add_slash=True)
 
                         return (untranslate_path(componentRoot, p),
                                 p,
-                                os.stat(p),
-                                httplib.OK)
+                                os.stat(p))
+
                     
             elif stat.S_ISFILE(s.st_mode):
                 # is the file hidden?
                 if self.is_hidden(path, realpath, s):
-                    return path, realpath, s, httplib.NOT_FOUND
-                return path, realpath, s, httplib.OK
+                    raise get_http_exception(httplib.NOT_FOUND)
+                return path, realpath, s
             else:
                 # don't know what the hell this is
-                raise webob.exc.HTTPForbidden()
+                raise get_http_exception(httplib.FORBIDDEN)
 
             
 class StaticFileServer(FileServerMixin):
 
-    def serve_file(self, path, realpath, statinfo, status):
-        if status==httplib.OK:
-            type, encoding=mimetypes.guess_type(realpath)
-            if not type:
-                type='application/octet-stream'
-            if type.startswith('text/') and encoding:
-                type+='; charset=%s' % encoding
+    def serve_file(self, path, realpath, statinfo):
 
-            if Configuration.staticFileUseXSendFile:
-                header=Configuration.staticFileXSendFileHeader
-                if Configuration.staticFileXSendFilePathTranslated:
-                    xpath=realpath
-                else:
-                    xpath=path
-                    
-                # I don't think I need conditional_response here.
-                res=webob.Response(content_type=type,
-                                   content_length=statinfo.st_size,
-                                   last_modified=statinfo.st_mtime)
-                res.headers.add(header, xpath)
+        type, encoding=mimetypes.guess_type(realpath)
+        if not type:
+            type='application/octet-stream'
+        if type.startswith('text/') and encoding:
+            type+='; charset=%s' % encoding
+
+        if Configuration.staticFileUseXSendFile:
+            header=Configuration.staticFileXSendFileHeader
+            if Configuration.staticFileXSendFilePathTranslated:
+                xpath=realpath
             else:
-                res=webob.Response(content_type=type,
-                                   conditional_response=True,
-                                   app_iter=FileIterable(realpath),
-                                   content_length=statinfo.st_size,
-                                   last_modified=statinfo.st_mtime)
-                
-            # optionally add etag.... @TBD
-            # optionally add custom headers for some things.... @TBD
+                xpath=path
 
-            return res
-        elif status==httplib.NOT_FOUND:
-            # we should special case this .... @TBD
-            # depending on how it is done, it could be moved
-            # into the FileServerMixin
-            return webob.exc.HTTPNotFound()
+            # I don't think I need conditional_response here.
+            res=webob.Response(content_type=type,
+                               content_length=statinfo.st_size,
+                               last_modified=statinfo.st_mtime)
+            res.headers.add(header, xpath)
+        else:
+            res=webob.Response(content_type=type,
+                               conditional_response=True,
+                               app_iter=FileIterable(realpath),
+                               content_length=statinfo.st_size,
+                               last_modified=statinfo.st_mtime)
+
+        # optionally add etag.... @TBD
+        # optionally add custom headers for some things.... @TBD
+
+        return res
+
 
 
 class STMLFileServer(FileServerMixin):
     """
     """
 
-    def serve_file(self, path, realpath, statinfo, status):
+    def serve_file(self, path, realpath, statinfo):
         pass
     
 
@@ -229,8 +234,8 @@ class DispatchingFileServer(FileServerMixin):
     of filename (usually extension).
     """
 
-    def serve_file(self, path, realpath, statinfo, status):
-        # precondition: either it is 404 or the audio exists and it is OK to serve it
+    def serve_file(self, path, realpath, statinfo):
+        # precondition: the file exists and it is OK to serve it
 
         handler=self.get_handler(path, realpath)
         if not handler:
