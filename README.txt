@@ -8,8 +8,8 @@ Overview
 ========
 
 "Satimol" is a nickname for the SkunkWeb 4 project, a complete rewrite
-of those parts of SkunkWeb 3 that merit bring forward into the modern
-Python web development world.
+of those parts of SkunkWeb 3 that make sense to bring forward into the
+modern Python web development world.
 
 Highlights include:
 
