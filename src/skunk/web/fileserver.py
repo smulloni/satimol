@@ -243,7 +243,9 @@ class StaticFileServer(FileServerBase):
 
     def serve_file(self, path, realpath, statinfo, request):
 
-        type, dontbother=mimetypes.guess_type(realpath)
+        type, contentenc=mimetypes.guess_type(realpath)
+        if contentenc:
+            res.content_encoding=contentenc
         if not type:
             type='application/octet-stream'
         if type.startswith('text/'):
