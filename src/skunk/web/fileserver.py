@@ -1,3 +1,13 @@
+"""
+
+WSGI applications for serving active STML pages (or Python skunk components)
+and static documents.
+
+
+
+"""
+
+
 import errno
 import httplib
 import logging
@@ -22,6 +32,8 @@ from skunk.util.importutil import import_from_string
 from skunk.util.pathutil import translate_path, untranslate_path
 
 log=logging.getLogger(__name__)
+
+__all__=['DispatchingFileServer', 'StaticFileServer']
 
 # FileIterable and FileIterator stolen from Ian Bicking's nice WebOb
 # file-serving example.  Thanks, Ian.
@@ -65,7 +77,7 @@ Configuration.mergeDefaults(
     staticFileUseChardet=True,
 
     # for dispatching server, a list of (pattern, handler) pairs
-    fileDispatchers=DEFAULT_FILE_DISPATCHERS,
+    fileDispatchers=DEFAULT_FILE_DISPATCHERS
     
     )
 
@@ -293,7 +305,6 @@ class STMLFileHandler(FileServerBase):
             response.body=body
         return response
         
-            
 
 class DispatchingFileServer(FileServerBase):
     """
@@ -340,9 +351,9 @@ class DispatchingFileServer(FileServerBase):
         handler=self.get_handler(path)
         assert handler, "get_handler didn't return a handler"
         return handler.serve_file(path, realpath, statinfo, request)
-    
-        
-if __name__=='__main__':
+
+
+def _test():
     import sys
     logging.basicConfig(level=logging.DEBUG)
     args=sys.argv[1:]
@@ -351,4 +362,5 @@ if __name__=='__main__':
     from wsgiref.simple_server import make_server
     make_server('localhost', 7777, DispatchingFileServer()).serve_forever()
 
-    
+if __name__=='__main__':
+    _test()
