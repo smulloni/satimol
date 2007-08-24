@@ -21,7 +21,6 @@ Highlights include:
 * skunk.web_, a collection of WSGI applications for skunk
   applications.
 
-
 skunk.cache
 ===========
 
@@ -72,3 +71,8 @@ potentially other things).
 
 Coming up, an MVC framework, and a deployment system.
 
+License
+=======
+
+Satimol is available either under the GPL (v3 or later; see COPYING)
+or a BSD license (see LICENSE).
