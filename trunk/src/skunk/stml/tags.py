@@ -4,6 +4,7 @@ from skunk.stml.parser import Expr, Node
 from skunk.stml.signature import Signature
 from skunk.stml.valformat import ValFormatRegistry
 from skunk.stml.log import debug
+from skunk.stml.tagutils import get_temp_name
 
 class BlockTag(Node):
     """
@@ -505,6 +506,47 @@ class CompargsTag(EmptyTag):
         s="__h.components.getCurrentComponent().check_args(%r, %r)" % (args, kwargs)
         codeStream.writeln(s)
 
+
+class ArgsTag(EmptyTag):
+    tagName='args'
+    signature=Signature((), 'args', 'kwargs')
+    _top=True
+    modules=[('skunk.util.argextract', '_argextract'),
+             ('skunk.config', 'config')]
+
+    def genCode(self, codeStream):
+        wl=codeStream.writeln
+        indent=codeStream.indent
+        dedent=codeStream.dedent
+        
+        argsrcvar=get_temp_name()
+        argsvar=get_temp_name()
+        kwargsvar=get_temp_name()
+        
+        args=self._parsed_args['args']
+        kwargs=self._parsed_args['kwargs']
+        wl('%s = %r' % (argsvar, args))
+        wl('%s = %r' % (kwargsvar, kwargs))
+        wl('try:')
+        indent()
+        wl('%s=REQUEST.params' % argsrcvar)
+        dedent()
+        wl('except (AttributeError, NameError):')
+        indent()
+        wl('%s={}' % argsrcvar)
+        dedent()
+
+        wl('try:')
+        indent()
+        wl('locals().update(__h._argextract.extract_args(%s, *%s, **%s))' \
+           % (argsrcvar, argsvar, kwargsvar))
+        dedent()
+        wl('finally:')
+        indent()
+        wl('del %s, %s, %s' % (argsrcvar, argsvar, kwargsvar))
+        dedent()
+
+
 class CacheTag(EmptyTag):
     tagName="cache"
     signature=Signature(('when', None))
@@ -514,7 +556,8 @@ class CacheTag(EmptyTag):
 
     def genCode(self, codeStream):
         when=self._parsed_args['when']
-        s="__expiration=__h.timeconvert.convert(%r or __h.config.Configuration.defaultCacheExpiration)" % when
+        s=("__expiration=__h.timeconvert.convert("
+           "%r or __h.config.Configuration.defaultCacheExpiration)") % when
         codeStream.writeln(s)
 
 class _logTagMixin(object):
@@ -544,7 +587,7 @@ class ErrorTag(_logTagMixin,EmptyTag):
 
 class ExceptionTag(_logTagMixin,EmptyTag):
     tagName='exception'
-    
+
     
 def _gettagclasses():
     return [(k, v) for k, v in globals().items() if k.endswith('Tag') and v.tagName]

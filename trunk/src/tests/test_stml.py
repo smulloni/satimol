@@ -5,6 +5,8 @@ import unittest
 import random
 import tempfile
 
+import webob
+
 import skunk.stml as S
 import skunk.components as C
 from skunk.config import Configuration
@@ -666,6 +668,18 @@ def foo(x):
         print v
         self.failUnless('ding dong 4' in v)
         
+    def testArgsTag1(self):
+        self.f.write("<:args x=`int` y z=`(int,12)`:>\n")
+        self.f.write("x: <:val `str(x)`:>\n")
+        self.f.write("y: <:val `str(y)`:>\n")
+        self.f.write("z: <:val `z+0`:>\n")
+        self.f.close()
+        request=webob.Request.blank('/foo')
+        res=C.stringcomp(self.fname, REQUEST=request)
+        print res
+        self.failUnless('x: None' in res)
+        self.failUnless('y: None' in res)
+        self.failUnless('z: 12' in res)
         
 if __name__=='__main__':
     unittest.main()
