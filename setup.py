@@ -7,19 +7,18 @@ description="caching and templating facilities from the SkunkWeb project"
 
 long_description="""
 
-SaTiMoL is the latest incarnation of the SkunkWeb libraries, which
-include a caching system for memoizing callables, with in-memory,
-disk, or memcached backends, and a standalone implementation of
-SkunkWeb's STML (Skunk Template Markup Language), a powerful
-componentized templating language.
-
+SaTiMoL is the SkunkWeb 4 project, a set of of libraries and
+applications for web development, including a caching system for
+memoizing callables, with in-memory, disk, or memcached backends, and
+a standalone implementation of SkunkWeb's STML (Skunk Template Markup
+Language), a powerful componentized templating language.
 
 """
 
 VERSION='0.4.0'
 
 setup(author="Jacob Smullyan",
-      author_email='smulloni@smullyan.org',
+      author_email='jsmullyan@gmail.com',
       description=description,
       long_description=long_description,
       license="BSD/GPL",
@@ -45,6 +44,9 @@ setup(author="Jacob Smullyan",
     'console_scripts' : [
     'stmlcc = skunk.stml.cc:main'
     ]
+    },
+      extras_require= {
+    'web' : 'webob',
     },
       package_dir={'' : 'src'},
       test_suite='nose.collector')
