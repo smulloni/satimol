@@ -16,11 +16,11 @@ from skunk.stml.signature import Signature
 from skunk.stml.tags import EmptyTag, BaseTags
 from skunk.stml.tagutils import get_temp_name
 
-Configuration.mergeDefaults(slotConfigFilename='slotconf.pydcmp',
-                            defaultTemplateFilename='template.stml',
-                            skinDir='/comp/skins',
-                            defaultSkin='default'
-                            )
+Configuration.setDefaults(slotConfigFilename='slotconf.pydcmp',
+                          defaultTemplateFilename='template.stml',
+                          skinDir='/comp/skins',
+                          defaultSkin='default'
+                          )
 _slotlocal=threading.local()
 def get_slot_stack():
     try:

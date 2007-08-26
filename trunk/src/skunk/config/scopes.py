@@ -3,42 +3,55 @@ from threading import local
 class ScopeManager(object):
 
     def __init__(self):
-        self.data=local()
-        self.defaults={}
-        self.userconfig={}
-        self.scopes={}
-        self.matchers=[]
-        self.overlay={}
-
-    def mergeDefaults(self, **kw):
-        kw.update(self.defaults)
-        self.defaults.update(kw)
-        self._mash()
+        # the attributes accessed by the __getattr__ hook
+        self._data=local()
+        # the defaults
+        self._defaults={}
+        # user configuration 
+        self._userconfig={}
+        # the context
+        self._context=local().__dict__
+        # functions that manipulate the environment according to the scope
+        self._matchers=[]
+        # overrides added by scoping
+        self._overlay=local().__dict__
 
     def setDefaults(self, **kw):
-        self.defaults.update(kw)
+        """
+        set default values
+        """
+        self._defaults.update(kw)
         self._mash()
 
     def _mash(self):
-        d=self.defaults.copy()
-        d.update(self.userconfig)
-        d.update(self.overlay)
-        self.data.__dict__.clear()
-        self.data.__dict__.update(d)
+        d=self._defaults.copy()
+        d.update(self._userconfig)
+        d.update(self._overlay)
+        self._data.__dict__.clear()
+        self._data.__dict__.update(d)
 
     def trim(self):
-        self.overlay.clear()
-        self.scopes.clear()
+        """
+        reset the context dictionary to empty
+        """
+        self._overlay.clear()
+        self._context.clear()
         self._mash()
 
     def scope(self, context):
-        self.scopes.update(context)
-        self.overlay.clear()
-        for m in self.matchers:
+        """
+        set the user configuration according to a context dictionary.
+        """
+        self._context.update(context)
+        self._overlay.clear()
+        for m in self._matchers:
             self._process_matcher(m)
         self._mash()
 
     def load(self, *files, **globals):
+        """
+        load user configuration from files
+        """
         if len(globals)==1 and 'globals' in globals:
             globals=globals['globals']
         for f in files:
@@ -49,28 +62,37 @@ class ScopeManager(object):
         self._mash()
 
     def loads(self, s, globals=None):
+        """
+        load user configuration from a Python string
+        """
         self._load_string(s, globals)
         self._mash()
 
     def load_kw(self, **kw):
+        """
+        loads user configuration by keyword
+        """
         self.load_dict(kw)
 
     def keys(self):
-        return self.data.__dict__.keys()
+        return self._data.__dict__.keys()
 
     def items(self):
-        return self.data.__dict__.items()
+        return self._data.__dict__.items()
 
     def __iter__(self):
-        return self.data.__dict__.__iter__()
+        return self._data.__dict__.__iter__()
 
     def iteritems(self):
-        return self.data.__dict__.iteritems()
+        return self._data.__dict__.iteritems()
 
     def load_dict(self, d):
+        """
+        load a dictionary of user configuration
+        """
         for k in d:
             if not k.startswith('_'):
-                self.userconfig[k]=d[k]
+                self._userconfig[k]=d[k]
         self._mash()
 
     def _load_string(s, globals=None, filename='<config>'):
@@ -81,15 +103,19 @@ class ScopeManager(object):
         env={}
         exec codeObj in globals, env
         for key in (k for k in env if not k.startswith('_')):
-            self.userconfig[key]=env[key]
+            self._userconfig[key]=env[key]
 
     def reset(self):
-        self.userconfig.clear()
+        """
+        set the config object back to defaults, discarding
+        all user-specified values
+        """
+        self._userconfig.clear()
         self.trim()
 
     def _process_matcher(self, matcher):
-        overlay=self.overlay
-        scopes=self.scopes
+        overlay=self._overlay
+        scopes=self._context
 
         if matcher.match(scopes):
             overlay.update(matcher.overlay)
@@ -97,7 +123,7 @@ class ScopeManager(object):
                 self._process_matcher(kid)
 
     def __getattr__(self, k):
-        return getattr(self.data, k)
+        return getattr(self._data, k)
 
             
 class ScopeMatcher(object):

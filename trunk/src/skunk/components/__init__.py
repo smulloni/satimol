@@ -12,7 +12,7 @@ from skunk.components.api import *
 
 from skunk.config import Configuration 
 
-Configuration.mergeDefaults(
+Configuration.setDefaults(
     useCompileMemoryCache=True,
     compileCachePath=None,
     componentRoot='/',

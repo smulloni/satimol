@@ -58,7 +58,7 @@ DEFAULT_INDEX_DOCUMENTS=[
 DEFAULT_FILE_DISPATCHERS=[('.*\.(stml|html|py)$',
                            'skunk.web.fileserver:STMLFileHandler')]
 
-Configuration.mergeDefaults(
+Configuration.setDefaults(
     hiddenFilePatterns=DEFAULT_HIDDEN_FILE_PATTERNS,
     indexDocuments=DEFAULT_INDEX_DOCUMENTS,
     
