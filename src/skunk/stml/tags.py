@@ -527,7 +527,7 @@ class ArgsTag(EmptyTag):
         kwargs=self._parsed_args['kwargs']
         wl('%s = %r' % (argsvar, args))
         wl('%s = %r' % (kwargsvar, kwargs))
-        wl('%s=REQUEST.params' % argsrcvar)
+        wl('%s=REQUEST.params.mixed()' % argsrcvar)
         wl('try:')
         indent()
         wl('locals().update(__h._argextract.extract_args(%s, *%s, **%s))' \
