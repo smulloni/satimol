@@ -2,7 +2,7 @@ import logging
 
 from skunk.config import Configuration
 
-Configuration.mergeDefaults(userLogger='USER')
+Configuration.setDefaults(userLogger='USER')
 
 def getUserLogger():
     """returns the logger used for user logging in STML"""
