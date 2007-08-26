@@ -1,15 +1,34 @@
 .. -*-rst-*-
 
-STML User's Manual
-==================
+====================
+ STML User's Manual
+====================
 
 :Author: Jacob Smullyan
 :Contact: jsmullyan@gmail.com
-:Date: August 20, 2007
+:Date: $Date$
+:Revision: $Revision$
 :Copyright: 2004, 2007 Jacob Smullyan
 
 .. contents:: Table of Contents
-.. sectnum::
+..
+    1  Introduction
+    2  The Structure of STML Tags
+    3  Setting and Showing Things
+      3.1  ``<:set:>``
+      3.2  ``<:default:>``
+      3.3  ``<:del:>``
+      3.4  ``<:call:>``
+      3.5  ``<:val:>``
+      3.6  ``<:import:>``
+      3.7  ``<:filter:>`` and ``<:spool:>``
+      3.8  ``<:args:>``
+    4  Flow Control
+    5  Comments
+    6  Component Tags
+    7  Logging
+    8  Using Other Tag Libraries sectnum::
+
 
 Introduction
 ------------
@@ -277,6 +296,69 @@ value to a variable.
   *In STML3, there is no ``<:filter:>`` tag, and ``<:spool:>`` has
   no ``filter`` attribute.*
 
+``<:args:>``
+~~~~~~~~~~~~
+
+::
+
+  <:args [arg1 arg2...] [arg3=val3 arg4=val4 ...]:>
+
+The ``<:args:>`` tag is a convenient way of accessing CGI parameters
+from a web request.  It brings the CGI parameters you specify by name
+into the local namespace, optionally setting default values and
+converting them.  
+
+Each argument of this tag specifies a name and optionally a Python
+expression value, which may be a default value, a conversion
+function, or a 2-tuple of the form ``(default, converterFunc)``. 
+The name of each argument indicates both the name of the CGI parameter
+and also of the local variable that will be bound.
+
+If you just specify a parameter name, without a Python expression
+specifying a default and/or converter function, it will copy the CGI
+parameter of that name, if it exists, into a local variable of that
+name; if no such parameter was passed, the corresponding local
+variable will be initialized to ``None``.  If you specify a conversion
+function, the CGI parameter value will be converted by it prior to
+being bound in the local namespace; if an exception occurs, it will be
+silently swallowed and the resulting value will be the default.
+
+::
+
+  <:args bopper nougat parsley=yum servings=`(int,5)`:>
+
+If the above is passed the querystring ``nougat=pumpkin&servings=20``,
+the following name/value pairs will be added to the template
+namespace::
+
+  bopper : None
+  nougat : 'pumpkin'
+  parsley : 'yum'
+  servings : 20
+
+If the querystring were ``bopper=frisbee&servings=cankersore``, the
+template values would be::
+
+  bopper : 'frisbee'
+  nougat : None
+  parsley : 'yum'
+  servings : 5
+
+This tag only works when there is a ``webob.Request`` object in the
+current namespace under the name ``REQUEST``.  You would normally only
+use this tag in a top-level component into which a request is passed in.
+
+The example above is equivalent to the following Python code::
+
+  from skunk.util.argextract import extra_args
+  locals().update(extract_args(REQUEST.params.mixed(), 
+                               'bopper',
+                               'nougat',
+                               parsley='yum',
+                               servings=(int, 5)))   
+ 
+
+
 Flow Control
 ------------
 
@@ -499,8 +581,8 @@ different libraries, it is possible to specify a prefix when using a
 tag library.  In use, the namespace will look like an xml namespace
 prefix::
 
-  <:use stoat.web.Tags prefix=web:>
-  <:web:args foo=`1`:>
+  <:use zapper.stmltags prefix=zapper:>
+  <:zapper:mogrify foo=`1`:>
 
 The ``<:use:>`` tag does not generate any code at runtime; the
 inclusion of the tag library happens at parse time.  Therefore, the
