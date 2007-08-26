@@ -41,7 +41,8 @@ def extract_args(argsrc, *args, **kwargs):
             try:
                 d[k]=converter(val)
             except:
-                d[k]=None
+                d[k]=default
+                #d[k]=None
         else:
             d[k]=val
     return d
