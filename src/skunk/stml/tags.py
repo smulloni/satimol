@@ -583,8 +583,6 @@ class ExceptionTag(_logTagMixin,EmptyTag):
     
 def _gettagclasses():
     return [(k, v) for k, v in globals().items() if k.endswith('Tag') and v.tagName]
-    #return dict([(v.tagName, v) for k, v in globals().items() \
-    #             if k.endswith('Tag') and v.tagName])
 
 _alltags=_gettagclasses()
 BaseTags=dict([(v.tagName, v) for k, v in _alltags if v._top])
