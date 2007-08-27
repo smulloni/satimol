@@ -5,7 +5,6 @@ from time import time
 from threading import RLock
 import warnings
 
-from skunk.cache.log import debug
 from skunk.cache.exceptions import NotInCache, UnCacheable, BypassCache
 from skunk.util.timeconvert import convert as time_convert
 
@@ -54,7 +53,6 @@ class Cache(object):
         """
         # the canonical name and cache key are needed both for
         # retrieve and store; just get them once
-        debug("policy is %r", policy)
         if expiration is not None:
             expiration=time_convert(expiration)
 
