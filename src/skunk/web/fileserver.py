@@ -30,6 +30,7 @@ from skunk.config import Configuration
 import skunk.stml
 from skunk.util.importutil import import_from_string
 from skunk.util.pathutil import translate_path, untranslate_path
+from skunk.web.context import Context
 
 log=logging.getLogger(__name__)
 
@@ -70,7 +71,6 @@ Configuration.setDefaults(
     # HTTPException classes 
     errorHandlers=webob.exc.status_map,
     staticFileAddEtag=False,
-    defaultCharset='utf-8',
     
     # whether to guess the character encoding of static text files
     # with chardet, if available
@@ -150,8 +150,14 @@ class Punter(object):
         
 class FileServerBase(Punter):
 
+    def get_request(self, environ):
+        try:
+            return Context.request
+        except AttributeError:
+            return webob.Request(environ)
+
     def __call__(self, environ, start_response):
-        request=webob.Request(environ)
+        request=self.get_request(environ)
         try:
             path, realpath, statinfo=self.check_path(request.path)
         except webob.exc.HTTPException, exc:
@@ -195,7 +201,7 @@ class FileServerBase(Punter):
         realpath=translate_path(componentRoot, path)
         try:
             s=os.stat(realpath)
-        except IOError, oy:
+        except (OSError, IOError), oy:
             if oy.errno==errno.ENOENT:
                 raise get_http_exception(httplib.NOT_FOUND)
             elif oy.errno==errno.EACCES:
@@ -297,8 +303,11 @@ class STMLFileHandler(FileServerBase):
     def serve_file(self, path, realpath, statinfo, request):
         """
         """
-        response=webob.Response(content_type='text/html',
-                                charset=Configuration.defaultCharset)
+        try:
+            response=Context.response
+        except AttributeError:
+            response.webob.Response(content_type=Configuration.defaultContentType,
+                                    charset=Configuration.defaultCharset)
         body=stringcomp(path, REQUEST=request, RESPONSE=response)
         # if you set the body of the response yourself, that will
         # replace anything output by the component.  Normally you
@@ -347,7 +356,6 @@ class DispatchingFileServer(FileServerBase):
         else:
             return handler
         
-
     
     def serve_file(self, path, realpath, statinfo, request):
         handler=self.get_handler(path)
@@ -362,7 +370,9 @@ def _test():
     if args:
         Configuration.load_kw(componentRoot=args[0])
     from wsgiref.simple_server import make_server
-    make_server('localhost', 7777, DispatchingFileServer()).serve_forever()
+    from skunk.web.context import ContextMiddleware
+    make_server('localhost', 7777,
+                ContextMiddleware(DispatchingFileServer())).serve_forever()
 
 if __name__=='__main__':
     _test()
