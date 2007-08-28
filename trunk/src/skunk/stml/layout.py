@@ -127,6 +127,7 @@ class SlotTag(EmptyTag):
         kwargs=self._parsed_args['kwargs']
         namevar=get_temp_name()
         slotvar=get_temp_name()
+        kwargsvar=get_temp_name()
         
         wl=codeStream.writeln
         ind=codeStream.indent
@@ -135,24 +136,26 @@ class SlotTag(EmptyTag):
         
         wl('%s=%r' % (namevar, name))
         wl("%s=%s.get(%s, '')" % (slotvar, slotmap, namevar))
-        wl('__h._layout.push_slot(%r)' % namevar)
+        wl("%s=%r" % (kwargsvar, kwargs))
+        wl('__h._layout.push_slot(%s)' % namevar)
         wl('try:')
         ind()
         wl("if callable(%s):" % slotvar)
         ind()
-        wl("OUTPUT.write(%s(**%r))" % (slotvar, kwargs))
+        wl("OUTPUT.write(%s(**%s))" % (slotvar, kwargsvar))
         ded()
         wl("elif %s:" % slotvar)
         ind()
         wl("OUTPUT.write(%s)" % slotvar)
         ded()
-        wl("del %s" % slotvar)
         ded()
         wl('finally:')
         ind()
-        wl('__h._layout.pop_slot(%r)' % namevar)
+        wl('__h._layout.pop_slot(%s)' % namevar)
         ded()
         wl('del %s' % namevar)
+        wl("del %s" % slotvar)
+        wl("del %s" % kwargsvar)
         
                            
 class CallTemplateTag(EmptyTag):
