@@ -1,20 +1,27 @@
+"""
+The implementation of the scopeable config object.
+"""
+
+import fnmatch
+import os
+import re
 from threading import local
 
 class ScopeManager(object):
 
     def __init__(self):
         # the attributes accessed by the __getattr__ hook
-        self._data=local()
+        self._data = local()
         # the defaults
-        self._defaults={}
+        self._defaults = {}
         # user configuration 
-        self._userconfig={}
+        self._userconfig = {}
         # the context
-        self._context=local().__dict__
+        self._context = local().__dict__
         # functions that manipulate the environment according to the scope
-        self._matchers=[]
+        self._matchers = []
         # overrides added by scoping
-        self._overlay=local().__dict__
+        self._overlay = local().__dict__
 
     def setDefaults(self, **kw):
         """
@@ -24,11 +31,15 @@ class ScopeManager(object):
         self._mash()
 
     def _mash(self):
-        d=self._defaults.copy()
-        d.update(self._userconfig)
-        d.update(self._overlay)
+        """
+        merge the different layers of configuration data
+        (defaults, userconfig, overlay) into self._data
+        """
+        adict = self._defaults.copy()
+        adict.update(self._userconfig)
+        adict.update(self._overlay)
         self._data.__dict__.clear()
-        self._data.__dict__.update(d)
+        self._data.__dict__.update(adict)
 
     def trim(self):
         """
@@ -48,24 +59,26 @@ class ScopeManager(object):
             self._process_matcher(m)
         self._mash()
 
-    def load(self, *files, **globals):
+    def load(self, *files, **kw):
         """
         load user configuration from files
         """
-        if len(globals)==1 and 'globals' in globals:
-            globals=globals['globals']
+        if len(kw)==1 and 'globals' in kw:
+            ourglobals = kw['globals']
+        else:
+            ourglobals = {}
         for f in files:
-            f=os.path.abspath(f)
-            fp=open(f)
-            stuff=fp.read()
-            self._load_string(stuff, globals, f)
+            f = os.path.abspath(f)
+            fp = open(f)
+            stuff = fp.read()
+            self._load_string(stuff, ourglobals, f)
         self._mash()
 
-    def loads(self, s, globals=None):
+    def loads(self, astring, namespace=None):
         """
         load user configuration from a Python string
         """
-        self._load_string(s, globals)
+        self._load_string(astring, namespace)
         self._mash()
 
     def load_kw(self, **kw):
@@ -92,18 +105,18 @@ class ScopeManager(object):
         """
         for k in d:
             if not k.startswith('_'):
-                self._userconfig[k]=d[k]
+                self._userconfig[k] = d[k]
         self._mash()
 
-    def _load_string(s, globals=None, filename='<config>'):
-        codeObj=compile(s, filename, 'exec')
-        if globals is None:
-            globals={}
+    def _load_string(self, astring, namespace=None, filename='<config>'):
+        code_obj = compile(astring, filename, 'exec')
+        if namespace is None:
+            namespace = {}
         # suppress any keys that begin with an underscore            
-        env={}
-        exec codeObj in globals, env
+        env = {}
+        exec code_obj in namespace, env
         for key in (k for k in env if not k.startswith('_')):
-            self._userconfig[key]=env[key]
+            self._userconfig[key] = env[key]
 
     def reset(self):
         """
@@ -114,8 +127,8 @@ class ScopeManager(object):
         self.trim()
 
     def _process_matcher(self, matcher):
-        overlay=self._overlay
-        scopes=self._context
+        overlay = self._overlay
+        scopes = self._context
 
         if matcher.match(scopes):
             overlay.update(matcher.overlay)
@@ -128,15 +141,15 @@ class ScopeManager(object):
             
 class ScopeMatcher(object):
     
-    def __init__(self, param, matchObj, *children, **overlay):
-        self.param=param
-        self.matchObj=matchObj
-        self.overlay=overlay
-        self.children=list(children)
+    def __init__(self, param, match_obj, *children, **overlay):
+        self.param = param
+        self.match_obj = match_obj
+        self.overlay = overlay
+        self.children = list(children)
 
     def match(self, context):
         try:
-            thing=context[self.param]
+            thing = context[self.param]
         except KeyError:
             return None
         else:
@@ -151,33 +164,33 @@ class ScopeMatcher(object):
 class StrictMatcher(ScopeMatcher):
 
     def _match(self, other):
-        return self.matchObj==other
+        return self.match_obj==other
 
 class SimpleStringMatcher(ScopeMatcher):
     
     def _match(self, other):
         return (isinstance(other, basestring)
-                and other.startswith(self.matchObj))
+                and other.startswith(self.match_obj))
 
 class GlobMatcher(ScopeMatcher):
     
     def _match(self, other):
         return (isinstance(other, basestring)
-                and fnmatch.fnmatchcase(other, self.matchObj))
+                and fnmatch.fnmatchcase(other, self.match_obj))
 
 class RegexMatcher(ScopeMatcher):
 
-    def __init__(self, matchObj, *children, **overlay):
+    def __init__(self, match_obj, *children, **overlay):
         # OK to pass regex flags as (pattern, re.I)
-        if isinstance(matchObj, (list, tuple)):
-            matchObj=re.compile(*matchObj)
+        if isinstance(match_obj, (list, tuple)):
+            match_obj = re.compile(*match_obj)
         else:
-            matchObj=re.compile(matchObj)
-        ScopeMatcher.__init__(self, matchObj, *children, **overlay)
+            match_obj = re.compile(match_obj)
+        ScopeMatcher.__init__(self, match_obj, *children, **overlay)
 
 
     def _match(self, other):
         return (isinstance(other, basestring) 
-                and self.matchObj.match(other))
+                and self.match_obj.match(other))
 
 
