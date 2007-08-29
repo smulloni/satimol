@@ -11,17 +11,17 @@ class ScopeManager(object):
 
     def __init__(self):
         # the attributes accessed by the __getattr__ hook
-        self._data = local()
+        self._data=local()
         # the defaults
-        self._defaults = {}
+        self._defaults={}
         # user configuration 
-        self._userconfig = {}
+        self._userconfig={}
         # the context
-        self._context = local().__dict__
+        self._context=local().__dict__
         # functions that manipulate the environment according to the scope
-        self._matchers = []
+        self._matchers=[]
         # overrides added by scoping
-        self._overlay = local().__dict__
+        self._overlay=local().__dict__
 
     def setDefaults(self, **kw):
         """
@@ -35,7 +35,7 @@ class ScopeManager(object):
         merge the different layers of configuration data
         (defaults, userconfig, overlay) into self._data
         """
-        adict = self._defaults.copy()
+        adict=self._defaults.copy()
         adict.update(self._userconfig)
         adict.update(self._overlay)
         self._data.__dict__.clear()
@@ -64,13 +64,13 @@ class ScopeManager(object):
         load user configuration from files
         """
         if len(kw)==1 and 'globals' in kw:
-            ourglobals = kw['globals']
+            ourglobals=kw['globals']
         else:
-            ourglobals = {}
+            ourglobals={}
         for f in files:
-            f = os.path.abspath(f)
-            fp = open(f)
-            stuff = fp.read()
+            f=os.path.abspath(f)
+            fp=open(f)
+            stuff=fp.read()
             self._load_string(stuff, ourglobals, f)
         self._mash()
 
@@ -105,18 +105,18 @@ class ScopeManager(object):
         """
         for k in d:
             if not k.startswith('_'):
-                self._userconfig[k] = d[k]
+                self._userconfig[k]=d[k]
         self._mash()
 
     def _load_string(self, astring, namespace=None, filename='<config>'):
-        code_obj = compile(astring, filename, 'exec')
+        code_obj=compile(astring, filename, 'exec')
         if namespace is None:
-            namespace = {}
+            namespace={}
         # suppress any keys that begin with an underscore            
-        env = {}
+        env={}
         exec code_obj in namespace, env
         for key in (k for k in env if not k.startswith('_')):
-            self._userconfig[key] = env[key]
+            self._userconfig[key]=env[key]
 
     def reset(self):
         """
@@ -127,8 +127,8 @@ class ScopeManager(object):
         self.trim()
 
     def _process_matcher(self, matcher):
-        overlay = self._overlay
-        scopes = self._context
+        overlay=self._overlay
+        scopes=self._context
 
         if matcher.match(scopes):
             overlay.update(matcher.overlay)
@@ -142,14 +142,14 @@ class ScopeManager(object):
 class ScopeMatcher(object):
     
     def __init__(self, param, match_obj, *children, **overlay):
-        self.param = param
-        self.match_obj = match_obj
-        self.overlay = overlay
-        self.children = list(children)
+        self.param=param
+        self.match_obj=match_obj
+        self.overlay=overlay
+        self.children=list(children)
 
     def match(self, context):
         try:
-            thing = context[self.param]
+            thing=context[self.param]
         except KeyError:
             return None
         else:
@@ -183,9 +183,9 @@ class RegexMatcher(ScopeMatcher):
     def __init__(self, match_obj, *children, **overlay):
         # OK to pass regex flags as (pattern, re.I)
         if isinstance(match_obj, (list, tuple)):
-            match_obj = re.compile(*match_obj)
+            match_obj=re.compile(*match_obj)
         else:
-            match_obj = re.compile(match_obj)
+            match_obj=re.compile(match_obj)
         ScopeMatcher.__init__(self, match_obj, *children, **overlay)
 
 
