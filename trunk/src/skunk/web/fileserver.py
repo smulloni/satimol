@@ -31,22 +31,18 @@ import skunk.stml
 from skunk.util.importutil import import_from_string
 from skunk.util.pathutil import translate_path, untranslate_path
 from skunk.web.context import Context
+from skunk.web.util import handle_error, get_http_exception, FileIterable
 
 log=logging.getLogger(__name__)
 
 __all__=['DispatchingFileServer', 'StaticFileServer']
 
-# FileIterable and FileIterator stolen from Ian Bicking's nice WebOb
-# file-serving example.  Thanks, Ian.
 
 DEFAULT_HIDDEN_FILE_PATTERNS=[
-    '$\.',         # UNIX hidden files
-    '\.comp$',     # skunk component
-    '\.pydcmp$',   # skunk data component
-    '\.pyinc$',    # skunk include
-    '\.pycomp$',   # skunk component
-    '\.inc$',      # skunk include
-    '~$'           # backup file
+    '^\.',                                   # UNIX hidden files
+    '\.(comp|pydcmp|pyinc|pycomp|inc)$',     # skunk components
+    '~$',          # backup file
+    '\.conf$'      # configuration files
     ]
 
 DEFAULT_INDEX_DOCUMENTS=[
@@ -57,7 +53,7 @@ DEFAULT_INDEX_DOCUMENTS=[
     ]
 
 DEFAULT_FILE_DISPATCHERS=[('.*\.(stml|html|py)$',
-                           'skunk.web.fileserver:STMLFileHandler')]
+                           'skunk.web.fileserver:serve_stml')]
 
 Configuration.setDefaults(
     hiddenFilePatterns=DEFAULT_HIDDEN_FILE_PATTERNS,
@@ -81,74 +77,7 @@ Configuration.setDefaults(
     
     )
 
-def get_http_exception(status, *args, **kwargs):
-    handlerclass=Configuration.errorHandlers[status]
-    handler=handlerclass(*args, **kwargs)
-    return handler
-
-def handle_error(status, environ, start_response, *args, **kwargs):
-    handler=get_http_exception(status, *args, **kwargs)
-    return handler(environ, start_response)
-
-class FileIterable(object):
-    
-    def __init__(self, filename, start=None, stop=None):
-        self.filename = filename
-        self.start = start
-        self.stop = stop
-
-    def __iter__(self):
-        return FileIterator(self.filename, self.start, self.stop)
-    
-    def app_iter_range(self, start, stop):
-        return self.__class__(self.filename, start, stop)
-
-class FileIterator(object):
-    chunk_size = 4096
-
-    def __init__(self, filename, start, stop):
-        self.filename = filename
-        self.fileobj = open(filename, 'rb')
-        if start:
-            self.fileobj.seek(start)
-        if stop is not None:
-            self.length = stop - start
-        else:
-            self.length = None
-            
-    def __iter__(self):
-        return self
-    
-    def next(self):
-        if self.length is not None and self.length <= 0:
-            raise StopIteration
-        chunk = self.fileobj.read(self.chunk_size)
-        if not chunk:
-            raise StopIteration
-        if self.length is not None:
-            self.length -= len(chunk)
-            if self.length < 0:
-                # Chop off the extra:
-                chunk = chunk[:self.length]
-        return chunk
-
-class Punter(object):
-    """
-    a WSGI application that may have a reference to another WSGI
-    application to punt to if it can't handle the request itself.  If
-    the application wants to punt, it calls self.punt(); if it has an attribute
-    called "next_app" it should be a WSGI application, which will be used to
-    handle the request.  If it does not, or if the attribute is None, a 404
-    response will be returned instead.
-    """
-
-    def punt(self, environ, start_response):
-        next_app=getattr(self, 'next_app', None)
-        if next_app:
-            return next_app(environ, start_response)
-        return handle_error(httplib.NOT_FOUND, environ, start_response)
-        
-class FileServerBase(Punter):
+class FileServerBase(object):
 
     def get_request(self, environ):
         try:
@@ -185,7 +114,7 @@ class FileServerBase(Punter):
         for h in Configuration.hiddenFilePatterns:
             if callable(h) and h(path, realpath, statinfo):
                 return True
-            elif re.match(h, path):
+            elif re.search(h, path):
                 return True
         return False
 
@@ -248,73 +177,69 @@ class StaticFileServer(FileServerBase):
     """
 
     def serve_file(self, path, realpath, statinfo, request):
+        return serve_static(path, realpath, statinfo, request)
 
-        type, contentenc=mimetypes.guess_type(realpath)
-        if contentenc:
-            res.content_encoding=contentenc
-        if not type:
-            type='application/octet-stream'
-        if type.startswith('text/'):
-            if Configuration.defaultCharset:
-                res.charset=Configuration.defaultCharset
-            elif chardet and Configuration.staticFileUseChardet:
-                res.charset=chardet.detect(open(realpath).read(1024))['encoding']
-            
-        if Configuration.staticFileUseXSendFile:
-            header=Configuration.staticFileXSendFileHeader
-            if Configuration.staticFileXSendFilePathTranslated:
-                xpath=realpath
-            else:
-                xpath=path
+def serve_stml(path, realpath, statinfo, request):
+    """
+    """
+    try:
+        response=Context.response
+    except AttributeError:
+        response.webob.Response(content_type=Configuration.defaultContentType,
+                                charset=Configuration.defaultCharset)
+    body=stringcomp(path, REQUEST=request, RESPONSE=response)
+    # if you set the body of the response yourself, that will
+    # replace anything output by the component.  Normally you
+    # won't be doing that in this context.
+    if not response.body:
+        response.body=body
+    return response
 
-            # I don't think I need conditional_response here; if you
-            # are using X-Sendfile your web server should be able to
-            # deal (at least it can it later versions of lighttpd)
-            res=webob.Response(content_type=type,
-                               content_length=statinfo.st_size,
-                               last_modified=statinfo.st_mtime)
-            res.headers.add(header, xpath)
+def serve_static(path, realpath, statinfo, request):
+
+    type, contentenc=mimetypes.guess_type(realpath)
+    if contentenc:
+        res.content_encoding=contentenc
+    if not type:
+        type='application/octet-stream'
+    if type.startswith('text/'):
+        if Configuration.defaultCharset:
+            res.charset=Configuration.defaultCharset
+        elif chardet and Configuration.staticFileUseChardet:
+            res.charset=chardet.detect(open(realpath).read(1024))['encoding']
+
+    if Configuration.staticFileUseXSendFile:
+        header=Configuration.staticFileXSendFileHeader
+        if Configuration.staticFileXSendFilePathTranslated:
+            xpath=realpath
         else:
-            res=webob.Response(content_type=type,
-                               conditional_response=True,
-                               app_iter=FileIterable(realpath),
-                               content_length=statinfo.st_size,
-                               last_modified=statinfo.st_mtime)
+            xpath=path
 
-            if Configuration.staticFileAddEtag:
-                # this can be more efficient than generating an Etag
-                # from the response body, so we're making it possible
-                # to do here rather than in middleware
-                etag='%s|%d|%d' % (realpath, statinfo.st_size, statinfo.st_mtime)
-                etag=md5.md5(etag).hexdigest()
-                res.headers['etag']=etag
+        # I don't think I need conditional_response here; if you
+        # are using X-Sendfile your web server should be able to
+        # deal (at least it can it later versions of lighttpd)
+        res=webob.Response(content_type=type,
+                           content_length=statinfo.st_size,
+                           last_modified=statinfo.st_mtime)
+        res.headers.add(header, xpath)
+    else:
+        res=webob.Response(content_type=type,
+                           conditional_response=True,
+                           app_iter=FileIterable(realpath),
+                           content_length=statinfo.st_size,
+                           last_modified=statinfo.st_mtime)
 
-        # Other custom header munging is left for middleware.
-        return res
+        if Configuration.staticFileAddEtag:
+            # this can be more efficient than generating an Etag
+            # from the response body, so we're making it possible
+            # to do here rather than in middleware
+            etag='%s|%d|%d' % (realpath, statinfo.st_size, statinfo.st_mtime)
+            etag=md5.md5(etag).hexdigest()
+            res.headers['etag']=etag
 
-class STMLFileHandler(FileServerBase):
-    """
-    a file server that specializes in STML and skunk component files.
+    # Other custom header munging is left for middleware.
+    return res
 
-    This treats everything like a skunk component, so you don't want
-    to use this directly; you want the DispatchingFileServer.
-    """
-
-    def serve_file(self, path, realpath, statinfo, request):
-        """
-        """
-        try:
-            response=Context.response
-        except AttributeError:
-            response.webob.Response(content_type=Configuration.defaultContentType,
-                                    charset=Configuration.defaultCharset)
-        body=stringcomp(path, REQUEST=request, RESPONSE=response)
-        # if you set the body of the response yourself, that will
-        # replace anything output by the component.  Normally you
-        # won't be doing that in this context.
-        if not response.body:
-            response.body=body
-        return response
         
 
 class DispatchingFileServer(FileServerBase):
@@ -323,8 +248,10 @@ class DispatchingFileServer(FileServerBase):
     of filename (usually extension).  
     """
 
-    _default=StaticFileServer()
     _handlercache={}
+
+    def _default_handler(self, path, realpath, statinfo, request):
+        return serve_static(path, realpath, statinfo, request)
 
     def get_handler(self, path):
 
@@ -343,16 +270,14 @@ class DispatchingFileServer(FileServerBase):
                 break
         log.debug('handler: %s', handler)
         if not handler:
-            # return static file handler
-            return self._default
+            return self._default_handler
         if isinstance(handler, basestring):
             try:
                 return self._handlercache[handler]
             except KeyError:
-                handlerclass=import_from_string(handler)
-                handlerinstance=handlerclass()
-                self._handlercache[handler]=handlerinstance
-                return handlerinstance
+                handler=import_from_string(handler)
+                self._handlercache[handler]=handler
+                return handler
         else:
             return handler
         
@@ -360,7 +285,7 @@ class DispatchingFileServer(FileServerBase):
     def serve_file(self, path, realpath, statinfo, request):
         handler=self.get_handler(path)
         assert handler, "get_handler didn't return a handler"
-        return handler.serve_file(path, realpath, statinfo, request)
+        return handler(path, realpath, statinfo, request)
 
 
 def _test():

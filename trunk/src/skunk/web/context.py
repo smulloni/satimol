@@ -1,32 +1,22 @@
-import logging
 import threading
 
 import webob
 
 from skunk.config import Configuration
-from skunk.util.hooks import Hook
 
 Context=threading.local()
-
-log=logging.getLogger(__name__)
-
-ContextInitHook=Hook()
-ContextCleanupHook=Hook()
 
 def initContext(environ, force=False):
     
     if not Context.__dict__:
         Context.request=webob.Request(environ)
         Context.response=webob.Response(content_type=Configuration.defaultContentType,
-                                        charset=Configuration.defaultCharset)
-        # hook for other context munging
-        ContextInitHook(environ)
+                                        charset=Configuration.defaultCharset,
+                                        server=Configuration.serverIdentification)
 
 def cleanupContext():
     Context.__dict__.clear()
-    ContextCleanupHook()
             
-
 class ContextMiddleware(object):
     """
     middleware that sets up the global Configuration and
