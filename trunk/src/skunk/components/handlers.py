@@ -111,7 +111,8 @@ class CallableComponentHandler(ComponentHandler):
 DEFAULT_FILE_COMPONENT_SUFFIX_MAP={
     '.pycomp' : ('string', StringOutputFileComponent),
     '.pydcmp' : ('data',  FileComponent),
-    '.pyinc' : ('include', StringOutputFileComponent)
+    '.pyinc' : ('include', StringOutputFileComponent),
+    '.py' : ('string', StringOutputFileComponent),
     }
 
 class FileComponentHandler(ComponentHandler):
