@@ -92,17 +92,20 @@ class STMLComponentMixin(object):
         """
         returns generated Python code for the component.
         """
-        if not self._code:
-            stml=self.getSTML()
-            node=stml_parse(stml, self.tagVocabulary)
-            codeStream=PythonCodeOutputStream()
-            for k in node.children:
-                if isinstance(k, basestring):
-                    codeStream.writeln('OUTPUT.write(%r)' % k)
-                else:
-                    k.genCode(codeStream)
-            self._code=codeStream.getvalue()
-        return self._code
+        code=getattr(self, '_code', None)
+        if code:
+            return code
+        
+        stml=self.getSTML()
+        node=stml_parse(stml, self.tagVocabulary)
+        codeStream=PythonCodeOutputStream()
+        for k in node.children:
+            if isinstance(k, basestring):
+                codeStream.writeln('OUTPUT.write(%r)' % k)
+            else:
+                k.genCode(codeStream)
+        code=self._code=codeStream.getvalue()
+        return code
 
     def getSTML(self):
         """

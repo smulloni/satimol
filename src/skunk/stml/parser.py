@@ -115,10 +115,8 @@ class Node(object):
                                      
             tokenType=token.tokenType
             if tokenType==t_TAGNAME:
-                self.handle_tagname(token.text)
                 # this doesn't happen here
                 assert False
-                continue
             elif tokenType==t_EQUALS:
 
                 if curarg is None:
