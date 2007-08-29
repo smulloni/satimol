@@ -8,6 +8,7 @@ import threading
 
 from skunk.components import (getCurrentDirectory,
                               ComponentHandlingException,
+                              call_component,
                               datacomp,
                               rectifyRelativePath)
 from skunk.config import Configuration
@@ -62,10 +63,10 @@ class ComponentSlot(object):
         self.namespace=namespace
         self.extra=extra
 
-    def __call__(self, **kw):
-        cache=kw.pop('cache', self.cache)
+    def __call__(self, **kwargs):
+        cache=kwargs.pop('cache', self.cache)
         kwargs.update(self.extra)
-        call_component(compname,
+        call_component(self.compname,
                        compargs=kwargs,
                        comptype=self.comptype,
                        cache=cache,
