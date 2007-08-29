@@ -7,9 +7,6 @@ def get_http_exception(status, *args, **kwargs):
 
 def handle_error(status, environ, start_response, *args, **kwargs):
     handler=get_http_exception(status, *args, **kwargs)
-    # this is not Context.response
-    if not handler.server:
-        handler.server=Configuration.serverIdentification
     return handler(environ, start_response)
 
 # FileIterable and FileIterator stolen from Ian Bicking's nice WebOb
@@ -56,3 +53,22 @@ class FileIterator(object):
                 # Chop off the extra:
                 chunk = chunk[:self.length]
         return chunk
+
+# I probably will not use this and use some sort of cascade scheme like
+# paste has (although I may want to provide some way of forcing the cascade
+# to stop even if returning an error code)
+class Punter(object):
+    """
+    a WSGI application that may have a reference to another WSGI
+    application to punt to if it can't handle the request itself.  If
+    the application wants to punt, it calls self.punt(); if it has an attribute
+    called "next_app" it should be a WSGI application, which will be used to
+    handle the request.  If it does not, or if the attribute is None, a 404
+    response will be returned instead.
+    """
+
+    def punt(self, environ, start_response):
+        next_app=getattr(self, 'next_app', None)
+        if next_app:
+            return next_app(environ, start_response)
+        return handle_error(httplib.NOT_FOUND, environ, start_response)
