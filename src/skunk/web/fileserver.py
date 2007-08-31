@@ -181,11 +181,12 @@ class StaticFileServer(FileServerBase):
 
 def serve_stml(path, realpath, statinfo, request):
     """
+    handler for stml and Component files.
     """
     try:
         response=Context.response
     except AttributeError:
-        response.webob.Response(content_type=Configuration.defaultContentType,
+        response=webob.Response(content_type=Configuration.defaultContentType,
                                 charset=Configuration.defaultCharset)
     body=stringcomp(path, REQUEST=request, RESPONSE=response)
     # if you set the body of the response yourself, that will
@@ -196,7 +197,8 @@ def serve_stml(path, realpath, statinfo, request):
     return response
 
 def serve_static(path, realpath, statinfo, request):
-
+    if request.method not in ('GET', 'HEAD'):
+            return get_http_exception(httplib.METHOD_NOT_ALLOWED)
     type, contentenc=mimetypes.guess_type(realpath)
     if contentenc:
         res.content_encoding=contentenc
@@ -237,7 +239,8 @@ def serve_static(path, realpath, statinfo, request):
             etag=md5.md5(etag).hexdigest()
             res.headers['etag']=etag
 
-    # Other custom header munging is left for middleware.
+    # Other custom header munging is left for middleware, or
+    # something else
     return res
 
         
