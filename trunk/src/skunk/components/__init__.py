@@ -16,7 +16,6 @@ Configuration.setDefaults(
     useCompileMemoryCache=True,
     compileCachePath=None,
     componentRoot='/',
-    defaultCacheExpiration='30s',
     componentCache=':memory:',
     componentCacheDebugMemcached=False,
     componentExtraGlobals=None,
