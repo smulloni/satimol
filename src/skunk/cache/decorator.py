@@ -32,15 +32,8 @@ Example usage:
 
 """
 
-try:
-    from peak.util.decorators import rewrap
-except ImportError:
-    from skunk.util.decorators import share_metadata
-    def rewrap(func, newfunc):
-        share_metadata(func, newfunc)
-        return newfunc
-
 from skunk.cache.policy import YES
+from skunk.util.decorators import rewrap
 
 _default=object()
 

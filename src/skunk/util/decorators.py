@@ -1,4 +1,11 @@
 
+try:
+    from peak.util.decorators import rewrap
+except ImportError:
+    def rewrap(func, newfunc):
+        share_metadata(func, newfunc)
+        return newfunc
+
 def share_metadata(fn, dec):
     try:
         dec.__module__=fn.__module__
@@ -36,8 +43,7 @@ def with_lock(lock):
                 return fn(*args, **kwargs)
             finally:
                 l.release()
-        share_metadata(fn, newfunc)
-        return newfunc
+        return rewrap(fn, newfunc)
     return wrapper
 
     
