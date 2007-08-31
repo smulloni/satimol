@@ -1,7 +1,10 @@
-#import ez_setup
-#ez_setup.use_setuptools()
+try:
+    import ez_setup
+    ez_setup.use_setuptools()
+except ImportError:
+    pass
 
-from setuptools import setup, Extension, find_packages
+from setuptools import setup, find_packages
 
 description="caching and templating facilities from the SkunkWeb project"
 
@@ -14,8 +17,11 @@ a standalone implementation of SkunkWeb's STML (Skunk Template Markup
 Language), a powerful componentized templating language.
 
 """
+import os
+import sys
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'src'))
+from skunk import __version__
 
-VERSION='0.4.0'
 
 setup(author="Jacob Smullyan",
       author_email='jsmullyan@gmail.com',
@@ -35,10 +41,8 @@ setup(author="Jacob Smullyan",
                    'Topic :: Software Development :: Libraries :: Python Modules',
                    'Topic :: Text Processing :: Markup :: HTML',
       ],
-      version=VERSION,
-      ext_modules=[Extension('skunk.util.signal_plus',
-                             ['src/skunk/util/signal_plus.c'])],
-      keywords="skunk skunkweb STML templating cache",
+      version=__version__,
+      keywords="skunk skunkweb STML templating cache WSGI",
       packages=find_packages('src', exclude='tests'),
       entry_points= {
     'console_scripts' : [
@@ -47,6 +51,8 @@ setup(author="Jacob Smullyan",
     },
       extras_require= {
     'web' : 'webob',
+    'routes' : 'routes',
+    'decoratortools' : 'decoratortools'
     },
       package_dir={'' : 'src'},
       test_suite='nose.collector')
