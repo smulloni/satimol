@@ -32,18 +32,47 @@ Example usage:
 
 """
 
+try:
+    from peak.util.decorators import rewrap
+except ImportError:
+    from skunk.util.decorators import share_metadata
+    def rewrap(func, newfunc):
+        share_metadata(func, newfunc)
+        return newfunc
 
-from policy import YES
-
+from skunk.cache.policy import YES
 
 _default=object()
 
 class CacheDecorator(object):
-    def __init__(self, cache, defaultExpiration='30s', defaultPolicy=YES, defaultOndefer=None):
+    def __init__(self,
+                 cache,
+                 defaultExpiration=_default,
+                 defaultPolicy=_default,
+                 defaultOndefer=_default):
         self.cache=cache
-        self.defaultExpiration=defaultExpiration
-        self.defaultPolicy=defaultPolicy
-        self.defaultOndefer=defaultOndefer
+        self._defaultExpiration=defaultExpiration
+        self._defaultPolicy=defaultPolicy
+        self._defaultOndefer=defaultOndefer
+
+    @property
+    def defaultExpiration(self):
+        if self._defaultExpiration != _default:
+            return self._defaultExpiration
+        return Configuration.defaultCacheExpiration
+        
+    @property
+    def defaultPolicy(self):
+        if self._defaultPolicy != _default:
+            return self._defaultPolicy
+        return Configuration.defaultCachePolicy
+
+    @property
+    def defaultOndefer(self):
+        if self._defaultOndefer != _default:
+            return self._defaultOndefer
+        return Configuration.defaultCacheOndefer
+
 
     def __call__(self, expiration=None, policy=None, ondefer=_default):
         if expiration is None:
@@ -55,8 +84,9 @@ class CacheDecorator(object):
             policy=self.defaultPolicy
         if ondefer is _default:
             ondefer=self.defaultOndefer
-        # workaround for nested scope bug/wart -- you can't assign to
-        # variables in intermediate (not global, not local) scopes
+        # workaround for nested scope bug/wart -- in Python 2.5 and
+        # smaller, you can't assign to variables in intermediate (not
+        # global, not local) scopes
         def wrapper(fn):
             if hasattr(fn, 'expiration') and def_exp:
                 expiration1=fn.expiration
@@ -68,15 +98,7 @@ class CacheDecorator(object):
                 ondefer2=kwargs.pop('ondefer', ondefer)
                 res=self.cache.call(fn, (args, kwargs), policy2, expiration2, ondefer2)
                 return res.value
-            if hasattr(fn, '__module__'):
-                newfunc.__module__=fn.__module__
-            if hasattr(fn, '__doc__'):
-                newfunc.__doc__=fn.__doc__
-            if hasattr(fn, "__dict__"):
-                newfunc.__dict__.update(fn.__dict__)
-            if hasattr(fn, '__name__'):
-                newfunc.__name__=fn.__name__
-            return newfunc
+            return rewrap(fn, newfunc)
         return wrapper
     
 __all__=['CacheDecorator']

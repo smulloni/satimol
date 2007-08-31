@@ -14,5 +14,10 @@ from skunk.cache.diskCache import *
 from skunk.cache.decorator import *
 from skunk.cache.log import *
 
-__version__ = '4.0.1'
-__author__  = 'Jacob Smullyan <jsmullyan@gmail.com>'
+from skunk.config import Configuration as _c
+_c.setDefaults(defaultCacheExpiration='30s',
+               defaultCachePolicy=YES,
+               defaultCacheOndefer=None)
+del _c
+
+
