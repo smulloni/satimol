@@ -48,7 +48,10 @@ def _interpret_response(res):
             # something has been done to it
             return ctxt_res
         else:
-            return get_http_exception(httplib.NOT_FOUND)
+            # perhaps this implicit behavior is
+            # less good than simply returning
+            # an empty response.... @REEXAMINE
+            return None
     elif isinstance(res, str):
         ctxt_res.body=res
         return ctxt_res
@@ -110,8 +113,33 @@ def dispatch(*args, **kwargs):
 
     return _interpret_response(res)
 
+class Punt(Exception):
+    pass
 
+class ControllerServer(object):
 
+    def __init__(self, wrapped_app=None):
+        self.wrapped_app=wrapped_app
+
+    def __call__(self, environ, start_response):
+        try:
+            res=dispatch_from_environ(environ)
+        except Punt:
+            res=None
+        if res is None and self.wrapped_app:
+            return self.wrapped_app(environ, start_response)
+        else:
+            return handle_error(httplib.NOT_FOUND,
+                                environ,
+                                start_response)
+            
+        
+            
+
+            
+                                
+        
+        
 
     
     
