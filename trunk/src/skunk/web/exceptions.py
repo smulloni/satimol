@@ -1,14 +1,14 @@
 import sys
 from traceback import format_exception
 
-import webob.exc import HTTPInternalServerError, HTTPNotFound
+from webob.exc import HTTPInternalServerError, HTTPNotFound, status_map
 
 from skunk.cache import NO
 from skunk.config import Configuration
-from skunk.stml import stringcomp
+from skunk.components import stringcomp
 from skunk.util.decorators import rewrap
 
-DEFAULT_ERRORS=webob.exc.status_map.copy()
+DEFAULT_ERRORS=status_map.copy()
 
 class NotFound(HTTPNotFound):
 

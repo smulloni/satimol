@@ -1,58 +1,69 @@
-import logging
+"""
+support code for using routes middleware.
+"""
+import httplib
 
-import routes
+from routes import request_config
+import routes.middleware
 
-log=logging.getLogger(__name__)
+from skunk.config import Configuration
+from skunk.web.context import Context, InitContextHook
+from skunk.web.exceptions import get_http_exception
 
-def getMapper():
-    return routes.Mapper()
+Configuration.setDefaults(MvcOn=False,
+                          routes=[],
+                          controllers={})
 
-def get_match_and_route(environ):
-    config=routes.request_config()
-    config.mapper=getMapper()
-    config.environ=environ
-    return config.mapper_dict, config.route
+def _redirect(url):
+    raise get_http_exception(httplib.MOVED_PERMANENTLY)
 
-def clean_routes_config():
-    config=routes.request_config()
-    try:
-        del config.environ
-    except AttributeError:
-        log.error("expected routes request config to have an 'environ' attribute")
-        
-    
+def initMapper(context, environ):
+    if not Configuration.MvcOn:
+        return
+    map=routes.Mapper()
+    for r in Configuration.routes:
+        if isinstance(r, dict):
+            map.connect(**r)
+        elif isinstance(r, (list, tuple)):
+            if (len(r)==2 and
+                isinstance(r[0], (list, tuple)) and
+                isinstance(r[1], dict)):
+                map.connect(*r[0], **r[1])
+            else:
+                map.connect(*r)
+        else:
+            raise ValueError, "wrong arguments for connect()"
 
-class RoutingMiddleware(object):
+    map.create_regs(list(Configuration.controllers))
+    context.routes_mapper=map
+    request_config().redirect=_redirect
 
-    def __init__(self, app):
-        self.app=app
+# initial the mapper in the context middleware
+InitContextHook.append(initMapper)
+
+class RoutingMiddleware(routes.middleware.RoutesMiddleware):
+    """
+    trivial subclass of routes' own middleware
+    """
+
+    def __init__(self, app, use_method_override=False, path_info=True):
+        super(RoutingMiddleware, self).__init__(app,
+                                                None,
+                                                use_method_override,
+                                                path_info)
+
+    def mapper():
+        def fget(self):
+            return Context.routes_mapper
+        def fset(self, val):
+            pass
+        return fget, fset
+    mapper=property(*mapper())
 
     def __call__(self, environ, start_response):
-        config=routes.request_config()
-        config.mapper=mapper
-        config.environ=environ
-        match=config.mapper_dict
-        route=config.route
-        if match:
-            for k,v in match.iteritems():
-                if v and isinstance(v, basestring):
-                    match[k]=urllib.unquote_plus(v)
-        environ['wsgiorg.routing_args']=((), match)
-        environ['routes.route']=route
-
-        if match.get('path_info'):
-            oldpath = environ['PATH_INFO']
-            newpath = match.get('path_info') or ''
-            environ['PATH_INFO'] = newpath
-            if not environ['PATH_INFO'].startswith('/'):
-                environ['PATH_INFO'] = '/' + environ['PATH_INFO']
-            environ['SCRIPT_NAME'] += re.sub(r'^(.*?)/' + newpath + '$', 
-                                             r'\1', oldpath)
-            if environ['SCRIPT_NAME'].endswith('/'):
-                environ['SCRIPT_NAME'] = environ['SCRIPT_NAME'][:-1]
-        try:
+        if not Configuration.MvcOn:
             return self.app(environ, start_response)
-        finally:
-            del config.environ
-            del config.mapper.environ
-        
+        return super(RoutingMiddleware, self).__call__(environ, start_response)
+
+            
+__all__=['RoutingMiddleware']
