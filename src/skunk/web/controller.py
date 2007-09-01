@@ -8,11 +8,9 @@ import webob
 from skunk.config import Configuration
 from skunk.util.importutil import import_from_string
 from skunk.web.context import Context
-from skunk.web.exceptions import get_http_exception
+from skunk.web.exceptions import get_http_exception, handle_error
 
 log=logging.getLogger(__name__)
-
-Configuration.setDefaults(controllers=[])
 
 def expose(**kwargs):
     def wrapper(func):
@@ -80,37 +78,54 @@ def dispatch_from_environ(environ, next_app=None):
     try:
         tmp=environ['wsgiorg.routing_args']
     except KeyError:
+        log.debug("no routing_args found")
         return None
     else:
         margs, mkwargs=tmp
-    return dispatch(*margs, **mkwargs)
+    return dispatch(environ, *margs, **mkwargs)
 
-def dispatch(*args, **kwargs):
-    controller=kwargs.get('controller')
-    if not controller:
+def dispatch(environ, *args, **kwargs):
+    log.debug("in dispatch")
+    controller_name=kwargs.get('controller')
+    if not controller_name:
+        log.debug("no controller found")
         return
 
+    controller=Configuration.controllers.get(controller_name)
+    if not controller:
+        log.warn('no such controller found: %s', controller_name)
+        return
     if isinstance(controller, basestring):
+        log.debug('greetings')
         try:
             controller=import_from_string(controller)
         except ImportError:
-            return get_http_exception(httplib.SERVER_ERROR,
+            return get_http_exception(httplib.INTERNAL_SERVER_ERROR,
                                       comment="couldn't import controller %s" % controller)
-        
-    action=kwargs.get('action', 'index')    
-    meth=getattr(controller, action, None)
+    else:
+        log.debug("got a non-string for controller: %s", controller)
+    log.debug("survived to this point")
+    action=kwargs.get('action', 'index')
+    reqmeth=environ['REQUEST_METHOD']
+    if reqmeth=='HEAD':
+        reqmeth='GET'
+    method_qualified_action='%s_%s' % (action, reqmeth)
+    meth=getattr(controller, method_qualified_action, None)
     if not meth:
+        meth=getattr(controller, action, None)
+    if not meth:
+        log.debug("no controller action found (looked for action %s in controller %s)", action, controller)
         return 
 
     if not getattr(meth, 'exposed', False):
         log.info("request for method that isn't exposed, not honoring")
         return
-    
+    log.debug("method is %s", meth)
     try:
         res=meth(*args, **kwargs)
     except webob.exc.HTTPException, e:
         res=e
-
+    log.debug('got response %s', res)
     return _interpret_response(res)
 
 class Punt(Exception):

@@ -3,16 +3,20 @@ import threading
 import webob
 
 from skunk.config import Configuration
+from skunk.util.hooks import Hook
 
 Context=threading.local()
 
+InitContextHook=Hook()
+
 def initContext(environ, force=False):
     
-    if not Context.__dict__:
+    if force or not Context.__dict__:
         Context.request=webob.Request(environ)
         Context.response=webob.Response(content_type=Configuration.defaultContentType,
                                         charset=Configuration.defaultCharset,
                                         server=Configuration.serverIdentification)
+        InitContextHook(Context, environ)
 
 def cleanupContext():
     Context.__dict__.clear()
