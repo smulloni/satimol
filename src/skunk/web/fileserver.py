@@ -31,7 +31,8 @@ import skunk.stml
 from skunk.util.importutil import import_from_string
 from skunk.util.pathutil import translate_path, untranslate_path
 from skunk.web.context import Context
-from skunk.web.util import handle_error, get_http_exception, FileIterable
+from skunk.web.exceptions import handle_error, get_http_exception
+from skunk.web.util import FileIterable
 
 log=logging.getLogger(__name__)
 
@@ -64,8 +65,6 @@ Configuration.setDefaults(
     staticFileXSendFileHeader='X-Sendfile',
     staticFileXSendFileHeaderPathTranslated=True,
     
-    # HTTPException classes 
-    errorHandlers=webob.exc.status_map,
     staticFileAddEtag=False,
     
     # whether to guess the character encoding of static text files
@@ -95,7 +94,8 @@ class FileServerBase(object):
         app=self.serve_file(path, realpath, statinfo, request)
         if app:
             return app(environ, start_response)
-        self.punt(environ, start_response)
+        exc=get_http_exception(httplib.NOT_FOUND)
+        return exc(environ, start_response)
     
     def serve_file(self, path, realpath, statinfo, request):
         raise NotImplementedError

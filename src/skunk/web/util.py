@@ -1,13 +1,4 @@
-from skunk.config import Configuration
-
-def get_http_exception(status, *args, **kwargs):
-    handlerclass=Configuration.errorHandlers[status]
-    handler=handlerclass(*args, **kwargs)
-    return handler
-
-def handle_error(status, environ, start_response, *args, **kwargs):
-    handler=get_http_exception(status, *args, **kwargs)
-    return handler(environ, start_response)
+import sys
 
 # FileIterable and FileIterator stolen from Ian Bicking's nice WebOb
 # file-serving example.  Thanks, Ian.

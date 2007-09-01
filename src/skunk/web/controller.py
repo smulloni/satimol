@@ -8,7 +8,7 @@ import webob
 from skunk.config import Configuration
 from skunk.util.importutil import import_from_string
 from skunk.web.context import Context
-from skunk.web.util import get_http_exception
+from skunk.web.exceptions import get_http_exception
 
 log=logging.getLogger(__name__)
 
