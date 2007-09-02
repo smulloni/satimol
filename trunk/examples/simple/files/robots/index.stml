@@ -1,0 +1,9 @@
+<html>
+<head><title>Robots</title>
+</head>
+<body>
+<ul><:for `('yellow', 'blue', 'green', 'brown')` color:>
+<li> <a href="/robots/<:val `color`:>"><:val `color`:></a></li>
+<:/for:></ul>
+</body>
+</html>
