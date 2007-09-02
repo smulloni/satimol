@@ -356,8 +356,6 @@ class FilterTag(BlockTag):
                 s='OUTPUT.write(__h.stml.get_formatter(%s)(__t._filter_stack.pop()))'
                 codeStream.writeln(s % filter)
                  
-            codeStream.dedent()
-
 
 class SpoolTag(FilterTag):
     """
