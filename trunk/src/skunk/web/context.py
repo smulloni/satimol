@@ -9,8 +9,9 @@ Context=threading.local()
 
 InitContextHook=Hook()
 
+CleanupContextHook=Hook()
+
 def initContext(environ, force=False):
-    
     if force or not Context.__dict__:
         Context.request=webob.Request(environ)
         Context.response=webob.Response(content_type=Configuration.defaultContentType,
@@ -19,6 +20,7 @@ def initContext(environ, force=False):
         InitContextHook(Context, environ)
 
 def cleanupContext():
+    CleanupContextHook()
     Context.__dict__.clear()
             
 class ContextMiddleware(object):
@@ -33,7 +35,7 @@ class ContextMiddleware(object):
 
     def __call__(self, environ, start_response):
         Configuration.scope(environ)
-        initContext(environ)
+        initContext(environ, True)
         try:
             return self.app(environ, start_response)
         finally:
