@@ -304,3 +304,10 @@ def _test():
 
 if __name__=='__main__':
     _test()
+
+
+__all__=['DispatchingFileServer', 'StaticFileServer',
+         'DEFAULT_HIDDEN_FILE_PATTERNS',
+         'DEFAULT_INDEX_DOCUMENTS',
+         'DEFAULT_FILE_DISPATCHERS'
+         ]

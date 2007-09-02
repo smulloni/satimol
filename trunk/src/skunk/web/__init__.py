@@ -11,4 +11,10 @@ Configuration.setDefaults(
 
 del Configuration
 
-
+from skunk.web.fileserver import *
+from skunk.web.context import *
+from skunk.web.controller import *
+try:
+    from skunk.web.routing import *
+except ImportError:
+    pass

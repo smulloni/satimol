@@ -80,7 +80,4 @@ def handle_error(status, environ, start_response, *args, **kwargs):
     handler=get_http_exception(status, *args, **kwargs)
     return handler(environ, start_response)
 
-    
-    
-
-                                     
+__all__=['DEFAULT_ERRORS']
