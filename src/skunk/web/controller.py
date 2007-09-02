@@ -26,7 +26,7 @@ def _interpret_response(res):
 
     Types accepted:
 
-    - a webob.Response
+    - a webob.Response or callable
     - None, in which case Context.response is returned if it has a body,
       and otherwise, a 404
     - a string, which is set to the body of Context.response and the latter
@@ -39,6 +39,9 @@ def _interpret_response(res):
     
     """
     if isinstance(res, webob.Response):
+        return res
+    elif callable(res):
+        # should be a WSGI application
         return res
     ctxt_res=Context.response
     if res is None:
@@ -123,7 +126,6 @@ def dispatch(environ, *args, **kwargs):
         res=meth(*args, **kwargs)
     except webob.exc.HTTPException, e:
         res=e
-    log.debug('got response %s', res)
     return _interpret_response(res)
 
 class Punt(Exception):
