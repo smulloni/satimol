@@ -86,7 +86,7 @@ def dispatch_from_environ(environ, next_app=None):
 
 def dispatch(environ, *args, **kwargs):
     log.debug("in dispatch")
-    controller_name=kwargs.get('controller')
+    controller_name=kwargs.pop('controller', None)
     if not controller_name:
         log.debug("no controller found")
         return
@@ -96,7 +96,6 @@ def dispatch(environ, *args, **kwargs):
         log.warn('no such controller found: %s', controller_name)
         return
     if isinstance(controller, basestring):
-        log.debug('greetings')
         try:
             controller=import_from_string(controller)
         except ImportError:
@@ -104,8 +103,7 @@ def dispatch(environ, *args, **kwargs):
                                       comment="couldn't import controller %s" % controller)
     else:
         log.debug("got a non-string for controller: %s", controller)
-    log.debug("survived to this point")
-    action=kwargs.get('action', 'index')
+    action=kwargs.pop('action', 'index')
     reqmeth=environ['REQUEST_METHOD']
     if reqmeth=='HEAD':
         reqmeth='GET'
@@ -141,12 +139,16 @@ class ControllerServer(object):
             res=dispatch_from_environ(environ)
         except Punt:
             res=None
-        if res is None and self.wrapped_app:
-            return self.wrapped_app(environ, start_response)
-        else:
-            return handle_error(httplib.NOT_FOUND,
-                                environ,
-                                start_response)
+
+        if res is None:
+            if self.wrapped_app:
+                return self.wrapped_app(environ, start_response)
+            else:
+                return handle_error(httplib.NOT_FOUND,
+                                    environ,
+                                    start_response)
+            
+        return res(environ, start_response)
             
         
             
