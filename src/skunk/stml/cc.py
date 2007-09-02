@@ -10,10 +10,12 @@ will work nicely for you; or
   python -m skunk/stml/cc -o outfile.py mycomponent.comp
 
 """
-
+import logging
 import optparse
 import os
 import sys
+
+logging.basicConfig(level=logging.CRITICAL)
 
 from skunk.stml.comp import STMLFileComponent
 

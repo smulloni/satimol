@@ -1,4 +1,7 @@
 from cStringIO import StringIO
+import logging
+
+log=logging.getLogger(__name__)
 
 class PythonCodeOutputStream(object):
     """
@@ -47,7 +50,10 @@ class PythonCodeOutputStream(object):
         """
         decrement the indent level
         """
-        self.indent_level-=tabs
+        if self.indent_level < tabs:
+            log.warn("negative dedent!")
+        self.indent_level-= tabs
+        
 
     def write(self, s):
         """
@@ -69,6 +75,10 @@ class PythonCodeOutputStream(object):
         writes a line, adding a line return
         """
         self.write(s+'\n')
+
+    def comment(self, comment):
+        for line in comment.split('\n'):
+            self.writeln('# %s' % line)
 
     def tell(self):
         return self.outputStream.tell()
