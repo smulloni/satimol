@@ -19,8 +19,8 @@ def initContext(environ, force=False):
                                         server=Configuration.serverIdentification)
         InitContextHook(Context, environ)
 
-def cleanupContext():
-    CleanupContextHook()
+def cleanupContext(environ):
+    CleanupContextHook(Context, environ)
     Context.__dict__.clear()
             
 class ContextMiddleware(object):
@@ -39,7 +39,7 @@ class ContextMiddleware(object):
         try:
             return self.app(environ, start_response)
         finally:
-            cleanupContext()
+            cleanupContext(environ)
             Configuration.trim()
     
     
