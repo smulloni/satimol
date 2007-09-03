@@ -22,6 +22,8 @@ class ScopeManager(object):
         self._matchers=[]
         # overrides added by scoping
         self._overlay=local().__dict__
+        # internal use for keeping track of what files are being loaded
+        self._loadstack=[]
 
     def setDefaults(self, **kw):
         """
@@ -66,7 +68,7 @@ class ScopeManager(object):
         if len(kw)==1 and 'globals' in kw:
             ourglobals=kw['globals']
         else:
-            ourglobals={}
+            ourglobals=self._get_load_namespace()
         for f in files:
             f=os.path.abspath(f)
             fp=open(f)
@@ -78,6 +80,8 @@ class ScopeManager(object):
         """
         load user configuration from a Python string
         """
+        if namespace is None:
+            namespace=self._get_load_namespace()
         self._load_string(astring, namespace)
         self._mash()
 
@@ -108,7 +112,13 @@ class ScopeManager(object):
                 self._userconfig[k]=d[k]
         self._mash()
 
-    def _load_string(self, astring, namespace=None, filename='<config>'):
+    def _load_string(self, astring, namespace=None, filename=None):
+        fakefile=filename is None
+        if fakefile:
+            filename='<config>'
+        else:
+            self._loadstack.append(filename)
+        
         code_obj=compile(astring, filename, 'exec')
         if namespace is None:
             namespace={}
@@ -117,6 +127,8 @@ class ScopeManager(object):
         exec code_obj in namespace, env
         for key in (k for k in env if not k.startswith('_')):
             self._userconfig[key]=env[key]
+        if not fakefile:
+            self._loadstack.pop()
 
     def reset(self):
         """
@@ -138,6 +150,27 @@ class ScopeManager(object):
     def __getattr__(self, k):
         return getattr(self._data, k)
 
+    def _get_load_namespace(self):
+        
+        def Scope(*matchers):
+            self._matchers.extend(matchers)
+            
+        def Include(filename):
+            # get file in which this is included.
+            lastfile=self._loadstack[-1]
+            self.load(os.path.join(os.path.dirname(lastfile), filename))
+
+        def Regex(param, val, *kids, **kw):
+            return RegexMatcher(param, val, *kids, **kw)
+
+        def Glob(param, val, *kids, **kw):
+            return GlobMatcher(param, val, *kids, **kw)
+
+        def Equal(param, val, *kids, **kw):
+            return StrictMatcher(param, val, *kids, **kw)
+
+        return locals()
+        
             
 class ScopeMatcher(object):
     
@@ -180,13 +213,13 @@ class GlobMatcher(ScopeMatcher):
 
 class RegexMatcher(ScopeMatcher):
 
-    def __init__(self, match_obj, *children, **overlay):
+    def __init__(self, param, match_obj, *children, **overlay):
         # OK to pass regex flags as (pattern, re.I)
         if isinstance(match_obj, (list, tuple)):
             match_obj=re.compile(*match_obj)
         else:
             match_obj=re.compile(match_obj)
-        ScopeMatcher.__init__(self, match_obj, *children, **overlay)
+        ScopeMatcher.__init__(self, param, match_obj, *children, **overlay)
 
 
     def _match(self, other):

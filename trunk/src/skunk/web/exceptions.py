@@ -6,7 +6,6 @@ from webob.exc import HTTPInternalServerError, HTTPNotFound, status_map
 from skunk.cache import NO
 from skunk.config import Configuration
 from skunk.components import stringcomp
-from skunk.util.decorators import rewrap
 
 DEFAULT_ERRORS=status_map.copy()
 
@@ -50,27 +49,6 @@ Configuration.setDefaults(errorHandlers=DEFAULT_ERRORS,
                           notFoundPage=None,
                           showTraceback=True)
 
-def errorcatcher(wsgiapp):
-    """
-    a decorator that catches wsgi errors.
-    """
-    def newfunc(environ, start_response):
-        try:
-            retval = wsgiapp(environ, start_response)
-        except:
-            info = sys.exc_info()
-            def newstart(status, headers, exc_info=info):
-                return start_response(status, headers, exc_info)
-            exc=get_http_exception(httplib.INTERNAL_SERVER_ERROR)
-            return exc(environ, newstart)
-        else:
-            # retval is an iterator, we could wrap it
-            # to catch errors in iteration. @TBD
-            return retval
-            
-    return rewrap(wsgiapp, newfunc)
-
-
 def get_http_exception(status, *args, **kwargs):
     handlerclass=Configuration.errorHandlers[status]
     handler=handlerclass(*args, **kwargs)
@@ -80,4 +58,4 @@ def handle_error(status, environ, start_response, *args, **kwargs):
     handler=get_http_exception(status, *args, **kwargs)
     return handler(environ, start_response)
 
-__all__=['DEFAULT_ERRORS']
+__all__=['DEFAULT_ERRORS', 'get_http_exception']
