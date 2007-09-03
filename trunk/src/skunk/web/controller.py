@@ -138,19 +138,24 @@ class ControllerServer(object):
 
     def __call__(self, environ, start_response):
         try:
-            res=dispatch_from_environ(environ)
-        except Punt:
-            res=None
+            try:
+                res=dispatch_from_environ(environ)
+            except Punt:
+                res=None
 
-        if res is None:
-            if self.wrapped_app:
-                return self.wrapped_app(environ, start_response)
-            else:
-                return handle_error(httplib.NOT_FOUND,
-                                    environ,
-                                    start_response)
-            
-        return res(environ, start_response)
+            if res is None:
+                if self.wrapped_app:
+                    return self.wrapped_app(environ, start_response)
+                else:
+                    return handle_error(httplib.NOT_FOUND,
+                                        environ,
+                                        start_response)
+
+            return res(environ, start_response)
+        except:
+            return handle_error(httplib.INTERNAL_SERVER_ERROR,
+                                environ,
+                                start_response)
             
         
 __all__=['expose', 'Punt', 'ControllerServer']            
