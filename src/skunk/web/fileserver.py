@@ -85,17 +85,20 @@ class FileServerBase(object):
             return webob.Request(environ)
 
     def __call__(self, environ, start_response):
-        request=self.get_request(environ)
         try:
+            request=self.get_request(environ)
             path, realpath, statinfo=self.check_path(request.path)
+            app=self.serve_file(path, realpath, statinfo, request)
+            if app:
+                return app(environ, start_response)
+            exc=get_http_exception(httplib.NOT_FOUND)
+            return exc(environ, start_response)
         except webob.exc.HTTPException, exc:
             return exc(environ, start_response)
-            
-        app=self.serve_file(path, realpath, statinfo, request)
-        if app:
-            return app(environ, start_response)
-        exc=get_http_exception(httplib.NOT_FOUND)
-        return exc(environ, start_response)
+        except:
+            return handle_error(httplib.INTERNAL_SERVER_ERROR,
+                                environ,
+                                start_response)
     
     def serve_file(self, path, realpath, statinfo, request):
         raise NotImplementedError
