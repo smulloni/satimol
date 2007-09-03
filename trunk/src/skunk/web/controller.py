@@ -67,6 +67,10 @@ def _interpret_response(res):
             return get_http_exception(res)
         except KeyError:
             pass
+
+    # deal with a dict here -- requires a template mechanism
+    # @TBD
+    
     # last resort
     try:
         ctxt_res.body=str(res)
@@ -115,7 +119,9 @@ def dispatch(environ, *args, **kwargs):
     if not meth:
         meth=getattr(controller, action, None)
     if not meth:
-        log.debug("no controller action found (looked for action %s in controller %s)", action, controller)
+        log.debug(("no controller action found "
+                   "(looked for action %s in controller %s)"),
+                  action, controller)
         return 
 
     if not getattr(meth, 'exposed', False):
@@ -160,9 +166,3 @@ class ControllerServer(object):
         
 __all__=['expose', 'Punt', 'ControllerServer']            
                                 
-        
-        
-
-    
-    
-    

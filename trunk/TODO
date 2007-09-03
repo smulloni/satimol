@@ -1,0 +1,25 @@
+- add template functionality to @expose - use buffet?
+- add content_type functionality to @expose -- automatic json marshalling?
+- auth
+- rewrite ?
+- sessions ?
+- db connection management -- there is already a hook, and I'm not sure 
+  there is any reason for special services for this.
+- stml buffet plugin
+
+# if we move away from requiring writing a top-level script:
+- per request middleware composition (would be useful anyway)
+- services 
+- bootstrap (load configuration from somewhere, load services)
+- paster-type script for creating instances.
+- swpython-like script that loads the application environment (with configuration).
+
+- skunk.net -- the old daemon or variant thereof;
+  wrappers around flup, cherrypy, paste, wsgiref;
+  mod_skunkweb support.
+
+
+TESTING:
+- try embedding in pylons.
+- use webtest for tests.
+ 
