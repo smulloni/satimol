@@ -23,3 +23,4 @@ TESTING:
 - try embedding in pylons.
 - use webtest for tests.
  
+My examples are just development artifacts, should replace with better ones later.
