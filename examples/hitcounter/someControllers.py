@@ -1,4 +1,5 @@
 import datetime
+import os
 
 import pydo
 
@@ -8,12 +9,13 @@ from skunk.web.context import Context
 def initDB():
     pydo.initAlias('fumanchu', 'sqlite3', dict(database='hit.db'),
                    pool=False)
-    create_sql="CREATE TABLE hits (id INTEGER NOT NULL PRIMARY KEY, hit_at TIMESTAMP, remote_ip VARCHAR(15))"
-    dbi=pydo.getConnection('fumanchu')
-    c=dbi.cursor()
-    c.execute(create_sql)
-    c.close()
-    dbi.commit()
+    if not os.path.exists('hit.db'):
+        create_sql="CREATE TABLE hits (id INTEGER NOT NULL PRIMARY KEY, hit_at TIMESTAMP, remote_ip VARCHAR(15))"
+        dbi=pydo.getConnection('fumanchu')
+        c=dbi.cursor()
+        c.execute(create_sql)
+        c.close()
+        dbi.commit()
     
 initDB()
 
@@ -61,7 +63,7 @@ class HomeController(object):
             for hit in allhits:
                 yield "<tr><td>%s</td><td>%s</td><td>%s</td></tr>" % (
                     hit.id, hit.hit_at.isoformat(), hit.remote_ip)
-                yield "</body></html>"
+            yield "</body></html>"
         else:
             yield "no hits"
         

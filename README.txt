@@ -7,9 +7,12 @@
 Overview
 ========
 
-"Satimol" is a nickname for the SkunkWeb 4 project, a complete rewrite
-of those parts of SkunkWeb 3 that make sense to bring forward into the
-modern Python web development world.
+"Satimol" is SkunkWeb 4, the latest incarnation of the SkunkWeb_
+application server, refactored into a set of libraries and WSGI_
+applications.
+
+.. _SkunkWeb: http://skunkweb.sourceforge.net/
+.. _WSGI: http://wsgi.org/wsgi
 
 Highlights include:
 
@@ -66,10 +69,14 @@ want to know about STML.
 skunk.web
 =========
 
-DispatchingFileServer is an active page implementation for STML (and
-potentially other things).  
+This is the application server proper, implemented as a series of WSGI
+components: an active page implementation for STML, a static file
+server that supports X-Sendfile_, and a controller framework.
 
-Coming up, an MVC framework, and a deployment system.
+.. _X-Sendfile: http://blog.lighttpd.net/articles/2006/07/02/x-sendfile
+
+
+
 
 License
 =======

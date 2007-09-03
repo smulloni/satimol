@@ -26,8 +26,10 @@
     4  Flow Control
     5  Comments
     6  Component Tags
-    7  Logging
-    8  Using Other Tag Libraries sectnum::
+    7  Layout Templates
+      7.1  Slot Configuration and slotconf.pydcmp
+    8  Logging
+    9  Using Other Tag Libraries
 
 
 Introduction
@@ -517,6 +519,62 @@ of the formats accepted for this -- TO BE DONE.]
   return values from data components written in STML.  ``skunk.stml``
   does not support writing data components in STML, and hence does not
   implement ``<:return:>``.*
+
+
+Layout Templates
+----------------
+
+STML supports sharing common layouts through layout templates and
+slots, a very simple system that accomplishes much of what other
+templating engines achieve through template inheritance.
+
+A layout template is an STML component that renders a complete
+document, but with empty slots in it that can be filled in various
+ways. 
+
+A slot is a named placeholder in such a template.
+
+At render time, the templating engine will look for a dictionary named
+``SLOTS``  in the current namespace to populate these slots; if not
+found, it will create a slot dictionary by looking at the slot
+configuration (see below).
+
+If no data is found for a particular slot, or if the data is ``None``
+or an empty string, no output will be produced for that slot.  If the
+data is a string, that string will be output.  If it is a callable, it
+will be called with any arguments you have specified in the template,
+and the output inserted.
+
+This system is implemented through two tags: ``<:slot:>`` and
+``<:calltemplate:>``.
+
+::
+  <:slot slotname [kwarg=val ...]:>
+
+The slot tag is a placeholder for a slot in the layout template; it
+should be given a unique slotname.  Any additional parameters passed
+in will be available to any code that runs to render the slot.
+
+
+:: 
+
+ <:calltemplate [template=None] [slotmap=SLOTS] [kwarg=val ...]:>
+
+The calltemplate tag is used for STML documents that want to invoke
+the layout template; in typical use it is called without arguments at
+the very end of the document.  
+
+Slot Configuration and ``slotconf.pydcmp``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To configure slots, create in the root directory of your site a file
+called ``slotconf.pydcmp``, a Python data component that returns a
+slot dictionary.  Every key you wish to be able to override should be
+present in this dictionary; all keys should be valid Python
+identifiers and be lowercase.  Empty values are perfectly OK. This
+data component will be called with one parameter, ``path``. 
+
+
 
 Logging
 -------
