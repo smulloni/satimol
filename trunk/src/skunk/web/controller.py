@@ -4,59 +4,73 @@ import sys
 import types
 
 from pkg_resources import iter_entry_points
+import simplejson
 import webob    
 
 from skunk.config import Configuration
+from skunk.util.decorators import rewrap
 from skunk.util.importutil import import_from_string
 from skunk.web.context import Context
 from skunk.web.exceptions import get_http_exception, handle_error
 
-Configuration.setDefaults(defaultTemplatingEngine='stml')
+Configuration.setDefaults(defaultTemplatingEngine='stml',
+                          defaultControllerTemplate=None)
 
 log=logging.getLogger(__name__)
 
-def expose(template=None,
-           **response_attrs):
+def expose(**response_attrs):
+    """
+    a decorator which marks a controller function or method
+    as a public action.  It can also be used to set attributes
+    on the webob.Response.
+    """
     def wrapper(func):
         func.exposed=True
-        if template:
-            func.template=template
-        # possibly useless buffet-related parameters that
-        # I'm supporting, but not loudly ....
-        format=response_attrs.pop('format', None)
-        if format:
-            func.format=format
-        fragment=response_attrs.pop('fragment', None)
-        if fragment:
-            func.fragment=fragment
         func.response_attrs=response_attrs
         return func
     return wrapper
 
-TEMPLATING_ENGINES=dict((x.name, x.load()) for x in \
-                        iter_entry_points('python.templating.engines'))
+def template(template=None,
+             **template_opts):
+    """
+    a decorator which indicates that the function should use a
+    template.
+    """
+    def wrapper(func):
+        def newfunc(*args, **kwargs):
+            data=func(*args, **kwargs)
+            if not isinstance(data, dict):
+                # you decided not to use a template, bye-bye
+                return data
+            tmpl=(template or
+                  Configuration.defaultControllerTemplate or
+                  Configuration.defaultTemplate)
+            if not tmpl:
+                raise ValueError('no template specified or found in configuration')
+            t=tmpl.split(':', 1)
+            if len(t)==1:
+                enginename=Configuration.defaultTemplatingEngine
+            else:
+                enginename, tmpl=t
+            del t
+            engineclass=TEMPLATING_ENGINES[enginename]
+            
+            extra_vars_func=template_opts.pop('extra_vars_func', None)
+            format=template_opts.pop('format', None)
+            fragment=template_opts.pop('fragment', None)
+            engine=engineclass(extra_vars_func, template_opts)
+            return engine.render(data, format, fragment, template)
+        return rewrap(func, newfunc)
+    return wrapper
 
-def _render_template(func, info):
-    template= getattr(func, 'template', None)
-    if not template:
-        log.error("no template specified!")
-        raise ValueError("no template specified")
-    if template:
-        t=template.split(':', 1)
-        if len(t)==1:
-            enginename=Configuration.defaultTemplatingEngine
-        else:
-            enginename, template=t
-    engineclass=TEMPLATING_ENGINES[enginename]
-    
-    # currently no way of passing in constructor arguments;
-    # when I start using other plugins this will need to be
-    # made more flexible @TBD
-    engine=engineclass()
-    format=getattr(func, 'format', None)
-    fragment=getattr(func, 'fragment', None)
-    return engine.render(info, format, fragment, template)
-    
+TEMPLATING_ENGINES={}
+for x in iter_entry_points('python.templating.engines'):
+    try:
+        TEMPLATING_ENGINES[x.name] = x.load()
+    except:
+        log.warn("couldn't load templating engine %s", x.name)
+del x    
+
 def _interpret_response(res, meth):
     """
     coerces the response into a webob.Response object.
@@ -64,15 +78,21 @@ def _interpret_response(res, meth):
     Types accepted:
 
     - a webob.Response or callable
-    - None, in which case Context.response is returned if it has a body,
-      and otherwise, a 404
+    - None, in which case Context.response is returned 
     - a string, which is set to the body of Context.response and the latter
       is returned
     - a unicode string (similar)
+    - if content type is application/json and type is list, tuple, or dict,
+      data will be json-ed and put in Context.response, which is returned
     - a list, tuple or generator -- becomes Context.response.app_iter
+    - an integer is taken to be an HTTP status code and a default error
+      response is generated.  An invalid code will cause an error.
 
-    Support for return a dict should be added, and invoking the templating
-    system directly.
+    Anything else is turned in a string with str().
+
+    This will also set attributes on response that have been set with the
+    @expose decorator, but only if the context response is used; if another
+    response is returned, those values will be ignored.
     
     """
     if isinstance(res, webob.Response):
@@ -82,25 +102,24 @@ def _interpret_response(res, meth):
         return res
     ctxt_res=Context.response
     if res is None:
-        if ctxt_res.app_iter or ctxt_res.body:
-            # something has been done to it
-            return ctxt_res
-        else:
-            # perhaps this implicit behavior is
-            # less good than simply returning
-            # an empty response.... @REEXAMINE
-            return None
+        log.warn("returning None from controller action, returning context response")
+        return ctxt_res
     # some response metadata may be set in the expose decorator
     # (perhaps too much -- for instance, "body".  If you do that,
-    # it's your problem.
+    # it's your problem)
     response_attrs=getattr(meth, 'response_attrs', {})
     for k, v in response_attrs.iteritems():
         setattr(ctxt_res, k, v)
+    
     if isinstance(res, str):
         ctxt_res.body=res
         return ctxt_res
     elif isinstance(res, unicode):
         ctxt_res.unicode_body=res
+        return ctxt_res
+    elif ctxt_res.content_type=='application/json' \
+             and isinstance(res, (list,tuple,dict)):
+        ctxt_res.body=simplejson.dumps(res)
         return ctxt_res
     elif isinstance(res, (list,tuple,types.GeneratorType)):
         ctxt_res.app_iter=res
@@ -109,22 +128,16 @@ def _interpret_response(res, meth):
         try:
             return get_http_exception(res)
         except KeyError:
-            log.warn("returning unrecognized http status code from controller: %d", res)
-            return None
-    elif isinstance(res, dict):
-        if res.content_type == 'application/json':
-            ctxt_res.body=simplejson.dumps(res)
-            return ctxt_res
-        else:
-            body=_render_template(meth, res)
-            ctxt_res.body=body
-            return ctxt_res
-    
+            log.error("returning unrecognized http status code from controller: %d",
+                     res)
+            raise
     # last resort
-    if res:
-        ctxt_res.body=str(res)
-        return ctxt_res
-    return get_http_exception(httplib.NOT_FOUND)    
+    log.debug(("got unusual type, %s, as return value from action, "
+               "stringifying as last resort"),
+              type(res))
+    ctxt_res.body=str(res)
+    return ctxt_res
+
 
 def dispatch_from_environ(environ, next_app=None):
     """
@@ -212,5 +225,5 @@ class ControllerServer(object):
                                 start_response)
             
         
-__all__=['expose', 'Punt', 'ControllerServer']            
+__all__=['expose', 'template', 'Punt', 'ControllerServer', 'TEMPLATING_ENGINES']            
                                 
