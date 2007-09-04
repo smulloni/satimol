@@ -1,0 +1,9 @@
+<html>
+<head>
+<title><:slot title:></title>
+</head>
+<body>
+<h1><:slot title:></h1>
+<:slot main:>
+</body>
+</html>

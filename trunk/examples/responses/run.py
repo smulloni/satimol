@@ -10,27 +10,22 @@ from skunk.web import (ContextMiddleware,
                        RoutingMiddleware,
                        DispatchingFileServer)
 
-
-
-class Controller(object):
+class BlowController(object):
 
     @expose()
     def blowup(self):
         raise ValueError, "hey there!"
 
-    
-
-
 logging.basicConfig(level=logging.DEBUG)
-
-Configuration.load_kw(componentRoot=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'files'),
+comproot=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'files')
+Configuration.load_kw(componentRoot=comproot,
                       errorPage='/500.html',
                       notFoundPage='/404.html',
                       routes=[
-    (('blowup', '/'), {'controller' : 'blow',
-                      'action' : 'blowup'})
+    (('blowup', '/blowup'), {'controller' : 'blow',
+                             'action' : 'blowup'})
     ],
-                      controllers={'blow' : Controller()},
+                      controllers={'blow' : BlowController()},
                       MvcOn=True,
                       showTraceback=True)
 
