@@ -18,9 +18,9 @@ from skunk.stml.tags import EmptyTag, BaseTags
 from skunk.stml.tagutils import get_temp_name
 
 Configuration.setDefaults(slotConfigFilename='slotconf.pydcmp',
-                          defaultTemplateFilename='template.stml',
+                          defaultTemplate='template.stml',
                           skinDir='/comp/skins',
-                          defaultSkin='default'
+                          skin='default'
                           )
 _slotlocal=threading.local()
 def get_slot_stack():
@@ -76,12 +76,12 @@ class ComponentSlot(object):
 
 def getTemplatePath(template=None):
     if template is None:
-        template=Configuration.defaultTemplateFilename
+        template=Configuration.defaultTemplate
     return getSkinComponentPath(template)
 
 def getSkinComponentPath(compname):
     return os.path.join(Configuration.skinDir,
-                        Configuration.defaultSkin,
+                        Configuration.skin,
                         compname)
 
 def getConfiguredSlots(path=None):

@@ -16,6 +16,6 @@ from skunk.stml.valformat import *
 from skunk.stml.tags import *
 from skunk.stml.comp import *
 from skunk.stml.layout import *
-
+from skunk.stml.buffetplugin import *
 
 
