@@ -1,0 +1,8 @@
+#summary SkunkWeb Web Application Framework
+
+= SkunkWeb =
+
+See its [http://skunkweb.sf.net/ homepage].
+
+
+
