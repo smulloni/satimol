@@ -51,10 +51,11 @@ setup(author="Jacob Smullyan",
     [python.templating.engines]
     stml = skunk.stml.buffetplugin:BuffetPlugin
     """,
-      extras_require= {
-    'web' : 'webob',
-    'routes' : 'routes',
-    'decoratortools' : 'decoratortools'
-    },
+      install_requires=[
+    'webob',
+    'simplejson',
+    'routes',
+    'decoratortools'
+    ],
       package_dir={'' : 'src'},
       test_suite='nose.collector')
