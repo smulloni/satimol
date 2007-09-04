@@ -1,6 +1,6 @@
 DOCUTILS_HTML=/usr/bin/rst2html.py
 
-stml.html:  stml.txt
-	${DOCUTILS_HTML} -v -s --stylesheet=style.css stml.txt stml.html
+manual.html:  manual.txt
+	${DOCUTILS_HTML} -v -s --stylesheet=style.css manual.txt manual.html
 clean: 
-	-rm stml.html
+	-rm manual.html

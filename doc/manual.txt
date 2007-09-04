@@ -1,8 +1,8 @@
-.. -*-rst-*-
+.. -*- rst -*-
 
-====================
- STML User's Manual
-====================
+===================
+ SkunkWeb 4 Manual
+===================
 
 :Author: Jacob Smullyan
 :Contact: jsmullyan@gmail.com
@@ -11,25 +11,64 @@
 :Copyright: 2004, 2007 Jacob Smullyan
 
 .. contents:: Table of Contents
-..
-    1  Introduction
-    2  The Structure of STML Tags
-    3  Setting and Showing Things
-      3.1  ``<:set:>``
-      3.2  ``<:default:>``
-      3.3  ``<:del:>``
-      3.4  ``<:call:>``
-      3.5  ``<:val:>``
-      3.6  ``<:import:>``
-      3.7  ``<:filter:>`` and ``<:spool:>``
-      3.8  ``<:args:>``
-    4  Flow Control
-    5  Comments
-    6  Component Tags
-    7  Layout Templates
-      7.1  Slot Configuration and slotconf.pydcmp
-    8  Logging
-    9  Using Other Tag Libraries
+
+Overview
+========
+
+SkunkWeb 4 is the latest incarnation of the SkunkWeb_ application
+server, refactored into a set of libraries and WSGI_ applications.
+
+.. _SkunkWeb: http://skunkweb.sourceforge.net/
+.. _WSGI: http://wsgi.org/wsgi
+
+Highlights include:
+
+* skunk.cache_, a useful cache for memoization.
+* skunk.config_, a configuration system which keeps configuration in
+  Python, rather than using INI files or XML.
+* skunk.stml_, an implementation of STML (Skunk Template Markup
+  Language).
+* skunk.web_, a collection of WSGI applications for skunk
+  applications.
+
+skunk.cache
+===========
+
+The ``skunk.cache`` package is a simple memoization facility for
+callables with in-memory, on-disk, and memcached backends.
+
+An Example
+----------
+
+Typical usage::
+
+  >>> from skunk.cache import *
+  >>> mycache=DiskCache('/tmp/mycache')
+  >>> cache=CacheDecorator(mycache, defaultPolicy=YES)
+  >>> @cache(expiration="5m")
+  ... def foo(x, y):
+  ...    print "actually calculating ...."
+  ...    return x + y
+  >>> foo(5, 5)
+  actually calculating ....
+  10
+  >>> foo(5, 5)
+  10
+  
+
+Cache Expiration
+----------------
+
+To be explained.
+
+skunk.config
+============
+
+@TBD
+
+skunk.stml
+==========
+
 
 
 Introduction
@@ -549,6 +588,7 @@ This system is implemented through two tags: ``<:slot:>`` and
 ``<:calltemplate:>``.
 
 ::
+
   <:slot slotname [kwarg=val ...]:>
 
 The slot tag is a placeholder for a slot in the layout template; it
@@ -654,4 +694,32 @@ attribute.
   colons in tag names.*
 
 
+
+
+
+skunk.web
+=========
+
+This is the application server proper, implemented as a series of WSGI
+components: an active page implementation for STML, a static file
+server that supports X-Sendfile_, and a controller framework.
+
+.. _X-Sendfile: http://blog.lighttpd.net/articles/2006/07/02/x-sendfile
+
+STML Active Pages
+-----------------
+
+@TBD.
+
+Controllers
+-----------
+
+@TBD
+
+License
+=======
+
+Satimol is available either under the GPL (v3 or later) or a BSD
+license.  See COPYING and LICENSE in the source distribution for the
+exact wording of these licenses.
 
