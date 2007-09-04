@@ -54,12 +54,130 @@ Typical usage::
   10
   >>> foo(5, 5)
   10
+
+Normally you'd want to use the decorator, but you can also the same
+result by using the ``call()`` method of a cache object::
+
+  >>> from skunk.cache import *
+  >>> mycache=MemoryCache()
+  >>> def foo(x, y):
+  ...    print "actually calculating ...."
+  ...    return x+ y
+  >>> entry=mycache.call(foo, (100, 50), FORCE)
+  actually calculating ....
+  >>> entry.value
+  150
+
+Cache Policies and Expiration
+-----------------------------
+
+When you call a function via the cache, you can specify one of several
+cache policies:
+
+NO
+  This bypasses the cache, neither reading from it nor writing to it.
+YES
+  This accepts a valid (unexpired) cache entry, and if one is not
+  found, will create one.
+FORCE
+  This forces recalculation and creates a new cache entry regardless
+  of whether there was a valid unexpired one before.
+OLD
+  This will return any data found in the cache, regardless of whether
+  it is expired.
+DEFER
+  This will, if a cache entry is expired, return it anyway and then
+  schedule a recalculation of the function by placing it on a queue.
+  It is up to the user's application to handle the queue.
+
+The cache expiration -- how long the cache entry should live -- can be 
+specified either by the caller, by passing an ``expiration`` parameter, 
+or by the callee, by setting an ``__expiration__`` attribute on itself
+or on the value it returns.  The expiration can be specified either as
+a duration, an absolute or relative expiration time, or a list of such
+values, expressed in a number of possible formats.
+
+To specify a duration, a string may be used containing a sequence of
+integer-letter pairs specifying units of time:
+
+*N* [d|h|m|s]
+   cache for *N* days|hours|minutes|seconds
+
+You may use any combination of these integer-letter pairs,
+in any order, and the durations will be summed.  For example, 
+``"3h2m8s"`` means "three hours, two minutes and eight seconds". 
+
+.. 
+  If you specify \texttt{until}, the value can be one
+  of many things, all intended to indicate a point in time
+  until which to cache. The \texttt{until} argument accepts
+  any one of the following:
+
+  \begin{itemize}
+  \item A string of the form \texttt{"hh:mi"} or
+  \texttt{"hh:mi:ss"}, specifying a time in hours, minutes,
+  and optionally seconds, on a 24-hour clock. This tells SkunkWeb
+  to cache until the next occurrence of that time. If you say
+  \texttt{until=06:00}, and SkunkWeb executes the component at 
+  05:30, it will cache for 30 minutes; but if SkunkWeb executes the 
+  component at 07:00, it will cache for 23 hours until the next
+  day at 06:00.
   
+  \item A string of the form \texttt{":mi"}, meaning 
+  ``minutes after the hour''. This tells SkunkWeb to cache until
+  that many minutes after the current hour, or after the
+  next hour if those minutes have already passed.
+  
+  \item A \texttt{DateTime} object, as produced by functions in the
+  \texttt{Date} or \texttt{DateTime} modules, or retrieved
+  from a database using skunk.org's \texttt{SQL} module
+  or SQL personality of SkunkWeb.
 
-Cache Expiration
-----------------
+  \item A string of the form \texttt{"yyyy-mm-dd"},
+  \texttt{"yyyy-mm-dd hh:mi"}, or \texttt{"yyyy-mm-dd hh:mi:ss"}.
+  These strings specify dates according to the ISO 
+  format supported by the \texttt{Date} module.
+  
+  \item A string of the form \texttt{"mm/dd/yyyy"},
+  \texttt{"mm/dd/yyyy hh:mi"}, or \texttt{"mm/dd/yyyy hh:mi:ss"}.
+  These strings specify dates according to a common
+  U.S. date format. These string forms are only supported
+  for backward compatibility; if you must use a string
+  specifying an explicit date, use the ISO format above.
+  
+  \item A \texttt{RelativeDateTime} object from the \texttt{DateTime}
+  module. these objects allow you to specify very complex
+  relative dates, such as ``the first Sunday of next month
+  at noon''. Be careful with these objects: unless you
+    read the documentation fully, you can end up constructing
+    a \texttt{RelativeDateTime} that moves you \emph{backwards} in time.
+    If you do that, the \texttt{<:cache:>} will raise
+    an exception telling you of your mistake.
+  
+    \item A tuple or list containing ANY combination of the above
+    items. In this case, SkunkWeb will evaluate all items, and choose
+    the result that is nearest the current date/time for 
+    the cache expiration. This means you can do neat complex
+  cache control:
 
-To be explained.
+  \begin{verbatim}# expires the cache at 0, 15, 30, and 45 minutes after the hour
+  <:cache until=`(":00", ":15", ":30", ":45")`:>
+
+  # expires the cache at 15 minutes after the hour,
+  # and also at 06:00 every day, and also
+  # at 5pm (17:00) on Sundays.
+  <:import DateTime "RelativeDateTime":>
+  <:cache until=`(":15", "06:00", 
+     RelativeDateTime(
+          weekday=0, hour=17, 
+          minute=0, second=0))`:>
+
+  \end{verbatim}
+  \end{itemize}
+
+
+
+
 
 skunk.config
 ============
