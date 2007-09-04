@@ -3,6 +3,7 @@ import logging
 import sys
 import types
 
+from pkg_resources import iter_entry_points
 import webob    
 
 from skunk.config import Configuration
@@ -10,17 +11,53 @@ from skunk.util.importutil import import_from_string
 from skunk.web.context import Context
 from skunk.web.exceptions import get_http_exception, handle_error
 
+Configuration.setDefaults(defaultTemplatingEngine='stml')
+
 log=logging.getLogger(__name__)
 
-def expose(**kwargs):
+def expose(template=None,
+           **response_attrs):
     def wrapper(func):
         func.exposed=True
-        for k,v in kwargs.iteritems():
-            setattr(func, k, v)
+        if template:
+            func.template=template
+        # possibly useless buffet-related parameters that
+        # I'm supporting, but not loudly ....
+        format=response_attrs.pop('format', None)
+        if format:
+            func.format=format
+        fragment=response_attrs.pop('fragment', None)
+        if fragment:
+            func.fragment=fragment
+        func.response_attrs=response_attrs
         return func
     return wrapper
+
+TEMPLATING_ENGINES=dict((x.name, x.load()) for x in \
+                        iter_entry_points('python.templating.engines'))
+
+def _render_template(func, info):
+    template= getattr(func, 'template', None)
+    if not template:
+        log.error("no template specified!")
+        raise ValueError("no template specified")
+    if template:
+        t=template.split(':', 1)
+        if len(t)==1:
+            enginename=Configuration.defaultTemplatingEngine
+        else:
+            enginename, template=t
+    engineclass=TEMPLATING_ENGINES[enginename]
     
-def _interpret_response(res):
+    # currently no way of passing in constructor arguments;
+    # when I start using other plugins this will need to be
+    # made more flexible @TBD
+    engine=engineclass()
+    format=getattr(func, 'format', None)
+    fragment=getattr(func, 'fragment', None)
+    return engine.render(info, format, fragment, template)
+    
+def _interpret_response(res, meth):
     """
     coerces the response into a webob.Response object.
 
@@ -53,7 +90,13 @@ def _interpret_response(res):
             # less good than simply returning
             # an empty response.... @REEXAMINE
             return None
-    elif isinstance(res, str):
+    # some response metadata may be set in the expose decorator
+    # (perhaps too much -- for instance, "body".  If you do that,
+    # it's your problem.
+    response_attrs=getattr(meth, 'response_attrs', {})
+    for k, v in response_attrs.iteritems():
+        setattr(ctxt_res, k, v)
+    if isinstance(res, str):
         ctxt_res.body=res
         return ctxt_res
     elif isinstance(res, unicode):
@@ -66,16 +109,21 @@ def _interpret_response(res):
         try:
             return get_http_exception(res)
         except KeyError:
-            pass
-
-    # deal with a dict here -- requires a template mechanism
-    # @TBD
+            log.warn("returning unrecognized http status code from controller: %d", res)
+            return None
+    elif isinstance(res, dict):
+        if res.content_type == 'application/json':
+            ctxt_res.body=simplejson.dumps(res)
+            return ctxt_res
+        else:
+            body=_render_template(meth, res)
+            ctxt_res.body=body
+            return ctxt_res
     
     # last resort
-    try:
+    if res:
         ctxt_res.body=str(res)
-    except:
-        pass
+        return ctxt_res
     return get_http_exception(httplib.NOT_FOUND)    
 
 def dispatch_from_environ(environ, next_app=None):
@@ -132,7 +180,7 @@ def dispatch(environ, *args, **kwargs):
         res=meth(*args, **kwargs)
     except webob.exc.HTTPException, e:
         res=e
-    return _interpret_response(res)
+    return _interpret_response(res, meth)
 
 class Punt(Exception):
     pass

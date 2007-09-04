@@ -44,11 +44,13 @@ setup(author="Jacob Smullyan",
       version=__version__,
       keywords="skunk skunkweb STML templating cache WSGI",
       packages=find_packages('src', exclude='tests'),
-      entry_points= {
-    'console_scripts' : [
-    'stmlcc = skunk.stml.cc:main'
-    ]
-    },
+      entry_points= """
+    [console_scripts]
+    stmlcc = skunk.stml.cc:main
+
+    [python.templating.engines]
+    stml = skunk.stml.buffetplugin:BuffetPlugin
+    """,
       extras_require= {
     'web' : 'webob',
     'routes' : 'routes',

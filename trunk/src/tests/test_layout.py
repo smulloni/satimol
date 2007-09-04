@@ -60,3 +60,18 @@ class TestLayout(object):
         assert 'HEAD' in res
         assert 'MAIN' in res
         assert 'FOOT' in res
+
+    def test_buffet1(self):
+        template="""
+        <:slot slot1:>
+        <:slot slot2:>
+        """
+        tp=S.getTemplatePath()
+        translated=translate_path(Cfg.componentRoot, tp)
+        os.makedirs(os.path.dirname(translated))
+        open(translated, 'w').write(template)
+        plugin=S.BuffetPlugin()
+        res=plugin.render(info=dict(SLOTS=dict(slot1='hello', slot2='goodbye')))
+        assert 'hello' in res
+        assert 'goodbye' in res
+        
