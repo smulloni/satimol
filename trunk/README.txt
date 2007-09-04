@@ -26,7 +26,8 @@ You can use easy_install::
 
   easy_install satimol
 
-Or from a tarball or SVN checkout::
+(Actually, that is a lie, as it hasn't been released yet.)  Or from a
+tarball or SVN checkout::
 
   python setup.py install
 
