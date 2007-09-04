@@ -1,0 +1,10 @@
+<:set TITLE "Error Response Test":>
+<:spool MAIN:>
+<p>Please be so good as to enjoy the following error pages:
+<ol>
+<li>a custom <a href="/foobar">404 Not Found</a> page</li>
+<li>a custom <a href="/blowup">500 Internal Server Error</a> page</li>
+</ol>
+</p> 
+<:/spool:>
+<:calltemplate:>
