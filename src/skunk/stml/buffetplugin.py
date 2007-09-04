@@ -20,7 +20,7 @@ class BuffetPlugin(object):
         "Renders the template to a string using the provided info."
         info=info.copy()
         if template is None:
-            template=Configuration.defaultTemplateFilename
+            template=Configuration.defaultTemplate
         if self.get_extra_vars_func:
             info.update(self.get_extra_vars_func())
         return call_component(template,
