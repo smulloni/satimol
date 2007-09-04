@@ -5,7 +5,9 @@
 - sessions ?
 - db connection management -- there is already a hook, and I'm not sure 
   there is any reason for special services for this.
-- stml buffet plugin
+- skunk.net -- the old daemon or variant thereof;
+  wrappers around flup, cherrypy, paste, wsgiref;
+  mod_skunkweb support.
 
 # if we move away from requiring writing a top-level script:
 - per request middleware composition (would be useful anyway)
@@ -14,9 +16,6 @@
 - paster-type script for creating instances.
 - swpython-like script that loads the application environment (with configuration).
 
-- skunk.net -- the old daemon or variant thereof;
-  wrappers around flup, cherrypy, paste, wsgiref;
-  mod_skunkweb support.
 
 
 TESTING:
