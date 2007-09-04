@@ -1,25 +1,24 @@
-/*
-:Author: David Goodger
-:Contact: goodger@users.sourceforge.net
-:date: $Date: 2004/02/27 22:47:26 $
-:version: $Revision: 1.1 $
-:copyright: This stylesheet has been placed in the public domain.
-
-Default cascading style sheet for the HTML output of Docutils.
-*/
-
 body {
-  background-color: #eeeeee;
-  font-family: Arial, sans-serif;
+  margin-top: 5px;
+  margin-left: 50px;
+  margin-right: 50px;
+  width: 750px;
+  
+  padding: 0;
+  border: 0;
+  color: #530;
+
+  font: 10pt verdana, "Bitstream Vera Sans", geneva, arial, helvetica, helve, sans-serif; 
 }
 
-em {
+/* em {
   font-family: Times New Roman, Times, serif;
-}
+}*/
 
-li {
-  list-style-type: circle;
-}
+#table-of-contents { 
+  margin-top: 0px;
+ }
+
 
 a.target {
   color: blue }
@@ -29,7 +28,7 @@ a.toc-backref {
   color: black }
 
 a:hover {
-  background-color: #cccccc;
+  /* background-color: #cccccc; */
 }
 
 cite {
@@ -50,12 +49,15 @@ div.abstract p.topic-title {
 
 div.attention, div.caution, div.danger, div.error, div.hint,
 div.important, div.note, div.tip, div.warning {
-  // margin: 2em ;
-  background-color: #cccccc;
-  align: center;
-  //width: 60%;
-  // border: medium outset ;
-  padding: 3px;
+  margin-left: 4em ;
+  padding: 8px;
+  text-align: justify;
+  font-size: smaller;
+  width: 80%;
+  border-top: 1px dashed #d33;
+  border-bottom: 1px dashed #d33;
+
+
  }
 
 div.attention p.admonition-title, div.caution p.admonition-title,
@@ -105,14 +107,15 @@ div.topic {
   margin: 2em }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: Helvetica, Arial, sans-serif;
-  border: thin solid black;
-  -moz-border-radius: 8px;
+  /* font-family: Helvetica, Arial, sans-serif; */
+  /* border: thin solid black; */
+  /* -moz-border-radius: 4px; */
   padding: 4px;
+  /* background-color: lightgrey; */
  }
 
-h1 {
-  background-color: #444499;
+/* h1 {
+  background-color: lightgrey;
   border: medium solid black;
   color: #ffffff;
 }
@@ -127,13 +130,15 @@ h3, h4, h5, h6 {
   background-color: #cccccc;
   color: #000000;
 }
+*/
 
 h1.title {
   text-align: center;
-  background-color: #444499;
-  color: #eeeeee;
-  border: thick solid black;
-  -moz-border-radius: 20px;
+  /* background-color: #444499; */
+  color: #000;
+  border-bottom: thick solid black;
+  /* border: thick solid black; */
+  /* -moz-border-radius: 20px; */
  }
 
 h2.subtitle {
@@ -160,6 +165,10 @@ ol.lowerroman {
 ol.upperroman {
   list-style: upper-roman }
 
+p { 
+ text-align: justify;
+ }
+
 p.caption {
   font-style: italic }
 
@@ -176,6 +185,10 @@ p.label {
 p.topic-title {
   font-weight: bold }
 
+pre { 
+   font-size: smaller;
+    }
+
 pre.address {
   margin-bottom: 0 ;
   margin-top: 0 ;
@@ -189,7 +202,7 @@ pre.line-block {
 pre.literal-block, pre.doctest-block {
   margin-left: 2em ;
   margin-right: 2em ;
-  background-color: #ffffff;
+  background-color: #EEE;
   border: thin black solid;
   padding: 5px;
 }
@@ -223,7 +236,10 @@ table.citation {
   padding-left: 0.5ex }
 
 table.docinfo {
-  margin: 2em 4em }
+  font-size: 80%;
+  margin-bottom: 25px;
+  padding-bottom: 0;
+}
 
 table.footnote {
   border-left: solid thin black ;
@@ -243,14 +259,17 @@ th.docinfo-name, th.field-name {
   white-space: nowrap }
 
 h1 tt, h2 tt, h3 tt, h4 tt, h5 tt, h6 tt {
-  font-size: 100% }
+  font-size: 80%; }
 
 tt {
   //background-color: #eeeeee;
   color: #000066 }
 
 ul.auto-toc {
-  list-style-type: none }
+  list-style-type: none;
+  font-size: 90%;
+
+}
 
 // Highlighting:
 
@@ -268,7 +287,3 @@ ul.auto-toc {
 .htmlstring {color: #006600;}
 .htmlattr {color: #000000;}
 
-.stmlfunction {color: #000077; font-weight: bold}
-.stmlattr {color: #000000;}
-.stmlstring {color: #006600;}
-.stmlexpr {color: #004444;}

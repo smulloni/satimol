@@ -7,75 +7,33 @@
 Overview
 ========
 
-"Satimol" is SkunkWeb 4, the latest incarnation of the SkunkWeb_
-application server, refactored into a set of libraries and WSGI_
+"Satimol" is SkunkWeb 4, the latest incarnation of the SkunkWeb
+application server, refactored into a set of libraries and WSGI
 applications.
 
-.. _SkunkWeb: http://skunkweb.sourceforge.net/
-.. _WSGI: http://wsgi.org/wsgi
+This is alpha code.  Please post bugs on 
 
-Highlights include:
+  http://code.google.com/p/satimol
 
-* skunk.cache_, a useful cache for memoization.
-* skunk.config_, a configuration system which keeps configuration in
-  Python, rather than using INI files or XML.
-* skunk.stml_, an implementation of STML (Skunk Template Markup
-  Language).
-* skunk.web_, a collection of WSGI applications for skunk
-  applications.
+or on the SkunkWeb mailing list::
 
-skunk.cache
-===========
+  https://lists.sourceforge.net/lists/listinfo/skunkweb-list
 
-The ``skunk.cache`` package is a simple memoization facility for
-callables with in-memory, on-disk, and memcached backends.
+Installation
+------------
 
-An Example
-----------
+You can use easy_install::
 
+  easy_install satimol
 
-Typical usage::
+Or from a tarball or SVN checkout::
 
-  >>> from skunk.cache import *
-  >>> mycache=DiskCache('/tmp/mycache')
-  >>> cache=CacheDecorator(mycache, defaultPolicy=YES)
-  >>> @cache(expiration="5m")
-  ... def foo(x, y):
-  ...    print "actually calculating ...."
-  ...    return x + y
-  >>> foo(5, 5)
-  actually calculating ....
-  10
-  >>> foo(5, 5)
-  10
-  
+  python setup.py install
 
-Cache Expiration
-----------------
+Use
+---
 
-To be explained.
-
-skunk.config
-============
-
-Ah, sometime I'll explain this too.
-
-skunk.stml
-==========
-
-See stml.txt in the doc/ directory for everything you might
-want to know about STML.
-
-skunk.web
-=========
-
-This is the application server proper, implemented as a series of WSGI
-components: an active page implementation for STML, a static file
-server that supports X-Sendfile_, and a controller framework.
-
-.. _X-Sendfile: http://blog.lighttpd.net/articles/2006/07/02/x-sendfile
-
-
+See the examples/ directory to get started, and the manual in doc/.
 
 
 License
