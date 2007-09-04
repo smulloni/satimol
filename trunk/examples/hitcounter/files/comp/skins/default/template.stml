@@ -3,10 +3,11 @@
 <title>SaTiMoL (SkunkWeb <:val `__version__`:>)</title>
 </head>
 <body>
-  <h1>Welcome to SkunkWeb 4</h1>
-  <img src="skunk.jpg" alt="SkunkWeb" />
+  <h1>Welcome to SkunkWeb <:val `__version__`:></h1>
+<div id="main">
   <:slot main:>
-
+</div>
+<div class="footer">nice footer here</div>
 </body>
 </html>
 
