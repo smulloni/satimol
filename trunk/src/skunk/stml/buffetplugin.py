@@ -10,7 +10,7 @@ class BuffetPlugin(object):
     def load_template(self, templatename):
         "Find a template specified in python 'dot' notation."
         # we don't need to do anything here.
-        pass
+        return templatename
 
     def render(self,
                info,
