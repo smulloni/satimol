@@ -59,7 +59,7 @@ def template(template=None,
             format=template_opts.pop('format', None)
             fragment=template_opts.pop('fragment', None)
             engine=engineclass(extra_vars_func, template_opts)
-            return engine.render(data, format, fragment, template)
+            return engine.render(data, format, fragment, tmpl)
         return rewrap(func, newfunc)
     return wrapper
 
