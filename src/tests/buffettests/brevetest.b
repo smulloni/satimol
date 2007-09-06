@@ -1,3 +1,4 @@
-html [ head [ title [ mytitle ] ]
-       body [ p [ message ] ]
+html [
+    head [ title [ mytitle ] ],
+    body [ p [ message ] ]
     ]

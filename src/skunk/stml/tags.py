@@ -1,3 +1,5 @@
+import webob.exc
+
 from skunk.config import Configuration
 from skunk.stml.exceptions import STMLSyntaxError
 from skunk.stml.parser import Expr, Node
@@ -5,6 +7,11 @@ from skunk.stml.signature import Signature
 from skunk.stml.valformat import ValFormatRegistry
 from skunk.stml.log import debug
 from skunk.stml.tagutils import get_temp_name
+
+def _redirect_func(location, status):
+    raise webob.exc.status_map(status)(location=location)
+
+Configuration.setDefaults(redirectFunc=_redirect_func)
 
 class BlockTag(Node):
     """
@@ -513,6 +520,14 @@ class ArgsTag(EmptyTag):
     modules=[('skunk.util.argextract', '_argextract'),
              ('skunk.config', 'config')]
 
+    def write_get_args(self, codeStream, argsvar):
+        """
+        do whatever is necessary to get form/querystring args
+        out of the environment.  The default works for
+        skunk.web.
+        """
+        codeStream.writeln('%s=REQUEST.params.mixed()' % argsvar)
+
     def genCode(self, codeStream):
         wl=codeStream.writeln
         indent=codeStream.indent
@@ -526,7 +541,9 @@ class ArgsTag(EmptyTag):
         kwargs=self._parsed_args['kwargs']
         wl('%s = %r' % (argsvar, args))
         wl('%s = %r' % (kwargsvar, kwargs))
-        wl('%s=REQUEST.params.mixed()' % argsrcvar)
+        
+        self.write_get_args(codeStream, argsrcvar)
+        
         wl('try:')
         indent()
         wl('locals().update(__h._argextract.extract_args(%s, *%s, **%s))' \
@@ -537,7 +554,21 @@ class ArgsTag(EmptyTag):
         wl('del %s, %s, %s' % (argsrcvar, argsvar, kwargsvar))
         dedent()
 
+class RedirectTag(EmptyTag):
+    tagName="redirect"
+    signature=Signature('location', ('status', 301))
 
+    modules=[('skunk.config', 'config')]
+    
+    def write_redirect(self, codeStream, location, status):
+        codeStream.writeln('__h.config.Configuration.redirectFunc(%r, %r)' \
+                           % (location, status))
+
+    def genCode(self, codeStream):
+        location=self._parsed_args['location']
+        status=self._parsed_args['status']
+        self.write_redirect(codeStream, location, status)
+    
 class CacheTag(EmptyTag):
     tagName="cache"
     signature=Signature(('when', None))
