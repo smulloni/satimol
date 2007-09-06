@@ -1,15 +1,26 @@
+import logging
 import os
 
-from skunk.stml import BuffetPlugin
+from skunk.config import Configuration
 from skunk.web import template, TEMPLATING_ENGINES
 
+logging.basicConfig(level=logging.DEBUG)
+
+here=os.path.dirname(os.path.abspath(__file__))
 
 def test_stml():
-    pass
+    Configuration.load_kw(componentRoot=here)
+    @template('stml:/stmltest.stml')
+    def tester():
+        return dict(message="my message",
+                    mytitle="my title")
+    res=tester()
+    assert "my message" in res
+    assert "my title" in res
+
 
 if 'breve' in TEMPLATING_ENGINES:
     def test_breve():
-        here=os.path.dirname(os.path.abspath(__file__))
         @template('breve:%s/brevetest' % here,
                   format='html')
         def tester():
@@ -21,7 +32,14 @@ if 'breve' in TEMPLATING_ENGINES:
 
 if 'mako' in TEMPLATING_ENGINES:
     def test_mako():
-        pass
+        @template('mako:%s/makotest.html' % here, format='html', options=dict(directories=['/']))
+        def tester():
+            return dict(message='my message',
+                        mytitle='my title')
+        res=tester()
+        assert "my message" in res
+        assert "my title" in res
+
 
 if 'genshi' in TEMPLATING_ENGINES:
     def test_genshi():

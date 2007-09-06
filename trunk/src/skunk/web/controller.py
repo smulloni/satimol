@@ -3,7 +3,6 @@ import logging
 import sys
 import types
 
-from pkg_resources import iter_entry_points
 import simplejson
 import webob    
 
@@ -12,9 +11,6 @@ from skunk.util.decorators import rewrap
 from skunk.util.importutil import import_from_string
 from skunk.web.context import Context
 from skunk.web.exceptions import get_http_exception, handle_error
-
-Configuration.setDefaults(defaultTemplatingEngine='stml',
-                          defaultControllerTemplate=None)
 
 log=logging.getLogger(__name__)
 
@@ -29,47 +25,6 @@ def expose(**response_attrs):
         func.response_attrs=response_attrs
         return func
     return wrapper
-
-def template(template=None,
-             **template_opts):
-    """
-    a decorator which indicates that the function should use a
-    template.
-    """
-    def wrapper(func):
-        def newfunc(*args, **kwargs):
-            data=func(*args, **kwargs)
-            if not isinstance(data, dict):
-                # you decided not to use a template, bye-bye
-                return data
-            tmpl=(template or
-                  Configuration.defaultControllerTemplate or
-                  Configuration.defaultTemplate)
-            if not tmpl:
-                raise ValueError('no template specified or found in configuration')
-            t=tmpl.split(':', 1)
-            if len(t)==1:
-                enginename=Configuration.defaultTemplatingEngine
-            else:
-                enginename, tmpl=t
-            del t
-            engineclass=TEMPLATING_ENGINES[enginename]
-            
-            extra_vars_func=template_opts.pop('extra_vars_func', None)
-            format=template_opts.pop('format', None)
-            fragment=template_opts.pop('fragment', None)
-            engine=engineclass(extra_vars_func, template_opts)
-            return engine.render(data, format, fragment, tmpl)
-        return rewrap(func, newfunc)
-    return wrapper
-
-TEMPLATING_ENGINES={}
-for x in iter_entry_points('python.templating.engines'):
-    try:
-        TEMPLATING_ENGINES[x.name] = x.load()
-    except:
-        log.warn("couldn't load templating engine %s", x.name)
-del x    
 
 def _interpret_response(res, meth):
     """
@@ -225,5 +180,5 @@ class ControllerServer(object):
                                 start_response)
             
         
-__all__=['expose', 'template', 'Punt', 'ControllerServer', 'TEMPLATING_ENGINES']            
+__all__=['expose', 'Punt', 'ControllerServer']
                                 

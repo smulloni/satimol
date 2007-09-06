@@ -1,3 +1,7 @@
+- Improve buffet support by providing reasonable default template
+  options for each engine I've tested.
+- test TurboKid, TurboCheetah.
+
 For first alpha release:
 
 - document what exists:
