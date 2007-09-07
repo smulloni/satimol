@@ -45,5 +45,6 @@ goo: <:val `goo`:><br />
 <:/if:>
 </div>
 
+<p>Also, if you like you can see a <a href="/blowup.stml">custom error page</a>.</p>
 </body>
 </html>

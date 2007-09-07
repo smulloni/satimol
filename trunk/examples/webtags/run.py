@@ -13,7 +13,9 @@ from skunk.web import ContextMiddleware, DispatchingFileServer
 
 comproot=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'files')
 
-Configuration.load_kw(componentRoot=comproot)
+Configuration.load_kw(componentRoot=comproot,
+                      showTraceback=True,
+                      errorPage='/500.html')
 
 # we don't need a controller for this
 app=ContextMiddleware(DispatchingFileServer())
