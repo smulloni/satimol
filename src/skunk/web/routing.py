@@ -15,7 +15,7 @@ Configuration.setDefaults(MvcOn=False,
                           controllers={})
 
 def _redirect(url, status=httplib.MOVED_PERMANENTLY):
-    raise get_http_exception(status)(location=url)
+    raise get_http_exception(status, location=url)
 
 def initMapper(context, environ):
     if not Configuration.MvcOn:

@@ -2,6 +2,9 @@
   options for each engine I've tested.
 - test TurboKid, TurboCheetah.
 
+Bugs:
+- 500 errors for STML parsing don't produce tracebacks (or is showTracebacks off?)
+
 For first alpha release:
 
 - document what exists:

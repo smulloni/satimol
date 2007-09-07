@@ -9,7 +9,7 @@ from skunk.stml.log import debug
 from skunk.stml.tagutils import get_temp_name
 
 def _redirect_func(location, status):
-    raise webob.exc.status_map(status)(location=location)
+    raise webob.exc.status_map(status, location=location)()
 
 Configuration.setDefaults(redirectFunc=_redirect_func)
 
@@ -556,7 +556,8 @@ class ArgsTag(EmptyTag):
 
 class RedirectTag(EmptyTag):
     tagName="redirect"
-    signature=Signature('location', ('status', 301))
+    signature=Signature(('location', ('status', 301)))
+    _top=True
 
     modules=[('skunk.config', 'config')]
     
