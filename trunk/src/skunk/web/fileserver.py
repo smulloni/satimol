@@ -96,6 +96,7 @@ class FileServerBase(object):
         except webob.exc.HTTPException, exc:
             return exc(environ, start_response)
         except:
+            log.exception("error in serving file")
             return handle_error(httplib.INTERNAL_SERVER_ERROR,
                                 environ,
                                 start_response)

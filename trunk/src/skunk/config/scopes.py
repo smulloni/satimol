@@ -25,6 +25,10 @@ class ScopeManager(object):
         # internal use for keeping track of what files are being loaded
         self._loadstack=[]
 
+    def addMatcher(self, *matchers):
+        """ add one (or more) matchers to the manager) """
+        self._matchers.extend(matchers)
+
     def setDefaults(self, **kw):
         """
         set default values
