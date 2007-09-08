@@ -14,6 +14,16 @@ For first alpha release:
 
 Then:
 
+- application-specific configuration -- separate docroots for
+  applications, for instance, or application-specific configuration
+  overrides.  "Application" should go into the scope environ, and
+  there should be a way of specifying it -- one per context manager?
+  An application manager?  (This might also mean, by the way, that the
+  vfs would need to be introduced, because we'd back in the situation
+  of having product archives (eggs in this case) that might be
+  zipped.)  Without representing apps in this way, it is still
+  possible to have multiple ones, and to scope on the basis of path or
+  some other feature that distinguishes app
 - auth
 - rewrite ?
 - sessions 
