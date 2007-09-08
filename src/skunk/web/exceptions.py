@@ -1,3 +1,5 @@
+import logging
+import string
 import sys
 from traceback import format_exception
 
@@ -6,6 +8,8 @@ from webob.exc import HTTPInternalServerError, HTTPNotFound, status_map
 from skunk.cache import NO
 from skunk.config import Configuration
 from skunk.components import stringcomp
+
+log=logging.getLogger(__name__)
 
 DEFAULT_ERRORS=status_map.copy()
 
@@ -23,7 +27,6 @@ DEFAULT_ERRORS[404]=NotFound
 
 class InternalServerError(HTTPInternalServerError):
 
-
     def get_traceback(self):
         if Configuration.showTraceback:
             exc_type, exc_val, exc_traceback=sys.exc_info()
@@ -34,13 +37,22 @@ class InternalServerError(HTTPInternalServerError):
         return ''
 
     def html_body(self, environ):
+        tb=self.get_traceback()
         if Configuration.errorPage:
-            tb=self.get_traceback()
             return stringcomp(Configuration.errorPage,
                               traceback=tb)
         else:
-            return super(InternalServerError, self).html_body(environ)
-        
+            return self.default_500_body(tb)
+
+    def default_500_body(self, tb):
+        t=string.Template('<h2>$title</h2>$explanation<br />$detail<br /><pre>$traceback</pre>$comment')
+        args=dict(explanation=self.explanation or '',
+                  detail=self.detail or '',
+                  comment=self.comment or '',
+                  title=self.title,
+                  traceback=tb)
+        return t.substitute(args)
+              
     
 DEFAULT_ERRORS[500]=InternalServerError
 
