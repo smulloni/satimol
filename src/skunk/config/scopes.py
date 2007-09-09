@@ -164,6 +164,9 @@ class ScopeManager(object):
             lastfile=self._loadstack[-1]
             self.load(os.path.join(os.path.dirname(lastfile), filename))
 
+        def Predicate(pred, *kids, **kw):
+            return PredicateMatcher(pred, *kids, **kw)
+
         def Regex(param, val, *kids, **kw):
             return RegexMatcher(param, val, *kids, **kw)
 
@@ -197,6 +200,15 @@ class ScopeMatcher(object):
         subclasses should implement this.
         """
         raise NotImplementedError
+
+class PredicateMatcher(object):
+    def __init__(self, predicate, *children, **overlay):
+        self.predicate=predicate
+        self.children=children
+        self.overlay=overlay
+
+    def match(self, context):
+        return self.predicate(context)
 
 class StrictMatcher(ScopeMatcher):
 
