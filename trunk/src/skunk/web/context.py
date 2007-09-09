@@ -65,4 +65,5 @@ class ContextMiddleware(object):
 __all__=['Context',
          'InitContextHook',
          'CleanupContextHook',
+         'PreConfigHook',
          'ContextMiddleware']
