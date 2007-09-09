@@ -1,3 +1,8 @@
+"""
+
+This example demonstrates dispatch based on method. 
+
+"""
 import datetime
 import logging
 import os
