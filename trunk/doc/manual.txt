@@ -12,8 +12,8 @@
 
 .. contents:: Table of Contents
 
-Overview
-========
+Summary
+=======
 
 SkunkWeb 4 is the latest incarnation of the SkunkWeb_ application
 server, refactored into a set of libraries and WSGI_ applications.
@@ -30,6 +30,7 @@ Highlights include:
   Language).
 * skunk.web_, a collection of WSGI applications for skunk
   applications.
+
 
 skunk.cache
 ===========
@@ -107,76 +108,27 @@ You may use any combination of these integer-letter pairs,
 in any order, and the durations will be summed.  For example, 
 ``"3h2m8s"`` means "three hours, two minutes and eight seconds". 
 
-.. 
-  If you specify \texttt{until}, the value can be one
-  of many things, all intended to indicate a point in time
-  until which to cache. The \texttt{until} argument accepts
-  any one of the following:
+You may wish to cache a value until a particular (absolute) time.  You
+can use a value that directly represents an absolute timestamp for
+this, such as a ``datetime.datetime`` or ``mx.DateTime.DateTimeType``
+instance.  Or you can use a string in the format
+``yyyy-mm-dd[:hh:mm[:ss]]``.
 
-  \begin{itemize}
-  \item A string of the form \texttt{"hh:mi"} or
-  \texttt{"hh:mi:ss"}, specifying a time in hours, minutes,
-  and optionally seconds, on a 24-hour clock. This tells SkunkWeb
-  to cache until the next occurrence of that time. If you say
-  \texttt{until=06:00}, and SkunkWeb executes the component at 
-  05:30, it will cache for 30 minutes; but if SkunkWeb executes the 
-  component at 07:00, it will cache for 23 hours until the next
-  day at 06:00.
-  
-  \item A string of the form \texttt{":mi"}, meaning 
-  ``minutes after the hour''. This tells SkunkWeb to cache until
-  that many minutes after the current hour, or after the
-  next hour if those minutes have already passed.
-  
-  \item A \texttt{DateTime} object, as produced by functions in the
-  \texttt{Date} or \texttt{DateTime} modules, or retrieved
-  from a database using skunk.org's \texttt{SQL} module
-  or SQL personality of SkunkWeb.
+You can also specify a relative time, with objects like
+``mx.DateTime.RelativeDateTime`` and
+``dateutil.relativedelta.relativedelta``, and with strings like
+``hh:mm[:ss]`` or ``:mm[:ss]``
 
-  \item A string of the form \texttt{"yyyy-mm-dd"},
-  \texttt{"yyyy-mm-dd hh:mi"}, or \texttt{"yyyy-mm-dd hh:mi:ss"}.
-  These strings specify dates according to the ISO 
-  format supported by the \texttt{Date} module.
-  
-  \item A string of the form \texttt{"mm/dd/yyyy"},
-  \texttt{"mm/dd/yyyy hh:mi"}, or \texttt{"mm/dd/yyyy hh:mi:ss"}.
-  These strings specify dates according to a common
-  U.S. date format. These string forms are only supported
-  for backward compatibility; if you must use a string
-  specifying an explicit date, use the ISO format above.
-  
-  \item A \texttt{RelativeDateTime} object from the \texttt{DateTime}
-  module. these objects allow you to specify very complex
-  relative dates, such as ``the first Sunday of next month
-  at noon''. Be careful with these objects: unless you
-    read the documentation fully, you can end up constructing
-    a \texttt{RelativeDateTime} that moves you \emph{backwards} in time.
-    If you do that, the \texttt{<:cache:>} will raise
-    an exception telling you of your mistake.
-  
-    \item A tuple or list containing ANY combination of the above
-    items. In this case, SkunkWeb will evaluate all items, and choose
-    the result that is nearest the current date/time for 
-    the cache expiration. This means you can do neat complex
-  cache control:
+And finally, you can use a list or tuple of such values, freely
+intermixed; the nearest future time of those indicated will be the
+effective value.
 
-  \begin{verbatim}# expires the cache at 0, 15, 30, and 45 minutes after the hour
-  <:cache until=`(":00", ":15", ":30", ":45")`:>
+For example, if the expiration is stated as::
 
-  # expires the cache at 15 minutes after the hour,
-  # and also at 06:00 every day, and also
-  # at 5pm (17:00) on Sundays.
-  <:import DateTime "RelativeDateTime":>
-  <:cache until=`(":15", "06:00", 
-     RelativeDateTime(
-          weekday=0, hour=17, 
-          minute=0, second=0))`:>
+  (':00', ':30', '5m')
 
-  \end{verbatim}
-  \end{itemize}
-
-
-
+and the current time is 2:34 PM, the effective expiration will be 2:39
+PM.  But if the current time is 2:29 PM, the expiration will be 2:30 PM.
 
 
 skunk.config
@@ -813,8 +765,6 @@ attribute.
 
 
 
-
-
 skunk.web
 =========
 
@@ -833,6 +783,17 @@ Controllers
 -----------
 
 @TBD
+
+Running SkunkWeb Applications
+-----------------------------
+
+Currently, SkunkWeb 4 has no automatic bootstrapping code; the code
+that actually launches and runs an application needs to be written by
+the application programmer.  This will probably change, but it will
+always be possible to assemble applications manually; several examples
+of this are available in the ``/examples`` directory of the source
+distribution.
+
 
 License
 =======
