@@ -1,0 +1,18 @@
+import cgi
+import re
+
+from routes import url_for
+
+camelpat=re.compile(r'\b[A-Z][a-z]+([A-Z][a-z]+)+\b')
+
+def wiki_format(body):
+    body=cgi.escape(body)
+    def repl(match):
+        text=match.group(0)
+        url=url_for('littlewiki', title=text)
+        return '<a class="wikilink" href="%s">%s</a>' % (url, text)
+    body=camelpat.sub(repl, body).strip()
+    return '\n'.join(['<p>%s</p>' % x.strip() for x in body.split('\n\n')])
+    
+OUTPUT.write(wiki_format(body))
+
