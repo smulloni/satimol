@@ -1,0 +1,13 @@
+<:spool MAIN:>
+<h2>Hit Counter Example</h2>
+
+<p>
+The purpose of this example is to show how to add
+a hook for resource management to skunkweb.  
+</p>
+<p>
+See <a href="/hits/">/hits/</a> for a record of hits to this page.
+</p>
+<:/spool:>
+<:calltemplate:>
+

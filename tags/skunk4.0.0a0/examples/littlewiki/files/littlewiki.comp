@@ -1,0 +1,46 @@
+<:compargs body title message:><html>
+<head>
+<title>Little Wiki: <:val `title or 'Home'`:></title>
+<script type="text/javascript">
+function showEditForm() {
+  var editform=document.getElementById('editform');
+  if (editform) {
+    editform.style.display="block";
+  }
+}
+</script>
+<style type="text/css">
+#editform {display:none;}
+</style>
+</head>
+<body>
+<h1><:val `title`:></h1>
+<:if `message`:><p><em><:val `message`:></em></p><:/if:>
+<:if `body`:>
+<div id="bodywrapper">
+<:component format_body.pycomp body=`body`:>
+</div>
+<br />
+<button id="editbutton" onclick="showEditForm();">Edit</button>
+<div id="editform">
+<form method="POST">
+<div>
+<textarea name="body" cols="80" rows="30">
+<:val `body`:>
+</textarea><br />
+<input type="submit" value="Save Page" /> 
+<input type="reset" />
+</div>
+</form>
+</div>
+<:else:>
+<form method="POST">
+<div>
+<textarea name="body" cols="80" rows="30">
+
+</textarea><br />
+<input type="submit" value="Save Page" />
+</div>
+</form>
+<:/if:>
+</body>

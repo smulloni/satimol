@@ -1,0 +1,50 @@
+<:args submitted foo bar goo=`(int, 44)`:>
+<html>
+<head>
+<title>Args Test</title>
+<style type="text/css">
+#formdiv {
+
+}
+
+#displaydiv {
+
+}
+</style>
+</head>
+<body>
+<form method="GET">
+<div id="formdiv">
+<input type="hidden" value="1" name="submitted" />
+<label for="foo">foo</label>
+<input type="text" 
+       name="foo"
+       value="<:val `foo or ''`:>" />
+<br />
+<label for="bar">bar</label>
+<input type="text" 
+       name="bar"
+       value="<:val `bar or ''`:>" />
+<br />
+<label for="goo">goo</label>
+<input type="text" 
+       name="goo"
+       value="<:val `goo or ''`:>" />
+<br />
+<input type="submit" />
+</form>
+
+<div id="displaydiv">
+<:if `submitted`:>
+<p> Here's the data we're going to act on based on your submission.</p>
+<blockquote>
+foo: <:val `foo`:><br />
+bar: <:val `bar`:><br />
+goo: <:val `goo`:><br />
+</blockquote>
+<:/if:>
+</div>
+
+<p>Also, if you like you can see a <a href="/blowup.stml">custom error page</a>.</p>
+</body>
+</html>

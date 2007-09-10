@@ -1,0 +1,12 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head><:import skunk __version__:>
+<title>SaTiMoL (SkunkWeb <:val `__version__`:>)</title>
+</head>
+<body>
+  <h1>Welcome to SkunkWeb 4</h1>
+  <img src="skunk.jpg" alt="SkunkWeb" />
+  <:slot main:>
+
+</body>
+</html>
+

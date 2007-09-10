@@ -1,0 +1,1194 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.4: http://docutils.sourceforge.net/" />
+<title>SkunkWeb 4 Manual</title>
+<meta name="author" content="Jacob Smullyan" />
+<meta name="date" content="2007-09-09" />
+<meta name="copyright" content="2004, 2007 Jacob Smullyan" />
+<style type="text/css">
+
+body {
+  margin-top: 5px;
+  margin-left: 50px;
+  margin-right: 50px;
+  width: 750px;
+  
+  padding: 0;
+  border: 0;
+  color: #530;
+
+  font: 10pt verdana, "Bitstream Vera Sans", geneva, arial, helvetica, helve, sans-serif; 
+}
+
+/* em {
+  font-family: Times New Roman, Times, serif;
+}*/
+
+#table-of-contents { 
+  margin-top: 0px;
+ }
+
+
+a.target {
+  color: blue }
+
+a.toc-backref {
+  text-decoration: none ;
+  color: black }
+
+a:hover {
+  /* background-color: #cccccc; */
+}
+
+cite {
+  font-style: normal;
+  font-family: monospace;
+  font-weight: bold;
+}
+
+dd {
+  margin-bottom: 0.5em }
+
+div.abstract {
+  margin: 2em 5em }
+
+div.abstract p.topic-title {
+  font-weight: bold ;
+  text-align: center }
+
+div.attention, div.caution, div.danger, div.error, div.hint,
+div.important, div.note, div.tip, div.warning {
+  margin-left: 4em ;
+  padding: 8px;
+  text-align: justify;
+  font-size: smaller;
+  width: 80%;
+  border-top: 1px dashed #d33;
+  border-bottom: 1px dashed #d33;
+
+
+ }
+
+div.attention p.admonition-title, div.caution p.admonition-title,
+div.danger p.admonition-title, div.error p.admonition-title,
+div.warning p.admonition-title {
+  color: red ;
+  font-weight: bold ;
+  font-family: sans-serif;
+  text-align: center }
+
+div.hint p.admonition-title, div.important p.admonition-title,
+div.note p.admonition-title, div.tip p.admonition-title {
+  font-weight: bold ;
+  font-family: sans-serif;
+  text-align: center }
+
+div.dedication {
+  margin: 2em 5em ;
+  text-align: center ;
+  font-style: italic }
+
+div.dedication p.topic-title {
+  font-weight: bold ;
+  font-style: normal }
+
+div.figure {
+  margin-left: 2em }
+
+div.footer, div.header {
+  font-size: smaller }
+
+div.system-messages {
+  margin: 5em }
+
+div.system-messages h1 {
+  color: red }
+
+div.system-message {
+  border: medium outset ;
+  padding: 1em }
+
+div.system-message p.system-message-title {
+  color: red ;
+  font-weight: bold }
+
+div.topic {
+  margin: 2em }
+
+h1, h2, h3, h4, h5, h6 {
+  /* font-family: Helvetica, Arial, sans-serif; */
+  /* border: thin solid black; */
+  /* -moz-border-radius: 4px; */
+  padding: 4px;
+  /* background-color: lightgrey; */
+ }
+
+/* h1 {
+  background-color: lightgrey;
+  border: medium solid black;
+  color: #ffffff;
+}
+
+h2 {
+  background-color: #666666;
+  color: #ffffff;
+  border: medium solid black;
+}
+
+h3, h4, h5, h6 {
+  background-color: #cccccc;
+  color: #000000;
+}
+*/
+
+h1.title {
+  text-align: center;
+  /* background-color: #444499; */
+  color: #000;
+  border-bottom: thick solid black;
+  /* border: thick solid black; */
+  /* -moz-border-radius: 20px; */
+ }
+
+h2.subtitle {
+  text-align: center }
+
+hr {
+  width: 75% }
+
+ol.simple, ul.simple {
+  margin-bottom: 1em }
+
+ol.arabic {
+  list-style: decimal }
+
+ol.loweralpha {
+  list-style: lower-alpha }
+
+ol.upperalpha {
+  list-style: upper-alpha }
+
+ol.lowerroman {
+  list-style: lower-roman }
+
+ol.upperroman {
+  list-style: upper-roman }
+
+p { 
+ text-align: justify;
+ }
+
+p.caption {
+  font-style: italic }
+
+p.credits {
+  font-style: italic ;
+  font-size: smaller }
+
+p.first {
+  margin-top: 0 }
+
+p.label {
+  white-space: nowrap }
+
+p.topic-title {
+  font-weight: bold }
+
+pre { 
+   font-size: smaller;
+    }
+
+pre.address {
+  margin-bottom: 0 ;
+  margin-top: 0 ;
+  font-family: serif ;
+  font-size: 100% }
+
+pre.line-block {
+  font-family: serif ;
+  font-size: 100% }
+
+pre.literal-block, pre.doctest-block {
+  margin-left: 2em ;
+  margin-right: 2em ;
+  background-color: #EEE;
+  border: thin black solid;
+  padding: 5px;
+}
+
+span.classifier {
+  font-family: sans-serif ;
+  font-style: oblique }
+
+span.classifier-delimiter {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+span.interpreted {
+  font-family: sans-serif }
+
+span.option-argument {
+  font-style: italic }
+
+span.pre {
+  white-space: pre }
+
+span.problematic {
+  color: red }
+
+table {
+  margin-top: 0.5em ;
+  margin-bottom: 0.5em }
+
+table.citation {
+  border-left: solid thin gray ;
+  padding-left: 0.5ex }
+
+table.docinfo {
+  font-size: 80%;
+  margin-bottom: 25px;
+  padding-bottom: 0;
+}
+
+table.footnote {
+  border-left: solid thin black ;
+  padding-left: 0.5ex }
+
+td, th {
+  padding-left: 0.5em ;
+  padding-right: 0.5em ;
+  vertical-align: top }
+
+td > p:first-child, th > p:first-child {
+  margin-top: 0em }
+
+th.docinfo-name, th.field-name {
+  font-weight: bold ;
+  text-align: left ;
+  white-space: nowrap }
+
+h1 tt, h2 tt, h3 tt, h4 tt, h5 tt, h6 tt {
+  font-size: 80%; }
+
+tt {
+  //background-color: #eeeeee;
+  color: #000066 }
+
+ul.auto-toc {
+  list-style-type: none;
+  font-size: 90%;
+
+}
+
+// Highlighting:
+
+.function {color: #000077; font-weight: bold}
+.keyword {color: #004444;}
+.comment {color: #770000; font-style: italic}
+.normal {color: #000000;}
+.string {color: #006600;}
+.symbol {color: #000000;}
+
+.htmltag {color: #000077;}
+.htmlsymbol {color: #000000;}
+.htmlnormal {color: #000000;}
+.htmlcomment {color: #770000; font-style: italic}
+.htmlstring {color: #006600;}
+.htmlattr {color: #000000;}
+
+
+</style>
+</head>
+<body>
+<div class="document" id="skunkweb-4-manual">
+<h1 class="title">SkunkWeb 4 Manual</h1>
+<table class="docinfo" frame="void" rules="none">
+<col class="docinfo-name" />
+<col class="docinfo-content" />
+<tbody valign="top">
+<tr><th class="docinfo-name">Author:</th>
+<td>Jacob Smullyan</td></tr>
+<tr><th class="docinfo-name">Contact:</th>
+<td><a class="first last reference" href="mailto:jsmullyan&#64;gmail.com">jsmullyan&#64;gmail.com</a></td></tr>
+<tr><th class="docinfo-name">Date:</th>
+<td>2007-09-09</td></tr>
+<tr><th class="docinfo-name">Revision:</th>
+<td>187</td></tr>
+<tr><th class="docinfo-name">Copyright:</th>
+<td>2004, 2007 Jacob Smullyan</td></tr>
+</tbody>
+</table>
+<!-- -*- rst -*- -->
+<div class="contents topic">
+<p class="topic-title first"><a id="table-of-contents" name="table-of-contents">Table of Contents</a></p>
+<ul class="simple">
+<li><a class="reference" href="#summary" id="id2" name="id2">Summary</a></li>
+<li><a class="reference" href="#skunk-cache" id="id3" name="id3">skunk.cache</a><ul>
+<li><a class="reference" href="#an-example" id="id4" name="id4">An Example</a></li>
+<li><a class="reference" href="#cache-policies-and-expiration" id="id5" name="id5">Cache Policies and Expiration</a></li>
+</ul>
+</li>
+<li><a class="reference" href="#skunk-config" id="id6" name="id6">skunk.config</a></li>
+<li><a class="reference" href="#skunk-stml" id="id7" name="id7">skunk.stml</a><ul>
+<li><a class="reference" href="#introduction" id="id8" name="id8">Introduction</a></li>
+<li><a class="reference" href="#the-structure-of-stml-tags" id="id9" name="id9">The Structure of STML Tags</a></li>
+<li><a class="reference" href="#setting-and-showing-things" id="id10" name="id10">Setting and Showing Things</a><ul>
+<li><a class="reference" href="#set" id="id11" name="id11"><tt class="docutils literal"><span class="pre">&lt;:set:&gt;</span></tt></a></li>
+<li><a class="reference" href="#default" id="id12" name="id12"><tt class="docutils literal"><span class="pre">&lt;:default:&gt;</span></tt></a></li>
+<li><a class="reference" href="#del" id="id13" name="id13"><tt class="docutils literal"><span class="pre">&lt;:del:&gt;</span></tt></a></li>
+<li><a class="reference" href="#call" id="id14" name="id14"><tt class="docutils literal"><span class="pre">&lt;:call:&gt;</span></tt></a></li>
+<li><a class="reference" href="#val" id="id15" name="id15"><tt class="docutils literal"><span class="pre">&lt;:val:&gt;</span></tt></a></li>
+<li><a class="reference" href="#import" id="id16" name="id16"><tt class="docutils literal"><span class="pre">&lt;:import:&gt;</span></tt></a></li>
+<li><a class="reference" href="#filter-and-spool" id="id17" name="id17"><tt class="docutils literal"><span class="pre">&lt;:filter:&gt;</span></tt> and <tt class="docutils literal"><span class="pre">&lt;:spool:&gt;</span></tt></a></li>
+<li><a class="reference" href="#args" id="id18" name="id18"><tt class="docutils literal"><span class="pre">&lt;:args:&gt;</span></tt></a></li>
+</ul>
+</li>
+<li><a class="reference" href="#flow-control" id="id19" name="id19">Flow Control</a></li>
+<li><a class="reference" href="#comments" id="id20" name="id20">Comments</a></li>
+<li><a class="reference" href="#component-tags" id="id21" name="id21">Component Tags</a></li>
+<li><a class="reference" href="#layout-templates" id="id22" name="id22">Layout Templates</a><ul>
+<li><a class="reference" href="#slot-configuration-and-slotconf-pydcmp" id="id23" name="id23">Slot Configuration and <tt class="docutils literal"><span class="pre">slotconf.pydcmp</span></tt></a></li>
+</ul>
+</li>
+<li><a class="reference" href="#logging" id="id24" name="id24">Logging</a></li>
+<li><a class="reference" href="#using-other-tag-libraries" id="id25" name="id25">Using Other Tag Libraries</a></li>
+</ul>
+</li>
+<li><a class="reference" href="#skunk-web" id="id26" name="id26">skunk.web</a><ul>
+<li><a class="reference" href="#stml-active-pages" id="id27" name="id27">STML Active Pages</a></li>
+<li><a class="reference" href="#controllers" id="id28" name="id28">Controllers</a></li>
+<li><a class="reference" href="#running-skunkweb-applications" id="id29" name="id29">Running SkunkWeb Applications</a></li>
+</ul>
+</li>
+<li><a class="reference" href="#license" id="id30" name="id30">License</a></li>
+</ul>
+</div>
+<div class="section">
+<h1><a class="toc-backref" href="#id2" id="summary" name="summary">Summary</a></h1>
+<p>SkunkWeb 4 is the latest incarnation of the <a class="reference" href="http://skunkweb.sourceforge.net/">SkunkWeb</a> application
+server, refactored into a set of libraries and <a class="reference" href="http://wsgi.org/wsgi">WSGI</a> applications.</p>
+<p>Highlights include:</p>
+<ul class="simple">
+<li><a class="reference" href="#skunk-cache">skunk.cache</a>, a useful cache for memoization.</li>
+<li><a class="reference" href="#skunk-config">skunk.config</a>, a configuration system which keeps configuration in
+Python, rather than using INI files or XML.</li>
+<li><a class="reference" href="#skunk-stml">skunk.stml</a>, an implementation of STML (Skunk Template Markup
+Language).</li>
+<li><a class="reference" href="#skunk-web">skunk.web</a>, a collection of WSGI applications for skunk
+applications.</li>
+</ul>
+</div>
+<div class="section">
+<h1><a class="toc-backref" href="#id3" id="skunk-cache" name="skunk-cache">skunk.cache</a></h1>
+<p>The <tt class="docutils literal"><span class="pre">skunk.cache</span></tt> package is a simple memoization facility for
+callables with in-memory, on-disk, and memcached backends.</p>
+<div class="section">
+<h2><a class="toc-backref" href="#id4" id="an-example" name="an-example">An Example</a></h2>
+<p>Typical usage:</p>
+<blockquote>
+<pre class="doctest-block">
+&gt;&gt;&gt; from skunk.cache import *
+&gt;&gt;&gt; mycache=DiskCache('/tmp/mycache')
+&gt;&gt;&gt; cache=CacheDecorator(mycache, defaultPolicy=YES)
+&gt;&gt;&gt; &#64;cache(expiration=&quot;5m&quot;)
+... def foo(x, y):
+...    print &quot;actually calculating ....&quot;
+...    return x + y
+&gt;&gt;&gt; foo(5, 5)
+actually calculating ....
+10
+&gt;&gt;&gt; foo(5, 5)
+10
+</pre>
+</blockquote>
+<p>Normally you'd want to use the decorator, but you can also the same
+result by using the <tt class="docutils literal"><span class="pre">call()</span></tt> method of a cache object:</p>
+<blockquote>
+<pre class="doctest-block">
+&gt;&gt;&gt; from skunk.cache import *
+&gt;&gt;&gt; mycache=MemoryCache()
+&gt;&gt;&gt; def foo(x, y):
+...    print &quot;actually calculating ....&quot;
+...    return x+ y
+&gt;&gt;&gt; entry=mycache.call(foo, (100, 50), FORCE)
+actually calculating ....
+&gt;&gt;&gt; entry.value
+150
+</pre>
+</blockquote>
+</div>
+<div class="section">
+<h2><a class="toc-backref" href="#id5" id="cache-policies-and-expiration" name="cache-policies-and-expiration">Cache Policies and Expiration</a></h2>
+<p>When you call a function via the cache, you can specify one of several
+cache policies:</p>
+<dl class="docutils">
+<dt>NO</dt>
+<dd>This bypasses the cache, neither reading from it nor writing to it.</dd>
+<dt>YES</dt>
+<dd>This accepts a valid (unexpired) cache entry, and if one is not
+found, will create one.</dd>
+<dt>FORCE</dt>
+<dd>This forces recalculation and creates a new cache entry regardless
+of whether there was a valid unexpired one before.</dd>
+<dt>OLD</dt>
+<dd>This will return any data found in the cache, regardless of whether
+it is expired.</dd>
+<dt>DEFER</dt>
+<dd>This will, if a cache entry is expired, return it anyway and then
+schedule a recalculation of the function by placing it on a queue.
+It is up to the user's application to handle the queue.</dd>
+</dl>
+<p>The cache expiration -- how long the cache entry should live -- can be
+specified either by the caller, by passing an <tt class="docutils literal"><span class="pre">expiration</span></tt> parameter,
+or by the callee, by setting an <tt class="docutils literal"><span class="pre">__expiration__</span></tt> attribute on itself
+or on the value it returns.  The expiration can be specified either as
+a duration, an absolute or relative expiration time, or a list of such
+values, expressed in a number of possible formats.</p>
+<p>To specify a duration, a string may be used containing a sequence of
+integer-letter pairs specifying units of time:</p>
+<dl class="docutils">
+<dt><em>N</em> [d|h|m|s]</dt>
+<dd>cache for <em>N</em> days|hours|minutes|seconds</dd>
+</dl>
+<p>You may use any combination of these integer-letter pairs,
+in any order, and the durations will be summed.  For example,
+<tt class="docutils literal"><span class="pre">&quot;3h2m8s&quot;</span></tt> means &quot;three hours, two minutes and eight seconds&quot;.</p>
+<p>You may wish to cache a value until a particular (absolute) time.  You
+can use a value that directly represents an absolute timestamp for
+this, such as a <tt class="docutils literal"><span class="pre">datetime.datetime</span></tt> or <tt class="docutils literal"><span class="pre">mx.DateTime.DateTimeType</span></tt>
+instance.  Or you can use a string in the format
+<tt class="docutils literal"><span class="pre">yyyy-mm-dd[:hh:mm[:ss]]</span></tt>.</p>
+<p>You can also specify a relative time, with objects like
+<tt class="docutils literal"><span class="pre">mx.DateTime.RelativeDateTime</span></tt> and
+<tt class="docutils literal"><span class="pre">dateutil.relativedelta.relativedelta</span></tt>, and with strings like
+<tt class="docutils literal"><span class="pre">hh:mm[:ss]</span></tt> or <tt class="docutils literal"><span class="pre">:mm[:ss]</span></tt></p>
+<p>And finally, you can use a list or tuple of such values, freely
+intermixed; the nearest future time of those indicated will be the
+effective value.</p>
+<p>For example, if the expiration is stated as:</p>
+<pre class="literal-block">
+(':00', ':30', '5m')
+</pre>
+<p>and the current time is 2:34 PM, the effective expiration will be 2:39
+PM.  But if the current time is 2:29 PM, the expiration will be 2:30 PM.</p>
+</div>
+</div>
+<div class="section">
+<h1><a class="toc-backref" href="#id6" id="skunk-config" name="skunk-config">skunk.config</a></h1>
+<p>Many variables are configured in the skunk libraries by refering to
+attributes of a global configuration object,
+<tt class="docutils literal"><span class="pre">skunk.config.Configuration</span></tt>.  This object manages default values of
+config attributes, user overrides of same, and conditional overrides,
+which are invoked when a certain predicate obtains.</p>
+<p>Typical use:</p>
+<blockquote>
+<pre class="doctest-block">
+&gt;&gt;&gt; from skunk.config import Configuration, RegexMatcher
+&gt;&gt;&gt; C.setDefaults(test1='foo')
+&gt;&gt;&gt; C.test1
+'foo'
+&gt;&gt;&gt; C.load_kw(test1='hanky') # load user value
+&gt;&gt;&gt; C.test1
+'hanky'
+&gt;&gt;&gt; C.addMatcher(RegexMatcher('HTTP_HOST', 'shch', test1='grape'))
+&gt;&gt;&gt; C.scope({'HTTP_HOST', 'www.freshcheese.net'})
+&gt;&gt;&gt; C.test1
+'grape'
+&gt;&gt;&gt; C.trim() # discard scoping
+&gt;&gt;&gt; C.test1
+'hanky'
+&gt;&gt;&gt; C.reset() # discard user configuration
+&gt;&gt;&gt; C.test1
+'foo'
+</pre>
+</blockquote>
+<p>Conditional overrides, like the <tt class="docutils literal"><span class="pre">HTTP_HOST</span></tt> example above, are
+accomplished by adding a <tt class="docutils literal"><span class="pre">ScopeMatcher</span></tt>, an object with the
+following significant attributes:</p>
+<ul class="simple">
+<li>a predicate that must be fulfilled for it to affect anything;</li>
+<li>overrides (name-value pairs);</li>
+<li>sub-matchers that will also be invoked if the matcher's predicate is
+fulfilled.</li>
+</ul>
+<p>When the config object is &quot;scoped&quot; (by calling its <tt class="docutils literal"><span class="pre">scope()</span></tt>
+method), it is exposed to an &quot;environment&quot; to which its scope matchers
+may react, potentially rejiggering the object's effective values until
+it is &quot;trimmed&quot; (by calling <tt class="docutils literal"><span class="pre">trim()</span></tt>), at which all scope-related
+user configuration is dropped.  The environment is expected to be a
+dictionary; as used in SkunkWeb, it is the WSGI environment, with a
+few additional keys for convenience (<tt class="docutils literal"><span class="pre">'url'</span></tt> and <tt class="docutils literal"><span class="pre">'path'</span></tt>, which
+otherwise matchers would need to calculate).  Repeated calls to
+<tt class="docutils literal"><span class="pre">scope()</span></tt> with different data updates, but does not replace, the
+previous effective scope environment; the configuration after:</p>
+<pre class="literal-block">
+Configuration.trim()
+Configuration.scope({'bob' : 'present'})
+Configuration.scope({'harry' : 'absent'})
+</pre>
+<p>is the same as after doing:</p>
+<pre class="literal-block">
+Configuration.trim()
+Configuration.scope({'bob' : 'present', 'harry' : 'absent'})
+</pre>
+<p>If you want to be sure that the values you are passing to scope are
+totally determinative of the resulting user configuration, you must
+call <tt class="docutils literal"><span class="pre">trim()</span></tt> first to wipe out any previous configuration state.</p>
+<p>The most general matcher, <tt class="docutils literal"><span class="pre">PredicateMatcher</span></tt>, expects its
+predicate to be a function that takes one argument, the current
+scope environment, and returns a true or false value.</p>
+<p>There are several other predefined matchers that are convenient for
+many tasks, performing tests (for equality, and various types of
+string matching) on specified keys within the scope environment.</p>
+<p>User configuration can be added either from within Python modules via
+the <tt class="docutils literal"><span class="pre">load_kw</span></tt> method, as above, or loaded directly from a Python
+file or string that is executed in the namespace of the configuration
+object.  In the latter case, several convenient functions are bound in
+that namespace:</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Include:</th><td class="field-body">includes another config file</td>
+</tr>
+<tr class="field"><th class="field-name">Scope:</th><td class="field-body">add scope matchers</td>
+</tr>
+<tr class="field"><th class="field-name">Predicate:</th><td class="field-body">a <tt class="docutils literal"><span class="pre">PredicateMatcher</span></tt></td>
+</tr>
+<tr class="field"><th class="field-name">Regex:</th><td class="field-body">a <tt class="docutils literal"><span class="pre">RegexMatcher</span></tt></td>
+</tr>
+<tr class="field"><th class="field-name">Glob:</th><td class="field-body">a <tt class="docutils literal"><span class="pre">GlobMatcher</span></tt></td>
+</tr>
+<tr class="field"><th class="field-name">Equal:</th><td class="field-body">a <tt class="docutils literal"><span class="pre">StrictMatcher</span></tt> (tests for equality)</td>
+</tr>
+</tbody>
+</table>
+<p>A config file using these facilities might look like:</p>
+<pre class="literal-block">
+componentRoot='/var/www/roots/default'
+Scope(Glob('HTTP_HOST', 'www.pimppants.*',
+           Equal('HTTP_PORT', '8080',
+                 componentRoot='/var/www/roots/8080'),
+           componentRoot='/var/www/roots/pimppants'))
+Include('nighthats.conf')
+</pre>
+</div>
+<div class="section">
+<h1><a class="toc-backref" href="#id7" id="skunk-stml" name="skunk-stml">skunk.stml</a></h1>
+<div class="section">
+<h2><a class="toc-backref" href="#id8" id="introduction" name="introduction">Introduction</a></h2>
+<blockquote>
+<em>The version of STML described here is largely but not completely
+backwards-compatible variant of the version implemented in SkunkWeb
+3 (hereafter called &quot;STML3&quot;).  The most important differences will
+be noted below.</em></blockquote>
+<p>STML is an extensible, tag-based templating language based on (and
+compiled to) Python, especially well-suited for dynamic generation of
+HTML or XML in web applications.  It is tightly wedded to the
+<tt class="docutils literal"><span class="pre">skunk.components</span></tt> library, which permits code to be broken up into
+separate reusable components that can be invoked with arguments like
+functions, returning string output or arbitrary Python data, and the
+<tt class="docutils literal"><span class="pre">skunk.cache</span></tt> library, which permits the return values of such
+invocations to be cached in a highly flexible and easily controlled
+manner.</p>
+</div>
+<div class="section">
+<h2><a class="toc-backref" href="#id9" id="the-structure-of-stml-tags" name="the-structure-of-stml-tags">The Structure of STML Tags</a></h2>
+<p>STML tags are delimited by the character sequences <tt class="docutils literal"><span class="pre">&lt;:</span></tt> and <tt class="docutils literal"><span class="pre">:&gt;</span></tt>.
+Between these delimiters, the first word is the tag name which
+identifies what tag is being called:</p>
+<pre class="literal-block">
+&lt;:halt:&gt;
+</pre>
+<p>The tag name may be followed by a number of tag attributes:</p>
+<pre class="literal-block">
+&lt;:val expr=`3` fmt=&quot;plain&quot;:&gt;
+</pre>
+<p>In the above, the first attribute has the name <tt class="docutils literal"><span class="pre">expr</span></tt> and the value
+<tt class="docutils literal"><span class="pre">`3`</span></tt>, and the second the name <tt class="docutils literal"><span class="pre">fmt</span></tt> and the value <tt class="docutils literal"><span class="pre">&quot;plain&quot;</span></tt>.
+The value <tt class="docutils literal"><span class="pre">`3`</span></tt>, written between backticks, is a Python expression,
+and is equivalent to the Python value <tt class="docutils literal"><span class="pre">3</span></tt>.  Any valid Python
+expression (without backticks) may be used wherever STML accepts
+expressions, and are always written between backticks <a class="footnote-reference" href="#backtick" id="id1" name="id1">[1]</a>.
+The value <tt class="docutils literal"><span class="pre">&quot;plain&quot;</span></tt> is a simply a string; it would be equivalent to
+write <tt class="docutils literal"><span class="pre">`&quot;plain&quot;`</span></tt>, <tt class="docutils literal"><span class="pre">`'plain'`</span></tt>, <tt class="docutils literal"><span class="pre">'plain'</span></tt>, or (since in this
+case the string between quotes contains no whitespace) simply the bare
+word <tt class="docutils literal"><span class="pre">plain</span></tt>.</p>
+<table class="docutils footnote" frame="void" id="backtick" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1" name="backtick">[1]</a></td><td>Python itself uses backticks as a synonym for the
+<tt class="docutils literal"><span class="pre">repr</span></tt> builtin function, but this syntax is deprecated in any
+case and is not supported in STML.  String literals inside Python
+expressions currently may not contain backticks either in STML, but
+this can be circumvented if necessary by used the hex escape
+<tt class="docutils literal"><span class="pre">'\x60'</span></tt>.</td></tr>
+</tbody>
+</table>
+<p>STML tags usually expect attributes in a default order, and if when
+using the tag you write the attributes in that order, you can leave
+out the attribute names. The following is equivalent to the previous
+example:</p>
+<pre class="literal-block">
+&lt;:val `3` plain:&gt;
+</pre>
+<p>(Note that this is a bit different than markup languages like HTML and
+XML, in which attribute order, unlike element order, is not
+significant.)  However, if you specify the attribute names, you can
+state them in any order:</p>
+<pre class="literal-block">
+&lt;:val fmt=plain expr=`3`:&gt;
+</pre>
+<p>Some attributes are optional and are defined as having default values;
+in this example, <tt class="docutils literal"><span class="pre">fmt</span></tt> is optional, and the default value is
+equivalent to <tt class="docutils literal"><span class="pre">plain</span></tt>, so you could simply write:</p>
+<pre class="literal-block">
+&lt;:val `3`:&gt;
+</pre>
+<p>Some tags accept arbitrary keyword arguments:</p>
+<pre class="literal-block">
+&lt;:component foo.comp
+            x=`y/2.0`
+            d=`range(4)`
+            p=&quot;this could go on and on...&quot;:&gt;
+</pre>
+<p>Again along the lines of SGML-based markup like HTML and XML, STML
+tags are of two basic syntactical types: block and empty.  Block tags
+open a block which will be parsed in the context of the tag, and must
+be closed by a matching tag with the same tagName, but preceded by a
+forward slash.  For instance, the template below has one block tag and
+one empty tag:</p>
+<pre class="literal-block">
+&lt;:filter:&gt;
+   This is some text inside a block.
+&lt;:/filter:&gt;
+&lt;:break:&gt;
+</pre>
+</div>
+<div class="section">
+<h2><a class="toc-backref" href="#id10" id="setting-and-showing-things" name="setting-and-showing-things">Setting and Showing Things</a></h2>
+<div class="section">
+<h3><a class="toc-backref" href="#id11" id="set" name="set"><tt class="docutils literal"><span class="pre">&lt;:set:&gt;</span></tt></a></h3>
+<pre class="literal-block">
+&lt;:set name value:&gt;
+</pre>
+<p>The <tt class="docutils literal"><span class="pre">&lt;:set:&gt;</span></tt> tag, assigns a value to a variable:</p>
+<pre class="literal-block">
+&lt;:set x &quot;hello&quot;:&gt;
+</pre>
+<p>This is exactly equivalent to the following Python:</p>
+<pre class="literal-block">
+x=&quot;hello&quot;
+</pre>
+</div>
+<div class="section">
+<h3><a class="toc-backref" href="#id12" id="default" name="default"><tt class="docutils literal"><span class="pre">&lt;:default:&gt;</span></tt></a></h3>
+<pre class="literal-block">
+&lt;:default name value:&gt;
+</pre>
+<p>The <tt class="docutils literal"><span class="pre">&lt;:default:&gt;</span></tt> tag assigns a value to a variable if the variable
+is currently undefined, and otherwise does nothing:</p>
+<pre class="literal-block">
+&lt;:default x `myObj`:&gt;
+</pre>
+<p>This is equivalent to the following Python:</p>
+<pre class="literal-block">
+try:
+    x
+except NameError:
+    x=myObj
+</pre>
+<p></p>
+<blockquote>
+<em>STML3's ``&lt;:default:&gt;`` tag assigned a value to a variable either
+if the variable was undefined, or if it was equal to ``None``.  This
+special treatment of ``None`` has been removed in skunk.stml.</em></blockquote>
+</div>
+<div class="section">
+<h3><a class="toc-backref" href="#id13" id="del" name="del"><tt class="docutils literal"><span class="pre">&lt;:del:&gt;</span></tt></a></h3>
+<pre class="literal-block">
+&lt;:del name:&gt;
+</pre>
+<p>The <tt class="docutils literal"><span class="pre">&lt;:del:&gt;</span></tt> tag deletes the Python object with the name <tt class="docutils literal"><span class="pre">name</span></tt>.
+The above precisely equivalent to the Python statement:</p>
+<pre class="literal-block">
+del name
+</pre>
+<p></p>
+</div>
+<div class="section">
+<h3><a class="toc-backref" href="#id14" id="call" name="call"><tt class="docutils literal"><span class="pre">&lt;:call:&gt;</span></tt></a></h3>
+<pre class="literal-block">
+&lt;:call expr:&gt;
+</pre>
+<p>The <tt class="docutils literal"><span class="pre">&lt;:call:&gt;</span></tt> tag is an escape hatch which enables you to directly
+execute a Python expression:</p>
+<pre class="literal-block">
+&lt;:call `x=4`:&gt;
+</pre>
+<p>The Python equivalent of any given <tt class="docutils literal"><span class="pre">&lt;:call:&gt;</span></tt> tag is the expression
+being called.</p>
+</div>
+<div class="section">
+<h3><a class="toc-backref" href="#id15" id="val" name="val"><tt class="docutils literal"><span class="pre">&lt;:val:&gt;</span></tt></a></h3>
+<pre class="literal-block">
+&lt;:val:&gt; expr fmt=`None`:&gt;
+</pre>
+<p>The <tt class="docutils literal"><span class="pre">&lt;:val:&gt;</span></tt> tag prints the value of the expression passed to the
+output stream, optionally passing it through a format function:</p>
+<pre class="literal-block">
+&lt;:val `myVar` fmt=xml:&gt;
+</pre>
+<p>The optional <tt class="docutils literal"><span class="pre">fmt</span></tt> attribute may be a callable that takes one
+argument and returns a string, or a string that is a key in the global
+dictionary <cite>skunk.stml.ValFormatRegistry</cite>.  The default formatter is
+the &quot;plain&quot; formatter (<tt class="docutils literal"><span class="pre">str</span></tt>).</p>
+<p>The output stream that <tt class="docutils literal"><span class="pre">&lt;:val:&gt;</span></tt> writes to is available in the
+STML namespace (actually, the global, not the local namespace
+that STML code is executed in) under the name <tt class="docutils literal"><span class="pre">OUTPUT</span></tt>.</p>
+<blockquote>
+<em>STML3 does not accept arbitrary callables for ``fmt``, and has
+slightly different keys in its equivalent ValFormatRegistry.  Also,
+while STML3 also has an output stream called OUTPUT, it is not
+directly available in the global namespace.</em></blockquote>
+</div>
+<div class="section">
+<h3><a class="toc-backref" href="#id16" id="import" name="import"><tt class="docutils literal"><span class="pre">&lt;:import:&gt;</span></tt></a></h3>
+<pre class="literal-block">
+&lt;:import module [names] [as=name]:&gt;
+</pre>
+<p>The <tt class="docutils literal"><span class="pre">&lt;:import:&gt;</span></tt> tag is the equivalent of Python's <tt class="docutils literal"><span class="pre">import</span></tt>
+statement.  The following table shows various forms of the tag
+with the corresponding Python code.</p>
+<blockquote>
+<table border="1" class="docutils">
+<colgroup>
+<col width="48%" />
+<col width="52%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Python</th>
+<th class="head">STML</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><tt class="docutils literal"><span class="pre">import</span> <span class="pre">M</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">&lt;:import</span> <span class="pre">M:&gt;</span></tt></td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">import</span> <span class="pre">M</span> <span class="pre">as</span> <span class="pre">C</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">&lt;:import</span> <span class="pre">M</span> <span class="pre">as=C:&gt;</span></tt></td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">from</span> <span class="pre">M</span> <span class="pre">import</span> <span class="pre">X</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">&lt;:import</span> <span class="pre">M</span> <span class="pre">X:&gt;</span></tt></td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">from</span> <span class="pre">M</span> <span class="pre">import</span> <span class="pre">X,</span> <span class="pre">Y</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">&lt;:import</span> <span class="pre">M</span> <span class="pre">&quot;X,</span> <span class="pre">Y&quot;:&gt;</span></tt></td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">from</span> <span class="pre">M</span> <span class="pre">import</span> <span class="pre">X</span> <span class="pre">as</span> <span class="pre">C</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">&lt;:import</span> <span class="pre">M</span> <span class="pre">X</span> <span class="pre">as=C:&gt;</span></tt></td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">from</span> <span class="pre">M</span> <span class="pre">import</span> <span class="pre">*</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">&lt;:import</span> <span class="pre">M</span> <span class="pre">*:&gt;</span></tt></td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">import</span> <span class="pre">M1,</span> <span class="pre">M2</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">&lt;:import</span> <span class="pre">&quot;M1,</span> <span class="pre">M2&quot;:&gt;</span></tt></td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">import</span> <span class="pre">M1</span> <span class="pre">as</span> <span class="pre">C,</span> <span class="pre">M2,</span> <span class="pre">M3</span> <span class="pre">as</span> <span class="pre">C</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">&lt;:import</span> <span class="pre">&quot;M1</span> <span class="pre">as</span> <span class="pre">C,</span> <span class="pre">M2,</span> <span class="pre">M3</span> <span class="pre">as</span> <span class="pre">C&quot;:&gt;</span></tt></td>
+</tr>
+</tbody>
+</table>
+</blockquote>
+</div>
+<div class="section">
+<h3><a class="toc-backref" href="#id17" id="filter-and-spool" name="filter-and-spool"><tt class="docutils literal"><span class="pre">&lt;:filter:&gt;</span></tt> and <tt class="docutils literal"><span class="pre">&lt;:spool:&gt;</span></tt></a></h3>
+<pre class="literal-block">
+&lt;:filter name=`None` fmt=`None`:&gt;&lt;:/filter:&gt;
+&lt;:spool name fmt=`None`:&gt;&lt;:/spool:&gt;
+</pre>
+<p>The previous tags are all empty tags; <tt class="docutils literal"><span class="pre">&lt;:filter:&gt;</span></tt> and <tt class="docutils literal"><span class="pre">&lt;:spool:&gt;</span></tt>
+are block tags.</p>
+<p><tt class="docutils literal"><span class="pre">&lt;:filter:&gt;</span></tt> enables you to filter the output resulting from a block
+of text, which may include other tags, through an arbitrary filter,
+and either directly output the filtered result, or save it in a
+variable.  It takes two attributes, <cite>name</cite> and <cite>filter</cite>, both of which
+are optional.  If you use neither, <tt class="docutils literal"><span class="pre">&lt;:filter:&gt;</span></tt> does nothing.  If
+you use just <tt class="docutils literal"><span class="pre">filter</span></tt>, <tt class="docutils literal"><span class="pre">&lt;:filter:&gt;</span></tt> is essentially a block version
+of the <tt class="docutils literal"><span class="pre">&lt;:val:&gt;</span></tt> tag:</p>
+<pre class="literal-block">
+&lt;:filter fmt=`str.upper`:&gt;
+   this will get output in upper case.
+&lt;:/filter:&gt;
+</pre>
+<p>What is output here (ignoring whitespace) will be <tt class="docutils literal"><span class="pre">&quot;THIS</span> <span class="pre">WILL</span> <span class="pre">GET</span>
+<span class="pre">OUTPUT</span> <span class="pre">IN</span> <span class="pre">UPPER</span> <span class="pre">CASE.&quot;</span></tt>.</p>
+<p>If you use <tt class="docutils literal"><span class="pre">name</span></tt>, with or without a filter, the block inside the
+tag outputs nothing, but the resulting string is stored in a variable
+with the name you specified.</p>
+<p><tt class="docutils literal"><span class="pre">&lt;:spool:&gt;</span></tt> is provided for convenience and backwards compatibility
+with STML3; it is equivalent to <tt class="docutils literal"><span class="pre">&lt;:filter:&gt;</span></tt>, except that the
+<tt class="docutils literal"><span class="pre">name</span></tt> attribute is required, and hence always assigns a string
+value to a variable.</p>
+<blockquote>
+<em>In STML3, there is no ``&lt;:filter:&gt;`` tag, and ``&lt;:spool:&gt;`` has
+no ``filter`` attribute.</em></blockquote>
+</div>
+<div class="section">
+<h3><a class="toc-backref" href="#id18" id="args" name="args"><tt class="docutils literal"><span class="pre">&lt;:args:&gt;</span></tt></a></h3>
+<pre class="literal-block">
+&lt;:args [arg1 arg2...] [arg3=val3 arg4=val4 ...]:&gt;
+</pre>
+<p>The <tt class="docutils literal"><span class="pre">&lt;:args:&gt;</span></tt> tag is a convenient way of accessing CGI parameters
+from a web request.  It brings the CGI parameters you specify by name
+into the local namespace, optionally setting default values and
+converting them.</p>
+<p>Each argument of this tag specifies a name and optionally a Python
+expression value, which may be a default value, a conversion
+function, or a 2-tuple of the form <tt class="docutils literal"><span class="pre">(default,</span> <span class="pre">converterFunc)</span></tt>.
+The name of each argument indicates both the name of the CGI parameter
+and also of the local variable that will be bound.</p>
+<p>If you just specify a parameter name, without a Python expression
+specifying a default and/or converter function, it will copy the CGI
+parameter of that name, if it exists, into a local variable of that
+name; if no such parameter was passed, the corresponding local
+variable will be initialized to <tt class="docutils literal"><span class="pre">None</span></tt>.  If you specify a conversion
+function, the CGI parameter value will be converted by it prior to
+being bound in the local namespace; if an exception occurs, it will be
+silently swallowed and the resulting value will be the default.</p>
+<pre class="literal-block">
+&lt;:args bopper nougat parsley=yum servings=`(int,5)`:&gt;
+</pre>
+<p>If the above is passed the querystring <tt class="docutils literal"><span class="pre">nougat=pumpkin&amp;servings=20</span></tt>,
+the following name/value pairs will be added to the template
+namespace:</p>
+<pre class="literal-block">
+bopper : None
+nougat : 'pumpkin'
+parsley : 'yum'
+servings : 20
+</pre>
+<p>If the querystring were <tt class="docutils literal"><span class="pre">bopper=frisbee&amp;servings=cankersore</span></tt>, the
+template values would be:</p>
+<pre class="literal-block">
+bopper : 'frisbee'
+nougat : None
+parsley : 'yum'
+servings : 5
+</pre>
+<p>This tag only works when there is a <tt class="docutils literal"><span class="pre">webob.Request</span></tt> object in the
+current namespace under the name <tt class="docutils literal"><span class="pre">REQUEST</span></tt>.  You would normally only
+use this tag in a top-level component into which a request is passed in.</p>
+<p>The example above is equivalent to the following Python code:</p>
+<pre class="literal-block">
+from skunk.util.argextract import extra_args
+locals().update(extract_args(REQUEST.params.mixed(),
+                             'bopper',
+                             'nougat',
+                             parsley='yum',
+                             servings=(int, 5)))
+</pre>
+</div>
+</div>
+<div class="section">
+<h2><a class="toc-backref" href="#id19" id="flow-control" name="flow-control">Flow Control</a></h2>
+<pre class="literal-block">
+&lt;:if expr:&gt;
+[&lt;:elif expr:&gt;] ...
+[&lt;:else:&gt;]
+&lt;:/if:&gt;
+
+&lt;:try:&gt;
+&lt;:except [exc]:&gt;
+[&lt;:else:&gt;]
+&lt;:/try:&gt;
+
+&lt;:try:&gt;
+&lt;:finally:&gt;
+&lt;:/try:&gt;
+
+&lt;:raise [exc]:&gt;
+
+&lt;:for expr [name=sequence_item]:&gt;
+[&lt;:break:&gt;]
+[&lt;:continue:&gt;]
+[&lt;:else:&gt;]
+&lt;:/for:&gt;
+
+&lt;:while expr :&gt;
+[&lt;:break:&gt;]
+[&lt;:continue:&gt;]
+[&lt;:else:&gt;]
+&lt;:/while:&gt;
+</pre>
+<p>STML's flow control facilities mirror those of Python itself almost exactly.  The following
+Python:</p>
+<pre class="literal-block">
+try:
+    v==0
+    while not v:
+        for i in p:
+            try:
+                v=i.value
+            except AttributeError:
+                continue
+            else:
+                break
+        else:
+            break
+    if v &gt; m:
+        do_bigger()
+    elif v==m:
+        do_the_same()
+    else:
+        do_smaller()
+finally:
+   cleanup()
+</pre>
+<p>would be translated into STML as:</p>
+<pre class="literal-block">
+&lt;:try:&gt;
+   &lt;:set v `0`:&gt;
+   &lt;:while `not v`:&gt;
+     &lt;:for `p` i:&gt;
+        &lt;:try:&gt;
+           &lt;:set v `i.value`:&gt;
+        &lt;:except `AttributeError`:&gt;
+           &lt;:continue:&gt;
+        &lt;:else:&gt;
+          &lt;:break:&gt;
+        &lt;:/try:&gt;
+     &lt;:else:&gt;
+        &lt;:break:&gt;
+     &lt;:/for:&gt;
+   &lt;:/while:&gt;
+   &lt;:if `v&gt;m`:&gt;
+      &lt;:call `do_bigger`:&gt;
+   &lt;:elif `v==m`:&gt;
+      &lt;:call `do_the_same()`:&gt;
+   &lt;:else:&gt;
+      &lt;:call `do_smaller()`:&gt;
+   &lt;:/if:&gt;
+&lt;:finally:&gt;
+   &lt;:call `cleanup()`:&gt;
+&lt;:/try:&gt;
+</pre>
+<p>The major differences to note are:</p>
+<blockquote>
+<ul class="simple">
+<li>indentation is not significant in STML (although, as in all languages,
+careful indentation helps legibility).</li>
+<li><tt class="docutils literal"><span class="pre">&lt;:try:&gt;</span></tt>, <tt class="docutils literal"><span class="pre">&lt;:for:&gt;</span></tt>, and <tt class="docutils literal"><span class="pre">&lt;:while:&gt;</span></tt> are block tags, and must be closed
+like any other block tag.</li>
+<li>instead of Python's <tt class="docutils literal"><span class="pre">for</span> <span class="pre">sequence_item</span> <span class="pre">in</span> <span class="pre">sequence</span></tt>, STML drops the <tt class="docutils literal"><span class="pre">in</span></tt>,
+reverses the <tt class="docutils literal"><span class="pre">sequence_item</span></tt> and <tt class="docutils literal"><span class="pre">sequence</span></tt>, and makes <tt class="docutils literal"><span class="pre">sequence_item</span></tt> optional
+(it defaults to <cite>&quot;sequence_item&quot;</cite>).</li>
+</ul>
+</blockquote>
+</div>
+<div class="section">
+<h2><a class="toc-backref" href="#id20" id="comments" name="comments">Comments</a></h2>
+<pre class="literal-block">
+&lt;:* ... *:&gt;
+&lt;:#:&gt;&lt;:/#:&gt;
+&lt;:comment:&gt;&lt;:/comment:&gt;
+</pre>
+<p>The three comment tags are of two types.  <tt class="docutils literal"><span class="pre">&lt;:#:&gt;</span></tt> and
+<tt class="docutils literal"><span class="pre">&lt;:comment:&gt;</span></tt> are synonymous; they are regular STML block tags that
+generate no code, but any stml within the tags will be parsed and must
+be well-formed.  The <tt class="docutils literal"><span class="pre">&lt;:*</span></tt> and <tt class="docutils literal"><span class="pre">*:&gt;</span></tt> tags are not, strictly
+speaking, tag at all, but a special comment syntax supported directly
+by the STML lexer.  Any text between the tags will be ignored.  Therefore,
+<tt class="docutils literal"><span class="pre">&lt;:*</span></tt> is better suited for temporarily commenting out blocks of STML
+that may be syntactically incorrect.</p>
+<blockquote>
+<em>STML3 also included a ``&lt;:doc:&gt;`` tag for the purpose of adding
+documentation to templates.</em></blockquote>
+</div>
+<div class="section">
+<h2><a class="toc-backref" href="#id21" id="component-tags" name="component-tags">Component Tags</a></h2>
+<pre class="literal-block">
+&lt;:component compname [arg1=value arg2=value ...] [__args__= argdict] [cache=no|yes|old|force] :&gt;
+&lt;:datacomp varname compname [arg1=value arg2=value ...] [__args__= argdict] [cache=no|yes|old|force] :&gt;
+&lt;:include compname:&gt;
+&lt;:compargs [arg1 arg2...] [arg3=val3 arg4=val4 ...]:&gt;
+&lt;:cache until=&quot;datespec&quot;| duration=&quot;timespec&quot;:&gt;
+&lt;:halt:&gt;
+</pre>
+<p>The <tt class="docutils literal"><span class="pre">&lt;:component:&gt;</span></tt> tag calls string components and outputs the
+results (to the output stream <tt class="docutils literal"><span class="pre">OUTPUT</span></tt> in the current namespace).
+The <tt class="docutils literal"><span class="pre">&lt;:datacomp:&gt;</span></tt> tag calls data components and places the returned
+value in <tt class="docutils literal"><span class="pre">varname</span></tt>.  <tt class="docutils literal"><span class="pre">&lt;:include:&gt;</span></tt> calls an include component and
+outputs the results (to <tt class="docutils literal"><span class="pre">OUTPUT</span></tt>).</p>
+<p>String and data components accept component arguments, and can be
+cached; includes cannot.  Component arguments can be passed by keyword
+in the component tag, or as a dictionary with the reserved keyword
+<tt class="docutils literal"><span class="pre">__args__</span></tt>.  The desired cache policy can be specified with the
+reserved keyword <tt class="docutils literal"><span class="pre">cache</span></tt>; acceptable values are
+<tt class="docutils literal"><span class="pre">skunk.cache.CachePolicy</span></tt> instances and the strings <tt class="docutils literal"><span class="pre">'no'</span></tt>,
+<tt class="docutils literal"><span class="pre">'yes'</span></tt>, <tt class="docutils literal"><span class="pre">'old'</span></tt>, <tt class="docutils literal"><span class="pre">'force'</span></tt>.</p>
+<p>To ensure that the correct component arguments have been passed to a
+component, and to set default values, the <tt class="docutils literal"><span class="pre">&lt;:compargs:&gt;</span></tt> tag may be
+used.  This will compare the component arguments used in a
+particular call with a signature given in the tag.</p>
+<p>The <tt class="docutils literal"><span class="pre">&lt;:cache:&gt;</span></tt> tag sets the expiration for the component, in case
+it is called with a <tt class="docutils literal"><span class="pre">CachePolicy</span></tt> that honors it. [add documentation
+of the formats accepted for this -- TO BE DONE.]</p>
+<blockquote>
+<em>STML3 also includes a ``&lt;:return:&gt;`` tag which can be used to
+return values from data components written in STML.  ``skunk.stml``
+does not support writing data components in STML, and hence does not
+implement ``&lt;:return:&gt;``.</em></blockquote>
+</div>
+<div class="section">
+<h2><a class="toc-backref" href="#id22" id="layout-templates" name="layout-templates">Layout Templates</a></h2>
+<p>STML supports sharing common layouts through layout templates and
+slots, a very simple system that accomplishes much of what other
+templating engines achieve through template inheritance.</p>
+<p>A layout template is an STML component that renders a complete
+document, but with empty slots in it that can be filled in various
+ways.</p>
+<p>A slot is a named placeholder in such a template.</p>
+<p>At render time, the templating engine will look for a dictionary named
+<tt class="docutils literal"><span class="pre">SLOTS</span></tt>  in the current namespace to populate these slots; if not
+found, it will create a slot dictionary by looking at the slot
+configuration (see below).</p>
+<p>If no data is found for a particular slot, or if the data is <tt class="docutils literal"><span class="pre">None</span></tt>
+or an empty string, no output will be produced for that slot.  If the
+data is a string, that string will be output.  If it is a callable, it
+will be called with any arguments you have specified in the template,
+and the output inserted.</p>
+<p>This system is implemented through two tags: <tt class="docutils literal"><span class="pre">&lt;:slot:&gt;</span></tt> and
+<tt class="docutils literal"><span class="pre">&lt;:calltemplate:&gt;</span></tt>.</p>
+<pre class="literal-block">
+&lt;:slot slotname [kwarg=val ...]:&gt;
+</pre>
+<p>The slot tag is a placeholder for a slot in the layout template; it
+should be given a unique slotname.  Any additional parameters passed
+in will be available to any code that runs to render the slot.</p>
+<pre class="literal-block">
+&lt;:calltemplate [template=None] [slotmap=SLOTS] [kwarg=val ...]:&gt;
+</pre>
+<p>The calltemplate tag is used for STML documents that want to invoke
+the layout template; in typical use it is called without arguments at
+the very end of the document.</p>
+<div class="section">
+<h3><a class="toc-backref" href="#id23" id="slot-configuration-and-slotconf-pydcmp" name="slot-configuration-and-slotconf-pydcmp">Slot Configuration and <tt class="docutils literal"><span class="pre">slotconf.pydcmp</span></tt></a></h3>
+<p>To configure slots, create in the root directory of your site a file
+called <tt class="docutils literal"><span class="pre">slotconf.pydcmp</span></tt>, a Python data component that returns a
+slot dictionary.  Every key you wish to be able to override should be
+present in this dictionary; all keys should be valid Python
+identifiers and be lowercase.  Empty values are perfectly OK. This
+data component will be called with one parameter, <tt class="docutils literal"><span class="pre">path</span></tt>.</p>
+</div>
+</div>
+<div class="section">
+<h2><a class="toc-backref" href="#id24" id="logging" name="logging">Logging</a></h2>
+<pre class="literal-block">
+&lt;:debug msg [arg1 args2 ...]:&gt;
+&lt;:info msg [arg1 args2 ...]:&gt;
+&lt;:warn msg [arg1 args2 ...]:&gt;
+&lt;:error msg [arg1 args2 ...]:&gt;
+&lt;:exception msg [arg1 args2 ...]:&gt;
+</pre>
+<p>STML's log tags using Python's <tt class="docutils literal"><span class="pre">logging</span></tt> module to call the standard
+log methods (<tt class="docutils literal"><span class="pre">debug</span></tt>, <tt class="docutils literal"><span class="pre">info</span></tt>, <tt class="docutils literal"><span class="pre">warn</span></tt>, <tt class="docutils literal"><span class="pre">error</span></tt>, and
+<tt class="docutils literal"><span class="pre">exception</span></tt>) on the user logger, which by default is named <tt class="docutils literal"><span class="pre">USER</span></tt>
+(a different name can be assign by setting the configuration variable
+<tt class="docutils literal"><span class="pre">userLogger</span></tt>).</p>
+<pre class="literal-block">
+&lt;:debug &quot;attempting precarious function call&quot;:&gt;
+&lt;:info &quot;received request from IP %s&quot; `ip`:&gt;
+&lt;:warn &quot;possible breakin attempt: %s %s&quot; `ip` `user`:&gt;
+&lt;:error &quot;that wasn't supposed to happen&quot;:&gt;
+&lt;:exception &quot;exception handling order:&quot;:&gt;
+</pre>
+<p>To access the logger programmatically:</p>
+<pre class="literal-block">
+from skunk.userlogger import getUserLogger
+logger=getUserLogger()
+logger.setLevel(logging.DEBUG)
+logger.debug(&quot;hello from Python&quot;)
+</pre>
+<p>Or as a shortcut for logging from Python components:</p>
+<pre class="literal-block">
+# imports debug, info, warn, error, exception
+from skunk.userlogger import *
+debug(&quot;I think I'm about to make a boo-boo....&quot;)
+error(&quot;Darn, I was right!&quot;)
+</pre>
+</div>
+<div class="section">
+<h2><a class="toc-backref" href="#id25" id="using-other-tag-libraries" name="using-other-tag-libraries">Using Other Tag Libraries</a></h2>
+<pre class="literal-block">
+&lt;:use tagdict [prefix=name]:&gt;
+</pre>
+<p>STML may be extended by other tag libraries.  A tag library is simply
+a mapping of tag names to tag classes (including just those tags which
+should appear at the top level and that do not need to be nested in
+another tag).</p>
+<p>The STML parser may be invoked with an extended set of tags that
+incorporates other libraries, but it may also be desirable to extend
+the vocabulary of available tags within an STML component; the
+<tt class="docutils literal"><span class="pre">&lt;:use:&gt;</span></tt> tag accomplishes this.  Tags imported by this means are
+only available within the component, subsequent to the <tt class="docutils literal"><span class="pre">&lt;:use:&gt;</span></tt>
+call; they are not inherited by any nested components and do not
+affect the global tag dictionary.</p>
+<p>For clarity, or to prevent name conflicts between tag names in
+different libraries, it is possible to specify a prefix when using a
+tag library.  In use, the namespace will look like an xml namespace
+prefix:</p>
+<pre class="literal-block">
+&lt;:use zapper.stmltags prefix=zapper:&gt;
+&lt;:zapper:mogrify foo=`1`:&gt;
+</pre>
+<p>The <tt class="docutils literal"><span class="pre">&lt;:use:&gt;</span></tt> tag does not generate any code at runtime; the
+inclusion of the tag library happens at parse time.  Therefore, the
+<tt class="docutils literal"><span class="pre">tagdict</span></tt> argument must be a string, not a Python expression (which
+only has meaning at runtime).  Tag libraries must be defined in
+importable Python modules, and specified by their <tt class="docutils literal"><span class="pre">__name__</span></tt>
+attribute.</p>
+<blockquote>
+<em>STML3 does not have a ``&lt;:use:&gt;`` tag, and does not permit
+colons in tag names.</em></blockquote>
+</div>
+</div>
+<div class="section">
+<h1><a class="toc-backref" href="#id26" id="skunk-web" name="skunk-web">skunk.web</a></h1>
+<p>This is the application server proper, implemented as a series of WSGI
+components: an active page implementation for STML, a static file
+server that supports <a class="reference" href="http://blog.lighttpd.net/articles/2006/07/02/x-sendfile">X-Sendfile</a>, and a controller framework.</p>
+<div class="section">
+<h2><a class="toc-backref" href="#id27" id="stml-active-pages" name="stml-active-pages">STML Active Pages</a></h2>
+<p>&#64;TBD.</p>
+</div>
+<div class="section">
+<h2><a class="toc-backref" href="#id28" id="controllers" name="controllers">Controllers</a></h2>
+<p>&#64;TBD</p>
+</div>
+<div class="section">
+<h2><a class="toc-backref" href="#id29" id="running-skunkweb-applications" name="running-skunkweb-applications">Running SkunkWeb Applications</a></h2>
+<p>Currently, SkunkWeb 4 has no automatic bootstrapping code; the code
+that actually launches and runs an application needs to be written by
+the application programmer.  This will probably change, but it will
+always be possible to assemble applications manually; several examples
+of this are available in the <tt class="docutils literal"><span class="pre">/examples</span></tt> directory of the source
+distribution.</p>
+</div>
+</div>
+<div class="section">
+<h1><a class="toc-backref" href="#id30" id="license" name="license">License</a></h1>
+<p>Satimol is available either under the GPL (v3 or later) or a BSD
+license.  See COPYING and LICENSE in the source distribution for the
+exact wording of these licenses.</p>
+</div>
+</div>
+<div class="footer">
+<hr class="footer" />
+<a class="reference" href="manual.txt">View document source</a>.
+
+</div>
+</body>
+</html>
