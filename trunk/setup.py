@@ -6,15 +6,23 @@ except ImportError:
 
 from setuptools import setup, find_packages
 
-description="caching and templating facilities from the SkunkWeb project"
+description="SkunkWeb 4 web framework"
 
 long_description="""
 
-SaTiMoL is the SkunkWeb 4 project, a set of of libraries and
-applications for web development, including a caching system for
-memoizing callables, with in-memory, disk, or memcached backends, and
-a standalone implementation of SkunkWeb's STML (Skunk Template Markup
-Language), a powerful componentized templating language.
+skunk.web is SkunkWeb 4, a set of of libraries and applications for
+web development, including:
+
+- a caching system for memoizing callables, with in-memory, disk, or
+  memcached backends;
+
+- a standalone implementation of SkunkWeb's venerable STML (Skunk
+  Template Markup Language, not to be remembered to be confused with
+  Short Term Memory Loss), a powerful componentized templating
+  language;
+
+- a lightweight but effective web controller framework.  
+
 
 """
 import os
@@ -29,9 +37,11 @@ setup(author="Jacob Smullyan",
       long_description=long_description,
       license="BSD/GPL",
       platforms='OS Independent',
-      name="satimol",
+      name="skunk.web",
       url="http://code.google.com/p/satimol/",
-      classifiers=["Development Status :: 4 - Beta",
+      classifiers=["Development Status :: 3 - Alpha",
+                   "Environment :: Web Environment",
+                   "Environment :: Web Environment :: Buffet",
                    "Intended Audience :: Developers",
                    "License :: OSI Approved :: BSD License",
                    "License :: OSI Approved :: GNU General Public License (GPL)",
@@ -42,7 +52,7 @@ setup(author="Jacob Smullyan",
                    'Topic :: Text Processing :: Markup :: HTML',
       ],
       version=__version__,
-      keywords="skunk skunkweb STML templating cache WSGI",
+      keywords="skunk skunkweb STML templating cache WSGI satimol",
       packages=find_packages('src', exclude='tests'),
       entry_points= """
     [console_scripts]
