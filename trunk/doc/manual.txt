@@ -41,7 +41,7 @@ callables with in-memory, on-disk, and memcached backends.
 An Example
 ----------
 
-Typical usage::
+Typical usage:
 
   >>> from skunk.cache import *
   >>> mycache=DiskCache('/tmp/mycache')
@@ -57,7 +57,7 @@ Typical usage::
   10
 
 Normally you'd want to use the decorator, but you can also the same
-result by using the ``call()`` method of a cache object::
+result by using the ``call()`` method of a cache object:
 
   >>> from skunk.cache import *
   >>> mycache=MemoryCache()
@@ -134,7 +134,95 @@ PM.  But if the current time is 2:29 PM, the expiration will be 2:30 PM.
 skunk.config
 ============
 
-@TBD
+Many variables are configured in the skunk libraries by refering to
+attributes of a global configuration object,
+``skunk.config.Configuration``.  This object manages default values of
+config attributes, user overrides of same, and conditional overrides,
+which are invoked when a certain predicate obtains.
+
+Typical use:
+
+  >>> from skunk.config import Configuration, RegexMatcher
+  >>> C.setDefaults(test1='foo')
+  >>> C.test1
+  'foo'
+  >>> C.load_kw(test1='hanky') # load user value
+  >>> C.test1
+  'hanky'
+  >>> C.addMatcher(RegexMatcher('HTTP_HOST', 'shch', test1='grape'))
+  >>> C.scope({'HTTP_HOST', 'www.freshcheese.net'})
+  >>> C.test1
+  'grape'
+  >>> C.trim() # discard scoping
+  >>> C.test1
+  'hanky'
+  >>> C.reset() # discard user configuration
+  >>> C.test1
+  'foo'
+
+Conditional overrides, like the ``HTTP_HOST`` example above, are
+accomplished by adding a ``ScopeMatcher``, an object with the
+following significant attributes:
+
+* a predicate that must be fulfilled for it to affect anything;
+* overrides (name-value pairs);
+* sub-matchers that will also be invoked if the matcher's predicate is
+  fulfilled.
+
+When the config object is "scoped" (by calling its ``scope()``
+method), it is exposed to an "environment" to which its scope matchers
+may react, potentially rejiggering the object's effective values until
+it is "trimmed" (by calling ``trim()``), at which all scope-related
+user configuration is dropped.  The environment is expected to be a
+dictionary; as used in SkunkWeb, it is the WSGI environment, with a
+few additional keys for convenience (``'url'`` and ``'path'``, which
+otherwise matchers would need to calculate).  Repeated calls to
+``scope()`` with different data updates, but does not replace, the
+previous effective scope environment; the configuration after::
+
+  Configuration.trim()
+  Configuration.scope({'bob' : 'present'})
+  Configuration.scope({'harry' : 'absent'})
+
+is the same as after doing::
+
+  Configuration.trim()
+  Configuration.scope({'bob' : 'present', 'harry' : 'absent'})
+
+If you want to be sure that the values you are passing to scope are
+totally determinative of the resulting user configuration, you must
+call ``trim()`` first to wipe out any previous configuration state.
+
+The most general matcher, ``PredicateMatcher``, expects its
+predicate to be a function that takes one argument, the current
+scope environment, and returns a true or false value.
+
+There are several other predefined matchers that are convenient for
+many tasks, performing tests (for equality, and various types of
+string matching) on specified keys within the scope environment.
+
+User configuration can be added either from within Python modules via
+the ``load_kw`` method, as above, or loaded directly from a Python
+file or string that is executed in the namespace of the configuration
+object.  In the latter case, several convenient functions are bound in
+that namespace:
+
+:Include: includes another config file
+:Scope: add scope matchers
+:Predicate: a ``PredicateMatcher``
+:Regex: a ``RegexMatcher``
+:Glob: a ``GlobMatcher``
+:Equal: a ``StrictMatcher`` (tests for equality)
+
+A config file using these facilities might look like::
+
+  componentRoot='/var/www/roots/default'
+  Scope(Glob('HTTP_HOST', 'www.pimppants.*',
+             Equal('HTTP_PORT', '8080',
+                   componentRoot='/var/www/roots/8080'),
+             componentRoot='/var/www/roots/pimppants'))
+  Include('nighthats.conf')
+   
 
 skunk.stml
 ==========
