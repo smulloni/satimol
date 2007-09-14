@@ -16,7 +16,7 @@ For first alpha release:
 
 Then:
 
-- application-specific configuration -- separate docroots for
+X application-specific configuration -- separate docroots for
   applications, for instance, or application-specific configuration
   overrides.  This can be done by an application adding a key to the
   environ in the new PreConfigHook and scoping on it.

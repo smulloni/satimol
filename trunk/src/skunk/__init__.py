@@ -6,6 +6,6 @@ WSGI-compliant frameworks.
 """
 
 
-__version__ = '4.0.0a0'
+__version__ = '4.0.0a1'
 __author__  = 'Jacob Smullyan'
 
