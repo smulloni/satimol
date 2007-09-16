@@ -157,7 +157,7 @@ class BasicFileAuthorizer(BasicAuthorizerBase, SimpleFileStorage):
 class _default:
     pass
 
-class CookieAuthorizerBase(object):
+class CookieAuthorizerMixin(object):
 
     def __init__(self, nonce):
         self.nonce=nonce
@@ -212,7 +212,7 @@ class LoginPageMixin(object):
 
     
         
-class CookieLoginAuthBase(CookieAuthorizerBase,
+class CookieLoginAuthBase(CookieAuthorizerMixin,
                           LoginPageMixin,
                           AuthorizerBase):
     def __init__(self,
