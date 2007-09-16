@@ -16,7 +16,9 @@ from skunk.web.exceptions import get_http_exception
 log=logging.getLogger(__name__)
 
 Configuration.setDefaults(authorizer=None,
-                          defaultUser=None)
+                          defaultUser=None,
+                          authCookieName='skunkauth')
+
 def enable():
     """
     install the auth service.  
@@ -106,7 +108,7 @@ class AuthStorageBase(object):
         raise NotImplementedError
 
 
-class SimpleFileStorage(IAuthStorage):
+class SimpleFileStorage(AuthStorageBase):
     def __init__(self, authfile):
         self.authfile=None
         
@@ -136,7 +138,7 @@ class BasicAuthorizerBase(AuthorizerBase):
             except ValueError:
                 return
             else:
-                if self.check_password(username password):
+                if self.check_password(username, password):
                     return username
         
     def process_login(self):
@@ -152,20 +154,31 @@ class BasicFileAuthorizer(BasicAuthorizerBase, SimpleFileStorage):
         BasicAuthorizerBase.__init__(self, realm)
         SimpleFileStorage.__init__(self, authfile)
 
+class _default:
+    pass
+
 class CookieAuthorizerBase(object):
 
-    def __init__(self, nonce, cookie_name, cookie_attrs=None):
+    def __init__(self, nonce):
         self.nonce=nonce
-        self.cookie_name=cookie_name
-        self.cookie_attrs=cookie_attrs or {}
 
     def get_logged_in_user(self):
         req=Context.request
-        cval=req.cookies.get(self.cookie_name)
+        cval=req.cookies.get(Configuration.authCookieName)
         if cval:
-            user=dearmor(nonce, cval)
+            user=dearmor(self.nonce, cval)
             if user:
                 return user
+            
+    def store_credentials(self, username, user):
+        """
+        store the user credentials as needed
+        """
+        rsp=Context.response
+        value=armor(self.nonce, username)
+        rsp.set_cookie(Configuration.authCookieName,
+                       value,
+                       **Configuration.authCookieAttributes)
 
 class LoginPageMixin(object):
 
@@ -199,3 +212,20 @@ class LoginPageMixin(object):
 
     
         
+class CookieLoginAuthBase(CookieAuthorizerBase,
+                          LoginPageMixin,
+                          AuthorizerBase):
+    def __init__(self,
+                 nonce,
+                 template,
+                 username_field='username',
+                 password_field='password',
+                 template_opts=None):
+        CookieAuthorizerBase.__init__(self, nonce)
+        LoginPageMixin.__init__(self,
+                                template,
+                                username_field,
+                                password_field,
+                                template_opts)
+
+         

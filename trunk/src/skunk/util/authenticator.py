@@ -46,7 +46,7 @@ class FileAuthenticator(PreloadedAuthenticator):
     def __init__(self, filename, create=False):
         self.file = filename
         PreloadedAuthenticator.__init__(self)
-        if (not create) or os.path.exists(filename)):
+        if (not create) or os.path.exists(filename):
             self._load()
 
     def _load(self):
