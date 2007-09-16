@@ -17,7 +17,8 @@ log=logging.getLogger(__name__)
 
 Configuration.setDefaults(authorizer=None,
                           defaultUser=None,
-                          authCookieName='skunkauth')
+                          authCookieName='skunkauth',
+                          authCookieAttributes={})
 
 def enable():
     """
