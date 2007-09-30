@@ -204,15 +204,9 @@ def serve_static(path, realpath, statinfo, request):
     if request.method not in ('GET', 'HEAD'):
             return get_http_exception(httplib.METHOD_NOT_ALLOWED)
     type, contentenc=mimetypes.guess_type(realpath)
-    if contentenc:
-        res.content_encoding=contentenc
+
     if not type:
         type='application/octet-stream'
-    if type.startswith('text/'):
-        if Configuration.defaultCharset:
-            res.charset=Configuration.defaultCharset
-        elif chardet and Configuration.staticFileUseChardet:
-            res.charset=chardet.detect(open(realpath).read(1024))['encoding']
 
     if Configuration.staticFileUseXSendFile:
         header=Configuration.staticFileXSendFileHeader
@@ -242,6 +236,15 @@ def serve_static(path, realpath, statinfo, request):
             etag='%s|%d|%d' % (realpath, statinfo.st_size, statinfo.st_mtime)
             etag=md5.md5(etag).hexdigest()
             res.headers['etag']=etag
+
+    if contentenc:
+        res.content_encoding=contentenc
+        
+    if type.startswith('text/'):
+        if Configuration.defaultCharset:
+            res.charset=Configuration.defaultCharset
+        elif chardet and Configuration.staticFileUseChardet:
+            res.charset=chardet.detect(open(realpath).read(1024))['encoding']
 
     # Other custom header munging is left for middleware, or
     # something else
