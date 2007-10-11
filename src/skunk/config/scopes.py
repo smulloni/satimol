@@ -243,3 +243,10 @@ class RegexMatcher(ScopeMatcher):
                 and self.match_obj.match(other))
 
 
+__all__=['RegexMatcher',
+         'StrictMatcher',
+         'GlobMatcher',
+         'SimpleStringMatcher',
+         'PredicateMatcher',
+         'ScopeMatcher',
+         'ScopeManager']

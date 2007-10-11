@@ -1,0 +1,5 @@
+<:import skunk.config Configuration:>
+<:call `RESPONSE.delete_cookie(Configuration.authCookieName)`:>
+<:call `RESPONSE.location='/protected/'`:>
+<:call `RESPONSE.status_int=302`:>
+You have been redirected.

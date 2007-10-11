@@ -57,6 +57,7 @@ setup(author="Jacob Smullyan",
       entry_points= """
     [console_scripts]
     stmlcc = skunk.stml.cc:main
+    skpasswd = skunk.util.authenticator:main
 
     [python.templating.engines]
     stml = skunk.stml.buffetplugin:BuffetPlugin
