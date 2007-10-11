@@ -5,10 +5,11 @@ mechanisms for custom auth schemes.
 """
 import base64
 import logging
+import os
 
 from skunk.config import Configuration
 from skunk.util.armor import armor, dearmor
-from skunk.util.authenticator import authenticate
+from skunk.util.authenticator import FileAuthenticator
 from skunk.web.buffet import template
 from skunk.web.context import Context
 from skunk.web.exceptions import get_http_exception
@@ -17,6 +18,8 @@ log=logging.getLogger(__name__)
 
 Configuration.setDefaults(authorizer=None,
                           defaultUser=None,
+                          authFile=None,
+                          users={},
                           authCookieName='skunkauth',
                           authCookieAttributes={})
 
@@ -110,14 +113,65 @@ class AuthStorageBase(object):
 
 
 class SimpleFileStorage(AuthStorageBase):
-    def __init__(self, authfile):
-        self.authfile=None
+    def __init__(self, authfile=None):
+        self._authfile=authfile
+
+    @property
+    def authfile(self):
+        if self._authfile:
+            return self._authfile
+        return Configuration.authFile
+
+    _authcache={}
+
+    @property
+    def _auth(self):
+        authfile=self.authfile
+        if authfile:
+            realmtime=os.path.getmtime(authfile)
+            try:
+                obj, mtime=self._authcache[authfile]
+            except KeyError:
+                obj=FileAuthenticator(authfile)
+                self._authcache[authfile]=obj, realmtime
+                return obj
+            else:
+                if realmtime > mtime:
+                    obj.reload()
+                return obj
         
     def check_password(self, username, password):
-        return authenticate(self.authfile, username, password)
+        return self._auth.authenticate(username, password)
 
     def get_user_by_username(self, username):
-        return username
+        if username in self._auth.authdict:
+            return username
+
+class SimpleDictStorage(AuthStorageBase):
+
+    def __init__(self, users=None):
+        self._users=users
+
+    @property
+    def users(self):
+        if self._users is None:
+            return Configuration.users
+        return self._users
+
+    def check_password(self, username, password):
+        thing=self.users.get(username)
+        if not thing:
+            return False
+        if hasattr(thing, 'check_password'):
+            return thing.check_password(username, password)
+        
+        # assume it is a sha digest of the password???
+        theirdig=sha.sha(password).hexdigest()
+        return thing==theirdig
+
+    def get_user_by_username(self, username):
+        if username in self.users:
+            return username
 
     
 class BasicAuthorizerBase(AuthorizerBase):
@@ -155,8 +209,7 @@ class BasicFileAuthorizer(BasicAuthorizerBase, SimpleFileStorage):
         BasicAuthorizerBase.__init__(self, realm)
         SimpleFileStorage.__init__(self, authfile)
 
-class _default:
-    pass
+
 
 class CookieAuthorizerMixin(object):
 
@@ -194,7 +247,7 @@ class LoginPageMixin(object):
         self.template_opts=template_opts or {}
 
     def process_login(self):
-        params=Context.request.mixed()
+        params=Context.request.params.mixed()
         username=params.get(self.username_field)
         password=params.get(self.password_field)
         if not (username or password):
@@ -209,7 +262,9 @@ class LoginPageMixin(object):
         @template(self.template, **self.template_opts)          
         def tmp():
             return errordata
-        return tmp()
+        exc=get_http_exception(200)
+        exc.body=tmp()
+        raise exc
 
     
         
@@ -222,7 +277,7 @@ class CookieLoginAuthBase(CookieAuthorizerMixin,
                  username_field='username',
                  password_field='password',
                  template_opts=None):
-        CookieAuthorizerBase.__init__(self, nonce)
+        CookieAuthorizerMixin.__init__(self, nonce)
         LoginPageMixin.__init__(self,
                                 template,
                                 username_field,
@@ -230,3 +285,19 @@ class CookieLoginAuthBase(CookieAuthorizerMixin,
                                 template_opts)
 
          
+class CookieFileAuthorizer(CookieLoginAuthBase, SimpleFileStorage):
+    def __init__(self,
+                 authfile,
+                 nonce,
+                 template,
+                 username_field='username',
+                 password_field='password',
+                 template_opts=None):
+        CookieLoginAuthBase.__init__(self,
+                                     nonce,
+                                     template,
+                                     username_field,
+                                     password_field,
+                                     template_opts)
+        SimpleFileStorage.__init__(self,
+                                   authfile)

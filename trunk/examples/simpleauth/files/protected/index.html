@@ -1,0 +1,17 @@
+<html>
+<head>
+<title>Congratulations</title>
+</head>
+<body>
+<h1>Congratulations!</h1>
+<:try:>
+<p><:import skunk.web.context Context:>
+You've successfully logged in, <:val `Context.user`:>.
+</p>
+<p><a href="logout.html">Logout</a></p>
+<:except:>
+Oops!
+<:exception "something nasty happened":>
+<:/try:>
+</body>
+</html>

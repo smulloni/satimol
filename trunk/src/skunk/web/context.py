@@ -35,31 +35,47 @@ class ContextMiddleware(object):
     def __init__(self, app):
         self.app=app
 
+    def _runapp(self, app, environ, start_response):
+        try:
+            return app(environ, start_response)
+        finally:
+            try:
+                CleanupContextHook(Context, environ)
+            finally:
+                Context.__dict__.clear()
+                Configuration.trim()
+        
+
     def __call__(self, environ, start_response):
+        if not hasattr(Context, 'wsgiapp'):
+            Context.wsgiapp=self
+        
         req=webob.Request(environ)
         env=environ.copy()
         # add some useful calculated info to env 
         env['url']=req.url
         env['path']=req.path
 
-        PreConfigHook(env)
+        try:
+            PreConfigHook(env)
+        except webob.exc.HTTPException, exc:
+            return self._runapp(exc, environ, start_response)
         
         Configuration.scope(env)
-        
+
         Context.request=req
         Context.response=webob.Response(
             content_type=Configuration.defaultContentType,
             charset=Configuration.defaultCharset,
             server=Configuration.serverIdentification)
 
-        InitContextHook(Context, environ)
-
         try:
-            return self.app(environ, start_response)
-        finally:
-            CleanupContextHook(Context, environ)
-            Context.__dict__.clear()
-            Configuration.trim()
+            InitContextHook(Context, environ)
+        except webob.exc.HTTPException, exc:
+            return self._runapp(exc, environ, start_response)
+
+        return self._runapp(self.app, environ, start_response)
+
     
     
 __all__=['Context',
