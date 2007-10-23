@@ -7,3 +7,5 @@ according to a WSGI/CGI environ).
 from skunk.config.obj import Configuration
 from skunk.config.scopes import *
 
+class ConfigurationError(Exception):
+    pass
