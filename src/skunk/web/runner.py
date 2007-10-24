@@ -138,9 +138,9 @@ def _get_run_func(app):
     else:
         threads=Configuration.use_threads
         if Configuration.protocol == 'fcgi':
-            serverclass=FCGIThreaderServer if threads else FCGIServer
+            serverclass=FCGIThreadServer if threads else FCGIServer
         elif Configuration.protocol == 'scgi':
-            serverclass=SCGIThreadedServer if threads else SCGIServer
+            serverclass=SCGIThreadServer if threads else SCGIServer
         def runfunc():
             if threads:
                 kw=dict(maxSpare=Configuration.maxSpare,
