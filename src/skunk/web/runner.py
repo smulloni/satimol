@@ -5,9 +5,11 @@ configuration, with daemonization and pid file support.
 TODO: add configuration for logging.
 
 """
+
 import errno
 import logging
 import os
+import signal
 
 try:
     import grp
@@ -53,6 +55,8 @@ Configuration.setDefaults(
     sslPrivateKey=None)
     
 log=logging.getLogger(__name__)
+
+
 
 class _BindAddress(object):
     def __init__(self,
@@ -114,19 +118,21 @@ class _BindAddress(object):
 
 def _get_run_func(app):
     addr=_BindAddress.from_string(Configuration.bindAddress)
-    if (Configuration.protocol=='https' and
+    if (Configuration.serverProtocol=='https' and
         None in (Configuration.sslCertificate,
                  Configuration.sslPrivateKey)):
         raise ConfigurationError("https requested, but certificate or "
                                  "private key not specified")    
-    if Configuration.protocol in ('http','https'):
+    if Configuration.serverProtocol in ('http','https'):
         if not httpserver:
             raise RuntimeError("to serve http directly you need to install CherryPy.")
         def runfunc():
+            log.debug('in runfunc for cherrypy http server')
             server=httpserver((addr.interface, addr.port),
                               app,
-                              Configuration.serverName)
-            if Configuration.protocol=='https':
+                              server_name=Configuration.serverName)
+            log.debug('server instance created')
+            if Configuration.serverProtocol=='https':
                 server.ssl_certificate=Configuration.sslCertificate
                 server.ssl_private_key=Configuration.sslPrivateKey
             try:
@@ -136,21 +142,21 @@ def _get_run_func(app):
                 
         return runfunc
     else:
-        threads=Configuration.use_threads
-        if Configuration.protocol == 'fcgi':
+        threads=Configuration.useThreads
+        if Configuration.serverProtocol == 'fcgi':
             serverclass=FCGIThreadServer if threads else FCGIServer
-        elif Configuration.protocol == 'scgi':
+        elif Configuration.serverProtocol == 'scgi':
             serverclass=SCGIThreadServer if threads else SCGIServer
         def runfunc():
             if threads:
                 kw=dict(maxSpare=Configuration.maxSpare,
-                        minSpare=Config.minSpare,
-                        maxThreads=Config.maxThreads)
+                        minSpare=Configuration.minSpare,
+                        maxThreads=Configuration.maxThreads)
             else:
-                kw=dict(maxSpare=Config.maxSpare,
-                        minSpare=Config.minSpare,
-                        maxChildren=Config.maxChildren,
-                        maxRequests=Config.maxRequests)
+                kw=dict(maxSpare=Configuration.maxSpare,
+                        minSpare=Configuration.minSpare,
+                        maxChildren=Configuration.maxChildren,
+                        maxRequests=Configuration.maxRequests)
             # clean out Nones
             kw=dict(i for i in kw.items() if not i[1] is None)
             server=serverclass(app,
@@ -214,20 +220,22 @@ def _run_server(func):
             pidfp.write('%s' % os.getpid())
             pidfp.close()
             
+
+    _change_user_group()
+    starting_pid=os.getpid()
     try:
-        _change_user_group()
         try:
             func()
-        except KeyboardInterrupt:
+        except (SystemExit, KeyboardInterrupt):
             pass
     finally:
-        if daemonize and pidfile:
+        if daemonize and pidfile and os.getpid()==starting_pid:
+            log.debug('removing pidfile')
             try:
                 os.unlink(pidfile)
-            except OSError, e:
-                # if it doesn't exist, that's OK
-                if e.errno!=errno.ENOENT:
-                    log.exception("problem unlinking pid file %s", pidfile)
+            except OSError, oy:
+                if oy.errno!=errno.ENOENT:
+                    log.exception("error unlinking pidfile")
 
 
 def run(wsgiapp):
