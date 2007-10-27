@@ -44,7 +44,7 @@ class HomeController(object):
         <titleHome Page</title>
         </head>
         <body>
-        <h1>Welcome to Satimol</h1>
+        <h1>Welcome to skunk.web</h1>
         </body>
         </html>
         """

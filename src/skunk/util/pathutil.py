@@ -1,4 +1,4 @@
-from os.path import normpath
+from os.path import normpath, dirname, abspath, join
 
 def translate_path(root, path):
     if (not path) or path=='/':
@@ -18,3 +18,5 @@ def untranslate_path(root, path):
     return p
 
 
+def relpath(selfpath, path):
+    return join(dirname(selfpath), path)

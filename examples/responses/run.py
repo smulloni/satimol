@@ -1,14 +1,9 @@
 import logging
 import os
 
-from cherrypy.wsgiserver import CherryPyWSGIServer
-
 from skunk.config import Configuration
-from skunk.web import (ContextMiddleware,
-                       ControllerServer,
-                       expose,
-                       RoutingMiddleware,
-                       DispatchingFileServer)
+from skunk.web import bootstrap, expose
+
 
 class BlowController(object):
 
@@ -17,7 +12,7 @@ class BlowController(object):
         raise ValueError, "hey there!"
 
 logging.basicConfig(level=logging.DEBUG)
-comproot=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'files')
+comproot=os.path.join(os.path.dirname(__file__), 'files')
 Configuration.load_kw(componentRoot=comproot,
                       errorPage='/500.html',
                       notFoundPage='/404.html',
@@ -26,16 +21,7 @@ Configuration.load_kw(componentRoot=comproot,
                              'action' : 'blowup'})
     ],
                       controllers={'blow' : BlowController()},
-                      MvcOn=True,
                       showTraceback=True)
 
-app=ContextMiddleware(RoutingMiddleware(ControllerServer(DispatchingFileServer())))
-
-server=CherryPyWSGIServer(('localhost', 7777), app, server_name='localhost')
-
-
 if __name__=='__main__':
-    try:
-        server.start()
-    except KeyboardInterrupt:
-        server.stop()
+    bootstrap()

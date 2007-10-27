@@ -40,7 +40,7 @@ class SimpleController(object):
 
 logging.basicConfig(level=logging.DEBUG)
 
-comproot=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'files')
+comproot=os.path.join(os.path.dirname(__file__), 'files')
 
 Configuration.load_kw(
     componentRoot=comproot,
