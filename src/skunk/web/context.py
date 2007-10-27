@@ -25,6 +25,12 @@ InitContextHook=Hook()
 # function is passed the Context object and the wsgi environ.
 CleanupContextHook=Hook()
 
+# a hook at the end of request processing, after CleanupContextHook,
+# for cleanup operations of resources like database connections.  Each
+# function is passed the Context object and the wsgi environ.
+CleanupResourcesHook=Hook()
+
+
 class ContextMiddleware(object):
     """
     middleware that sets up the global Configuration and
@@ -40,7 +46,16 @@ class ContextMiddleware(object):
             return app(environ, start_response)
         finally:
             try:
-                CleanupContextHook(Context, environ)
+                try:
+                    CleanupContextHook(Context, environ)
+                except:
+                    log.exception('error in CleanupContextHook')
+
+                try:
+                    CleanupResourcesHook(Context, environ)
+                except:
+                    log.exception('error in CleanupResourcesHook')
+                
             finally:
                 Context.__dict__.clear()
                 Configuration.trim()

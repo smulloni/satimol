@@ -10,7 +10,7 @@ from skunk.config import Configuration
 from skunk.web.context import Context, InitContextHook
 from skunk.web.exceptions import get_http_exception
 
-Configuration.setDefaults(MvcOn=False,
+Configuration.setDefaults(MvcOn=True,
                           routes=[],
                           controllers={})
 

@@ -30,6 +30,8 @@ def enable():
     from skunk.web.context import InitContextHook
     if not _auth_hook in InitContextHook:
         InitContextHook.append(_auth_hook)
+
+init_service=enable        
     
 def _auth_hook(*args, **kwargs):
     authorizer=Configuration.authorizer

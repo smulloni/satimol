@@ -10,7 +10,8 @@ import os
 import pydo
 
 from skunk.config import Configuration
-from skunk.web import (expose,
+from skunk.web import (bootstrap,
+                       expose,
                        template,
                        Context,
                        ContextMiddleware,
@@ -92,8 +93,7 @@ controllers=dict(littlewiki=__name__)
 
 comproot=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'files')
 
-Configuration.load_kw(MvcOn=True,
-                      routes=routes,
+Configuration.load_kw(routes=routes,
                       componentRoot=comproot,
                       controllers=controllers,
                       showTraceback=True)
@@ -108,13 +108,6 @@ CleanupContextHook.append(rollbackConnection)
 
 app=ContextMiddleware(RoutingMiddleware(ControllerServer()))
 
-def runhttp(addr=('localhost', 7777)):
-    from cherrypy.wsgiserver import CherryPyWSGIServer
-    server=CherryPyWSGIServer(addr, app)
-    try:
-        server.start()
-    except KeyboardInterrupt:
-        server.stop()
 
 if __name__=='__main__':
-    runhttp()
+    bootstrap(app)
