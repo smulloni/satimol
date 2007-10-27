@@ -13,7 +13,7 @@ import os
 import pydo
 
 from skunk.config import Configuration
-from skunk.web import InitContextHook, CleanupContextHook, Context, expose
+from skunk.web import InitContextHook, CleanupContextHook, Context, bootstrap, expose
 
 
 def initDB():
