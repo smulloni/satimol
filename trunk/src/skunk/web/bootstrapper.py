@@ -17,6 +17,7 @@ import logging
 
 from skunk.config import Configuration
 from skunk.util.importutil import import_from_string
+from skunk.web.runner import run
 
 log=logging.getLogger(__name__)
 
@@ -38,6 +39,11 @@ def load_services():
             if callable(s):
                 log.debug("service is callable, calling")
                 s()
+            else:
+                initmethod=getattr(s, 'init_service', None)
+                if initmethod:
+                    log.debug('found service init method %s', initmethod)
+                    initmethod()
         except:
             exception("error loading service %s", service)
             raise
@@ -63,4 +69,25 @@ def make_app():
         else:
             app=cls()
     return app
+
+
+def bootstrap(app=None,
+              *configfiles):
+    """
+
+    Steps in bootstrapping:
+
+    1. configuration must be read (or it may be initialized already)
+    2. services must be loaded if they are present.
+    3. the app must be built if it is not passed in.
+    4. the server must be started.
+    
+    """
+    if configfiles:
+        Configuration.load(*configfiles)
+    load_services()
+    if not app:
+        app=make_app()
+    run(app)
         
+__all__=['bootstrap']

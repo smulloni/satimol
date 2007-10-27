@@ -5,7 +5,7 @@ import time
 import uuid
 
 from skunk.config import Configuration
-from skunk.web.context import Context
+from skunk.web.context import Context, InitContextHook, CleanupContextHook
 from skunk.util.importutil import import_from_string
 
 log=logging.getLogger(__name__)
@@ -21,7 +21,23 @@ Configuration.setDefaults(
     sessionStaleAction=None,
     )
 
-# hook to enable sessions and put them in the context @TBD
+# hook to enable sessions and put them in the context 
+
+def _init_session_hook(ctxt, env):
+    if Configuration.sessionEnabled:
+        ctxt.Session=Session()
+
+def _session_cleanup_hook(ctxt, env):
+    if Configuration.sessionEnabled:
+        Context.Session.save()
+        
+def enable():
+    if not _init_session_hook in InitContextHook:
+        InitContextHook.append(_init_session_hook)
+    if not _session_cleanup_hook in CleanupContextHook:
+        CleanupContextHook.append(_session_cleanup_hook)
+
+init_service=enable        
 
 class Session(DictMixin):
 
@@ -180,6 +196,4 @@ class SessionStore(object):
         """delete any sessions that are timed out."""
         raise NotImplementedError
 
-
-
-__all__=['Session', 'SessionStore']
+__all__=['Session', 'SessionStore', 'init_service']

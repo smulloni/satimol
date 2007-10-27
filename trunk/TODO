@@ -2,42 +2,18 @@
 
 - Improve buffet support by providing reasonable default template
   options for each engine I've tested.
-- test TurboKid, TurboCheetah, jinja.
+- test TurboKid, TurboCheetah, jinja ....
+- session backends: postgresql/mysql; memcached
+- better docs: README, manual
+- website
+- more examples
+- auth: digest auth
+- bootstrap: add logging configuration
+- paster-type script
+- swipython-like script
 
-For first alpha release:
-
-- document what exists:
-  - better README
-  - a manual (not just STML)
-  - better website (should be skunk.web driven, at least in part)
-- a few more examples
-
----------
-
-Then:
-
-X application-specific configuration -- separate docroots for
-  applications, for instance, or application-specific configuration
-  overrides.  This can be done by an application adding a key to the
-  environ in the new PreConfigHook and scoping on it.
-- auth -- drafted
-- rewrite ? -- I no longer use it, except at the webserver level
-- sessions -- perhaps support for sessions using a separate
-  implementation (like beaker); or a separate session middleware.
-- resource management -- perhaps use separate hooks
-- skunk.net -- the old daemon or variant thereof;
-  wrappers around flup, cherrypy, paste, wsgiref;
-  mod_skunkweb support.
-
-
-if we move away from requiring writing a top-level script:
-
-- per request middleware composition (would be useful anyway)
-- bootstrap (load configuration from somewhere, load services)
-- paster-type script for creating instances.
-- swpython-like script that loads the application environment (with configuration).
-
-
+- simplify all examples; add a util method for finding file paths (or
+  use pkg_resources)
 
 TESTING:
 - try embedding in pylons.

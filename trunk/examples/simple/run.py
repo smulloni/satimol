@@ -8,14 +8,8 @@ cherrypy's wsgi server, but any one can be used).
 import logging
 import os
 
-from cherrypy.wsgiserver import CherryPyWSGIServer
-
 from skunk.config import Configuration
-from skunk.web.context import ContextMiddleware
-from skunk.web.controller import expose, ControllerServer
-from skunk.web.fileserver  import DispatchingFileServer
-from skunk.web.routing import RoutingMiddleware
-
+from skunk.web import expose, bootstrap
 
 class SimpleController(object):
 
@@ -57,18 +51,8 @@ Configuration.load_kw(
      {'controller' : 'simple', 'action' : 'wsgi'}),
     (('hello', '/hello'), {'controller' : 'simple'}),
     ],
-    controllers={'simple' : SimpleController()},
-    MvcOn=True)
-
-app=ContextMiddleware(RoutingMiddleware(ControllerServer(DispatchingFileServer())))
-
-server=CherryPyWSGIServer(('localhost', 7777), app, server_name='localhost')
-
+    controllers={'simple' : SimpleController()})
 
 if __name__=='__main__':
-    try:
-        print "starting server"        
-        server.start()
-    except KeyboardInterrupt:
-        server.stop()
-        print "server stopped"
+    bootstrap()
+

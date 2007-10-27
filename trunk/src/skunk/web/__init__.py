@@ -19,4 +19,5 @@ Configuration.setDefaults(
     )
 
 del Configuration, __version__, _redirect
+from skunk.web.bootstrapper import *
 
