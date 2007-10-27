@@ -1,3 +1,9 @@
+"""
+
+This example use the lower-level run() function rather than bootstrap().
+
+"""
+
 import logging
 import os
 import sys

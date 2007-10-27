@@ -14,10 +14,8 @@ from skunk.web import (bootstrap,
                        expose,
                        template,
                        Context,
-                       ContextMiddleware,
-                       CleanupContextHook,
-                       ControllerServer,
-                       RoutingMiddleware)
+                       CleanupContextHook)
+
 
 log=logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
@@ -91,7 +89,7 @@ routes=[
 
 controllers=dict(littlewiki=__name__)
 
-comproot=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'files')
+comproot=os.path.join(os.path.dirname(__file__), 'files')
 
 Configuration.load_kw(routes=routes,
                       componentRoot=comproot,
@@ -106,8 +104,5 @@ def rollbackConnection(*args, **kwargs):
 
 CleanupContextHook.append(rollbackConnection)    
 
-app=ContextMiddleware(RoutingMiddleware(ControllerServer()))
-
-
 if __name__=='__main__':
-    bootstrap(app)
+    bootstrap()

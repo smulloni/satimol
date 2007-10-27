@@ -14,7 +14,7 @@ import pydo
 
 from skunk.config import Configuration
 from skunk.web import InitContextHook, CleanupContextHook, Context, bootstrap, expose
-
+from skunk.util.pathutil import relpath
 
 def initDB():
     pydo.initAlias('hitcounter', 'sqlite3', dict(database='hit.db'),
@@ -79,7 +79,7 @@ def record_hit(Context, environ):
 CleanupContextHook.append(record_hit)        
 CleanupContextHook.append(rollbackConnection)
 
-comproot=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'files')
+comproot=os.path.join(os.path.dirname(__file__), 'files')
 Configuration.load_kw(componentRoot=comproot,
                       routes=[
     (('hits', '/hits'), {'controller' : 'hits', 'action' : 'show_hits'}),

@@ -1,13 +1,13 @@
 .. -*-rst-*-
 
-=========
- Satimol
-=========
+===========
+ skunk.web
+===========
 
 Overview
 ========
 
-"Satimol" is SkunkWeb 4, the latest incarnation of the SkunkWeb
+``skunk.web`` is SkunkWeb 4, the latest incarnation of the SkunkWeb
 application server, refactored into a set of libraries and WSGI
 applications.
 
@@ -24,7 +24,7 @@ Installation
 
 You can use easy_install::
 
-  easy_install satimol
+  easy_install skunk.web
 
 Or from a tarball or SVN checkout::
 
@@ -43,5 +43,5 @@ See the examples/ directory to get started, and the manual in doc/.
 License
 =======
 
-Satimol is available either under the GPL (v3 or later; see COPYING)
-or a BSD license (see LICENSE).
+``skunk.web`` is available either under the GPL (v3 or later; see
+COPYING) or a BSD license (see LICENSE).
