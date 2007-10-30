@@ -75,7 +75,7 @@ class DiskSessionStore(SessionStore):
             try:
                 os.unlink(filename)
             except IOError, e:
-                if e.errno==errno.EENOENT:
+                if e.errno==errno.ENOENT:
                     pass
                 else:
                     log.exception('error deleting session: %s', filename)
