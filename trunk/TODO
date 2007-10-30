@@ -9,13 +9,7 @@
 - more examples
 - auth: digest auth
 - bootstrap: add logging configuration
-- paster-type script
-- swipython-like script
+- paster-type script, with virtualenv, directory template, swipython script
 
-- simplify all examples; add a util method for finding file paths (or
-  use pkg_resources)
 
-TESTING:
-- try embedding in pylons.
-- use webtest for tests.
  
