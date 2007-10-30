@@ -1,9 +1,12 @@
+import logging
 import threading
 
 import webob
 
 from skunk.config import Configuration
 from skunk.util.hooks import Hook
+
+log=logging.getLogger(__name__)
 
 # A container for Request, Response, and possibly other things
 Context=threading.local()

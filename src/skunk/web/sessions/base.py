@@ -25,11 +25,11 @@ Configuration.setDefaults(
 
 def _init_session_hook(ctxt, env):
     if Configuration.sessionEnabled:
-        ctxt.Session=Session()
+        ctxt.session=Session()
 
 def _session_cleanup_hook(ctxt, env):
     if Configuration.sessionEnabled:
-        Context.Session.save()
+        Context.session.save()
         
 def enable():
     if not _init_session_hook in InitContextHook:
@@ -72,14 +72,10 @@ class Session(DictMixin):
         else:
             log.info("creating new session")
             cookieval=self._make_cookie()
-            Context.response.cookie[cookiename]=cookieval
-            morsel=Context.response.cookie[cookiename]
-            morsel[path]=Configuration.sessionCookiePath
-            extras=Configuration.sessionCookieExtras
-            if extras:
-                for k in extras:
-                    morsel[k]=extras[k]
-
+            Context.response.set_cookie(cookiename,
+                                        cookieval,
+                                        path=Configuration.sessionCookiePath,
+                                        **(Configuration.sessionCookieExtras or {}))
             self._data={}
 
     def _get_session(self):
@@ -102,7 +98,7 @@ class Session(DictMixin):
                     log.warn(("don't know what to do with "
                               "Configuration.sessionStaleAction %s" % staleAction))
         else:
-            return session
+            return session_data
         return None
     
     def _get_cookie_salt(self):
@@ -122,19 +118,19 @@ class Session(DictMixin):
             log.warn('cookie digest does not match, tossing')
             return None
         try:
-            session_id, ip == val.split('|', 1)
+            session_id, ip = val.split('|', 1)
         except ValueError:
             log.warn("malformed cookie: %s", val)
             return None
-        if ip != Context.request.remote_ip:
+        if ip != Context.request.remote_addr:
             log.warn("ip of cookie, %s, does not match request's (%s)",
                      ip,
-                     Context.request.remote_ip)
+                     Context.request.remote_addr)
             return None
         return session_id
 
     def _make_cookie(self):
-        ip=Context.request.remote_ip
+        ip=Context.request.remote_addr
         session_id=str(uuid.uuid4())
         val="%s|%s" % (session_id,
                        ip)
@@ -173,7 +169,7 @@ class Session(DictMixin):
 
     def save(self):
         if self._dirty:
-            Configuration.sessionStore.save(self.session_id, self._data)
+            Configuration.sessionStore.save(self._session_id, self._data)
             self._dirty=False
 
     
