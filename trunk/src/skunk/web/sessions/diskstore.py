@@ -33,16 +33,16 @@ class DiskSessionStore(SessionStore):
         
                 
     def _get_filename(self, session_id):
-        parts=[self.session_directory]
+        parts=[self._session_directory]
         parts.extend('-'.split(session_id))
-        filename=os.path.normpath(os.path.join(parts))
-        if filename.startswith(self.session_directory):
+        filename=os.path.normpath(os.path.join(*parts))
+        if filename.startswith(self._session_directory):
             return filename
 
     def _get_session_id(self, filename):
-        if not filename.startswith(self.session_directory):
+        if not filename.startswith(self._session_directory):
             return None
-        f=filename[:len(self.session_directory)]
+        f=filename[:len(self._session_directory)]
         parts=filter(None, f.split(os.path.sep))
         return '-'.join(parts)
 
@@ -52,8 +52,14 @@ class DiskSessionStore(SessionStore):
         if not filename:
             log.warn("invalid session id?: %s", session_id)
         dir=os.path.dirname(filename)
+        if not os.path.exists(dir):
+            try:
+                os.makedirs(dir)
+            except IOError, oy:
+                if oy.errno!=errno.EEXIST:
+                    log.exception('error creating session directory')
+                    return
         try:
-            os.path.makedirs(dir)
             fd, name=tempfile.mkstemp(suffix='.tmp', dir=dir)
             fp=os.fdopen(fd,  'wb')
             pickle.dump(data, fp)
