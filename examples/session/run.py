@@ -1,16 +1,27 @@
+import atexit
 import os
 import logging
 import random
+import shutil
+import tempfile
 
 from skunk.config import Configuration
 from skunk.web import Context, bootstrap, expose
 from skunk.web.sessions.diskstore import DiskSessionStore
 
+log=logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
+sessiondir=tempfile.mkdtemp()
+
+def cleanup():
+    log.info('cleaning up temporary session directory')
+    shutil.rmtree(sessiondir)
+
+atexit.register(cleanup)
 
 Configuration.load_kw(
     sessionEnabled=True,
-    sessionStore=DiskSessionStore('/tmp/satimolsessions'),
+    sessionStore=DiskSessionStore(sessiondir),
     sessionCookieSalt='fudgemeaweatherby',
     services=['skunk.web.sessions'],
     controllers=dict(main=__name__),

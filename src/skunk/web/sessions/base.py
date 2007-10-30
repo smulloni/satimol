@@ -130,9 +130,10 @@ class Session(DictMixin):
         return session_id
 
     def _make_cookie(self):
+        if not self._session_id:
+            self._session_id=str(uuid.uuid4())
         ip=Context.request.remote_addr
-        session_id=str(uuid.uuid4())
-        val="%s|%s" % (session_id,
+        val="%s|%s" % (self._session_id,
                        ip)
         salt=self._get_cookie_salt()
         digest=sha.sha('%s%s' % (salt, val)).hexdigest()
