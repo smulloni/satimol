@@ -7,12 +7,15 @@ import pydo
 from skunk.config import Configuration
 from skunk.web.sessions.base import SessionStore
 
+def initDB(driver, connectArgs, pool=None, verbose=False, init=None):
+    pydo.initAlias('pydosessions', driver, connectArgs, pool, verbose, init)
+
 class PyDOSessionTable(pydo.PyDO):
     connectionAlias='pydosessions'
     table='skunksessions'
     fields=(pydo.Unique('id'),
             'data',
-            'modified_at')
+            'modified_at')    
 
 class PyDOSessionStore(SessionStore):
     
@@ -32,8 +35,12 @@ class PyDOSessionStore(SessionStore):
         obj=PyDOSessionTable.getUnique(id=session_id)        
         if obj:
             mtime=time.mktime(obj.modified_at.timetuple())
-            data=pickle.loads(obj.data)
-            return mtime, data
+            raw=obj.data
+            if isinstance(raw, unicode):
+                raw=raw.encode('utf-8')
+            data=pickle.loads(raw)
+            return data, mtime
+        return None, None
 
     def touch(self, session_id):
         obj=PyDOSessionTable.getUnique(id=session_id)
