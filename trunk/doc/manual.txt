@@ -15,7 +15,7 @@
 Summary
 =======
 
-SkunkWeb 4 is the latest incarnation of the SkunkWeb_ application
+**skunk.web** is the latest incarnation of the SkunkWeb_ application
 server, refactored into a set of libraries and WSGI_ applications.
 
 .. _SkunkWeb: http://skunkweb.sourceforge.net/
@@ -30,6 +30,31 @@ Highlights include:
   Language).
 * skunk.web_, a collection of WSGI applications for skunk
   applications.
+
+Installation
+============
+
+**skunk.web** uses setuptools_, so you can install it with
+`easy_install`_::
+
+  easy_install skunkweb.web
+
+Or from a tarball or SVN checkout::
+
+  python setup.py install
+
+If you want to follow development::
+
+  python setup.py develop
+
+Dependencies
+------------
+
+* setuptools_
+* decoratortools_
+* WebOb_  
+* flup_ (for fcgi and scgi servers)
+* CherryPy_ (for its http server)
 
 
 skunk.cache
@@ -858,35 +883,136 @@ skunk.web
 
 This is the application server proper, implemented as a series of WSGI
 components: an active page implementation for STML, a static file
-server that supports X-Sendfile_, and a controller framework.
+server (with X-Sendfile_ support), a controller framework, services
+for authorization and sessions, and bootstrapping code that can launch
+a server.
 
 .. _X-Sendfile: http://blog.lighttpd.net/articles/2006/07/02/x-sendfile
 
-STML Active Pages
------------------
+By default, **skunk.web** consists of four nested WSGI applications:
 
-@TBD.
+* ``ContextMiddleware``
+* ``RoutingMiddleware``
+* ``ControllerMiddleware``
+* ``DispatchingFileServer``
+
+The ``ContextMiddleware`` initializes ``request`` and ``response``
+attributes of a thread-local global object, ``skunk.web.Context``.
+These are ``webob.Request`` and ``webob.Response`` objects,
+respectively.
+
+``RoutingMiddleware`` uses Routes_ to parse the request and populate
+the ``wsgi.routing_vars`` environment variable, as per the x-wsgiorg
+routing spec.  If you don't want to use Routes_, you can swap this out
+with another middleware that performs routing (such as Selector_).
+
+``ControllerMiddleware`` is the controller framework *per se*. It
+employs the notion of a controller which contains one or more actions,
+which are servlets that return HTTP responses.  For detail, see
+Controllers_ below. 
+
+Finally, ``DispatchingFileServer`` serves STML (and potentially other
+varieties of) active pages and static files.  
 
 Controllers
 -----------
 
+A controller is any object, typically a module or class instance, with
+callable attributes exposed as actions (request handlers).
+
+Since the routing framework may allow clients to choose the name of
+the action, we follow the example of CherryPy_ and require that action
+methods be explicitly marked as exposed, by setting their ``exposed``
+attribute to a true value::
+
+  # the controller framework will execute this,
+  # as it is exposed
+  def an_action():
+      return webob.Response(body="Hello, World!")
+  an_action.explosed=True
+
+  # it will not deign to execute this, however
+  def wannabe():
+      return "Greetings, universe!"
+
+This is normally done by using the ``@expose()`` decorator::
+
+  from skunk.web import expose
+
+  @expose()
+  def an_action():
+      return "how convenient"
+
+``@expose()`` can also be used to set attributes on the response::
+
+  @expose(content_type='text/plain')
+  def plain():
+      return "how dry I am"
+
+The controller framework automatically tries to adapt return values to
+a WSGI application, most commonly a ``webob.Response``.  If a callable
+is directly returned, no adaptation is necessary; the callable is
+assumed to be a WSGI application and is invoked as such.  Otherwise,
+the following types are adapted:
+
+- ``None``, in which case ``Context.response`` is returned 
+- a string, which is set to the body of ``Context.response`` and the
+  latter is returned
+- a unicode string (similar)
+- if ``Context.response.content_type`` is ``application/json`` and the
+  returned type is ``list``, ``tuple``, or ``dict``, the returned 
+  data will be marshalled into JSON_ and put in ``Context.response``,
+  which is then returned.
+- a list, tuple or generator becomes ``Context.response.app_iter``
+- an integer is taken to be an HTTP status code and a default error
+  response is generated.  An invalid code will cause an error.
+  *N.B.*: ``Context.response`` is *not* used to generate the response;
+  the purpose of this shortcut is to make it simple to send vanilla
+  error codes, dispensing with any previous response initialization.
+
+Anything else is turned in a string with ``str()``.
+
+It is also possible to generate a response by raising a
+``webob.exc.HTTPException``. Note that if you do this, or if you
+explicitly return a WSGI application other than ``Context.response``,
+the latter object will not be used to serve the request, and any
+state it may have will be irrelevant.
+
+Templating with ``@template()``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can of course invoke a templating system manually from within a
+controller action, but as this is such a common thing to do, another
+decorator shortcut is provided::
+
+   @expose()
+   @template()
+   def hello_world():
+       return dict(message="Perhaps this isn't the best time to talk.")
+
+More detail here -- @TBD.
+
+
+
+STML Active Pages
+-----------------
+
 @TBD
+
 
 Running SkunkWeb Applications
 -----------------------------
 
-Currently, SkunkWeb 4 has no automatic bootstrapping code; the code
-that actually launches and runs an application needs to be written by
-the application programmer.  This will probably change, but it will
-always be possible to assemble applications manually; several examples
-of this are available in the ``/examples`` directory of the source
-distribution.
+Discuss here:
+
+- conf variables for running a server, including ``wsgiPipeline``
+- bootstrap()
 
 
 License
 =======
 
-Satimol is available either under the GPL (v3 or later) or a BSD
+**skunk.web** is available either under the GPL (v3 or later) or a BSD
 license.  See COPYING and LICENSE in the source distribution for the
 exact wording of these licenses.
 

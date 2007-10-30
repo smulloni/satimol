@@ -326,49 +326,56 @@ ul.auto-toc {
 <p class="topic-title first"><a id="table-of-contents" name="table-of-contents">Table of Contents</a></p>
 <ul class="simple">
 <li><a class="reference" href="#summary" id="id2" name="id2">Summary</a></li>
-<li><a class="reference" href="#skunk-cache" id="id3" name="id3">skunk.cache</a><ul>
-<li><a class="reference" href="#an-example" id="id4" name="id4">An Example</a></li>
-<li><a class="reference" href="#cache-policies-and-expiration" id="id5" name="id5">Cache Policies and Expiration</a></li>
+<li><a class="reference" href="#installation" id="id3" name="id3">Installation</a><ul>
+<li><a class="reference" href="#dependencies" id="id4" name="id4">Dependencies</a></li>
 </ul>
 </li>
-<li><a class="reference" href="#skunk-config" id="id6" name="id6">skunk.config</a></li>
-<li><a class="reference" href="#skunk-stml" id="id7" name="id7">skunk.stml</a><ul>
-<li><a class="reference" href="#introduction" id="id8" name="id8">Introduction</a></li>
-<li><a class="reference" href="#the-structure-of-stml-tags" id="id9" name="id9">The Structure of STML Tags</a></li>
-<li><a class="reference" href="#setting-and-showing-things" id="id10" name="id10">Setting and Showing Things</a><ul>
-<li><a class="reference" href="#set" id="id11" name="id11"><tt class="docutils literal"><span class="pre">&lt;:set:&gt;</span></tt></a></li>
-<li><a class="reference" href="#default" id="id12" name="id12"><tt class="docutils literal"><span class="pre">&lt;:default:&gt;</span></tt></a></li>
-<li><a class="reference" href="#del" id="id13" name="id13"><tt class="docutils literal"><span class="pre">&lt;:del:&gt;</span></tt></a></li>
-<li><a class="reference" href="#call" id="id14" name="id14"><tt class="docutils literal"><span class="pre">&lt;:call:&gt;</span></tt></a></li>
-<li><a class="reference" href="#val" id="id15" name="id15"><tt class="docutils literal"><span class="pre">&lt;:val:&gt;</span></tt></a></li>
-<li><a class="reference" href="#import" id="id16" name="id16"><tt class="docutils literal"><span class="pre">&lt;:import:&gt;</span></tt></a></li>
-<li><a class="reference" href="#filter-and-spool" id="id17" name="id17"><tt class="docutils literal"><span class="pre">&lt;:filter:&gt;</span></tt> and <tt class="docutils literal"><span class="pre">&lt;:spool:&gt;</span></tt></a></li>
-<li><a class="reference" href="#args" id="id18" name="id18"><tt class="docutils literal"><span class="pre">&lt;:args:&gt;</span></tt></a></li>
+<li><a class="reference" href="#skunk-cache" id="id5" name="id5">skunk.cache</a><ul>
+<li><a class="reference" href="#an-example" id="id6" name="id6">An Example</a></li>
+<li><a class="reference" href="#cache-policies-and-expiration" id="id7" name="id7">Cache Policies and Expiration</a></li>
 </ul>
 </li>
-<li><a class="reference" href="#flow-control" id="id19" name="id19">Flow Control</a></li>
-<li><a class="reference" href="#comments" id="id20" name="id20">Comments</a></li>
-<li><a class="reference" href="#component-tags" id="id21" name="id21">Component Tags</a></li>
-<li><a class="reference" href="#layout-templates" id="id22" name="id22">Layout Templates</a><ul>
-<li><a class="reference" href="#slot-configuration-and-slotconf-pydcmp" id="id23" name="id23">Slot Configuration and <tt class="docutils literal"><span class="pre">slotconf.pydcmp</span></tt></a></li>
+<li><a class="reference" href="#skunk-config" id="id8" name="id8">skunk.config</a></li>
+<li><a class="reference" href="#skunk-stml" id="id9" name="id9">skunk.stml</a><ul>
+<li><a class="reference" href="#introduction" id="id10" name="id10">Introduction</a></li>
+<li><a class="reference" href="#the-structure-of-stml-tags" id="id11" name="id11">The Structure of STML Tags</a></li>
+<li><a class="reference" href="#setting-and-showing-things" id="id12" name="id12">Setting and Showing Things</a><ul>
+<li><a class="reference" href="#set" id="id13" name="id13"><tt class="docutils literal"><span class="pre">&lt;:set:&gt;</span></tt></a></li>
+<li><a class="reference" href="#default" id="id14" name="id14"><tt class="docutils literal"><span class="pre">&lt;:default:&gt;</span></tt></a></li>
+<li><a class="reference" href="#del" id="id15" name="id15"><tt class="docutils literal"><span class="pre">&lt;:del:&gt;</span></tt></a></li>
+<li><a class="reference" href="#call" id="id16" name="id16"><tt class="docutils literal"><span class="pre">&lt;:call:&gt;</span></tt></a></li>
+<li><a class="reference" href="#val" id="id17" name="id17"><tt class="docutils literal"><span class="pre">&lt;:val:&gt;</span></tt></a></li>
+<li><a class="reference" href="#import" id="id18" name="id18"><tt class="docutils literal"><span class="pre">&lt;:import:&gt;</span></tt></a></li>
+<li><a class="reference" href="#filter-and-spool" id="id19" name="id19"><tt class="docutils literal"><span class="pre">&lt;:filter:&gt;</span></tt> and <tt class="docutils literal"><span class="pre">&lt;:spool:&gt;</span></tt></a></li>
+<li><a class="reference" href="#args" id="id20" name="id20"><tt class="docutils literal"><span class="pre">&lt;:args:&gt;</span></tt></a></li>
 </ul>
 </li>
-<li><a class="reference" href="#logging" id="id24" name="id24">Logging</a></li>
-<li><a class="reference" href="#using-other-tag-libraries" id="id25" name="id25">Using Other Tag Libraries</a></li>
+<li><a class="reference" href="#flow-control" id="id21" name="id21">Flow Control</a></li>
+<li><a class="reference" href="#comments" id="id22" name="id22">Comments</a></li>
+<li><a class="reference" href="#component-tags" id="id23" name="id23">Component Tags</a></li>
+<li><a class="reference" href="#layout-templates" id="id24" name="id24">Layout Templates</a><ul>
+<li><a class="reference" href="#slot-configuration-and-slotconf-pydcmp" id="id25" name="id25">Slot Configuration and <tt class="docutils literal"><span class="pre">slotconf.pydcmp</span></tt></a></li>
 </ul>
 </li>
-<li><a class="reference" href="#skunk-web" id="id26" name="id26">skunk.web</a><ul>
-<li><a class="reference" href="#stml-active-pages" id="id27" name="id27">STML Active Pages</a></li>
-<li><a class="reference" href="#controllers" id="id28" name="id28">Controllers</a></li>
-<li><a class="reference" href="#running-skunkweb-applications" id="id29" name="id29">Running SkunkWeb Applications</a></li>
+<li><a class="reference" href="#logging" id="id26" name="id26">Logging</a></li>
+<li><a class="reference" href="#using-other-tag-libraries" id="id27" name="id27">Using Other Tag Libraries</a></li>
 </ul>
 </li>
-<li><a class="reference" href="#license" id="id30" name="id30">License</a></li>
+<li><a class="reference" href="#skunk-web" id="id28" name="id28">skunk.web</a><ul>
+<li><a class="reference" href="#controllers" id="id29" name="id29">Controllers</a><ul>
+<li><a class="reference" href="#templating-with-template" id="id30" name="id30">Templating with <tt class="docutils literal"><span class="pre">&#64;template()</span></tt></a></li>
+</ul>
+</li>
+<li><a class="reference" href="#stml-active-pages" id="id31" name="id31">STML Active Pages</a></li>
+<li><a class="reference" href="#running-skunkweb-applications" id="id32" name="id32">Running SkunkWeb Applications</a></li>
+</ul>
+</li>
+<li><a class="reference" href="#license" id="id33" name="id33">License</a></li>
 </ul>
 </div>
 <div class="section">
 <h1><a class="toc-backref" href="#id2" id="summary" name="summary">Summary</a></h1>
-<p>SkunkWeb 4 is the latest incarnation of the <a class="reference" href="http://skunkweb.sourceforge.net/">SkunkWeb</a> application
+<p><strong>skunk.web</strong> is the latest incarnation of the <a class="reference" href="http://skunkweb.sourceforge.net/">SkunkWeb</a> application
 server, refactored into a set of libraries and <a class="reference" href="http://wsgi.org/wsgi">WSGI</a> applications.</p>
 <p>Highlights include:</p>
 <ul class="simple">
@@ -382,11 +389,37 @@ applications.</li>
 </ul>
 </div>
 <div class="section">
-<h1><a class="toc-backref" href="#id3" id="skunk-cache" name="skunk-cache">skunk.cache</a></h1>
+<h1><a class="toc-backref" href="#id3" id="installation" name="installation">Installation</a></h1>
+<p><strong>skunk.web</strong> uses <a href="#id34" name="id35"><span class="problematic" id="id35">setuptools_</span></a>, so you can install it with
+<a href="#id36" name="id37"><span class="problematic" id="id37">`easy_install`_</span></a>:</p>
+<pre class="literal-block">
+easy_install skunkweb.web
+</pre>
+<p>Or from a tarball or SVN checkout:</p>
+<pre class="literal-block">
+python setup.py install
+</pre>
+<p>If you want to follow development:</p>
+<pre class="literal-block">
+python setup.py develop
+</pre>
+<div class="section">
+<h2><a class="toc-backref" href="#id4" id="dependencies" name="dependencies">Dependencies</a></h2>
+<ul class="simple">
+<li><a href="#id38" name="id39"><span class="problematic" id="id39">setuptools_</span></a></li>
+<li><a href="#id40" name="id41"><span class="problematic" id="id41">decoratortools_</span></a></li>
+<li><a href="#id42" name="id43"><span class="problematic" id="id43">WebOb_</span></a></li>
+<li><a href="#id44" name="id45"><span class="problematic" id="id45">flup_</span></a> (for fcgi and scgi servers)</li>
+<li><a href="#id46" name="id47"><span class="problematic" id="id47">CherryPy_</span></a> (for its http server)</li>
+</ul>
+</div>
+</div>
+<div class="section">
+<h1><a class="toc-backref" href="#id5" id="skunk-cache" name="skunk-cache">skunk.cache</a></h1>
 <p>The <tt class="docutils literal"><span class="pre">skunk.cache</span></tt> package is a simple memoization facility for
 callables with in-memory, on-disk, and memcached backends.</p>
 <div class="section">
-<h2><a class="toc-backref" href="#id4" id="an-example" name="an-example">An Example</a></h2>
+<h2><a class="toc-backref" href="#id6" id="an-example" name="an-example">An Example</a></h2>
 <p>Typical usage:</p>
 <blockquote>
 <pre class="doctest-block">
@@ -421,7 +454,7 @@ actually calculating ....
 </blockquote>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id5" id="cache-policies-and-expiration" name="cache-policies-and-expiration">Cache Policies and Expiration</a></h2>
+<h2><a class="toc-backref" href="#id7" id="cache-policies-and-expiration" name="cache-policies-and-expiration">Cache Policies and Expiration</a></h2>
 <p>When you call a function via the cache, you can specify one of several
 cache policies:</p>
 <dl class="docutils">
@@ -477,7 +510,7 @@ PM.  But if the current time is 2:29 PM, the expiration will be 2:30 PM.</p>
 </div>
 </div>
 <div class="section">
-<h1><a class="toc-backref" href="#id6" id="skunk-config" name="skunk-config">skunk.config</a></h1>
+<h1><a class="toc-backref" href="#id8" id="skunk-config" name="skunk-config">skunk.config</a></h1>
 <p>Many variables are configured in the skunk libraries by refering to
 attributes of a global configuration object,
 <tt class="docutils literal"><span class="pre">skunk.config.Configuration</span></tt>.  This object manages default values of
@@ -577,9 +610,9 @@ Include('nighthats.conf')
 </pre>
 </div>
 <div class="section">
-<h1><a class="toc-backref" href="#id7" id="skunk-stml" name="skunk-stml">skunk.stml</a></h1>
+<h1><a class="toc-backref" href="#id9" id="skunk-stml" name="skunk-stml">skunk.stml</a></h1>
 <div class="section">
-<h2><a class="toc-backref" href="#id8" id="introduction" name="introduction">Introduction</a></h2>
+<h2><a class="toc-backref" href="#id10" id="introduction" name="introduction">Introduction</a></h2>
 <blockquote>
 <em>The version of STML described here is largely but not completely
 backwards-compatible variant of the version implemented in SkunkWeb
@@ -596,7 +629,7 @@ invocations to be cached in a highly flexible and easily controlled
 manner.</p>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id9" id="the-structure-of-stml-tags" name="the-structure-of-stml-tags">The Structure of STML Tags</a></h2>
+<h2><a class="toc-backref" href="#id11" id="the-structure-of-stml-tags" name="the-structure-of-stml-tags">The Structure of STML Tags</a></h2>
 <p>STML tags are delimited by the character sequences <tt class="docutils literal"><span class="pre">&lt;:</span></tt> and <tt class="docutils literal"><span class="pre">:&gt;</span></tt>.
 Between these delimiters, the first word is the tag name which
 identifies what tag is being called:</p>
@@ -669,9 +702,9 @@ one empty tag:</p>
 </pre>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id10" id="setting-and-showing-things" name="setting-and-showing-things">Setting and Showing Things</a></h2>
+<h2><a class="toc-backref" href="#id12" id="setting-and-showing-things" name="setting-and-showing-things">Setting and Showing Things</a></h2>
 <div class="section">
-<h3><a class="toc-backref" href="#id11" id="set" name="set"><tt class="docutils literal"><span class="pre">&lt;:set:&gt;</span></tt></a></h3>
+<h3><a class="toc-backref" href="#id13" id="set" name="set"><tt class="docutils literal"><span class="pre">&lt;:set:&gt;</span></tt></a></h3>
 <pre class="literal-block">
 &lt;:set name value:&gt;
 </pre>
@@ -685,7 +718,7 @@ x=&quot;hello&quot;
 </pre>
 </div>
 <div class="section">
-<h3><a class="toc-backref" href="#id12" id="default" name="default"><tt class="docutils literal"><span class="pre">&lt;:default:&gt;</span></tt></a></h3>
+<h3><a class="toc-backref" href="#id14" id="default" name="default"><tt class="docutils literal"><span class="pre">&lt;:default:&gt;</span></tt></a></h3>
 <pre class="literal-block">
 &lt;:default name value:&gt;
 </pre>
@@ -708,7 +741,7 @@ if the variable was undefined, or if it was equal to ``None``.  This
 special treatment of ``None`` has been removed in skunk.stml.</em></blockquote>
 </div>
 <div class="section">
-<h3><a class="toc-backref" href="#id13" id="del" name="del"><tt class="docutils literal"><span class="pre">&lt;:del:&gt;</span></tt></a></h3>
+<h3><a class="toc-backref" href="#id15" id="del" name="del"><tt class="docutils literal"><span class="pre">&lt;:del:&gt;</span></tt></a></h3>
 <pre class="literal-block">
 &lt;:del name:&gt;
 </pre>
@@ -720,7 +753,7 @@ del name
 <p></p>
 </div>
 <div class="section">
-<h3><a class="toc-backref" href="#id14" id="call" name="call"><tt class="docutils literal"><span class="pre">&lt;:call:&gt;</span></tt></a></h3>
+<h3><a class="toc-backref" href="#id16" id="call" name="call"><tt class="docutils literal"><span class="pre">&lt;:call:&gt;</span></tt></a></h3>
 <pre class="literal-block">
 &lt;:call expr:&gt;
 </pre>
@@ -733,7 +766,7 @@ execute a Python expression:</p>
 being called.</p>
 </div>
 <div class="section">
-<h3><a class="toc-backref" href="#id15" id="val" name="val"><tt class="docutils literal"><span class="pre">&lt;:val:&gt;</span></tt></a></h3>
+<h3><a class="toc-backref" href="#id17" id="val" name="val"><tt class="docutils literal"><span class="pre">&lt;:val:&gt;</span></tt></a></h3>
 <pre class="literal-block">
 &lt;:val:&gt; expr fmt=`None`:&gt;
 </pre>
@@ -756,7 +789,7 @@ while STML3 also has an output stream called OUTPUT, it is not
 directly available in the global namespace.</em></blockquote>
 </div>
 <div class="section">
-<h3><a class="toc-backref" href="#id16" id="import" name="import"><tt class="docutils literal"><span class="pre">&lt;:import:&gt;</span></tt></a></h3>
+<h3><a class="toc-backref" href="#id18" id="import" name="import"><tt class="docutils literal"><span class="pre">&lt;:import:&gt;</span></tt></a></h3>
 <pre class="literal-block">
 &lt;:import module [names] [as=name]:&gt;
 </pre>
@@ -804,7 +837,7 @@ with the corresponding Python code.</p>
 </blockquote>
 </div>
 <div class="section">
-<h3><a class="toc-backref" href="#id17" id="filter-and-spool" name="filter-and-spool"><tt class="docutils literal"><span class="pre">&lt;:filter:&gt;</span></tt> and <tt class="docutils literal"><span class="pre">&lt;:spool:&gt;</span></tt></a></h3>
+<h3><a class="toc-backref" href="#id19" id="filter-and-spool" name="filter-and-spool"><tt class="docutils literal"><span class="pre">&lt;:filter:&gt;</span></tt> and <tt class="docutils literal"><span class="pre">&lt;:spool:&gt;</span></tt></a></h3>
 <pre class="literal-block">
 &lt;:filter name=`None` fmt=`None`:&gt;&lt;:/filter:&gt;
 &lt;:spool name fmt=`None`:&gt;&lt;:/spool:&gt;
@@ -837,7 +870,7 @@ value to a variable.</p>
 no ``filter`` attribute.</em></blockquote>
 </div>
 <div class="section">
-<h3><a class="toc-backref" href="#id18" id="args" name="args"><tt class="docutils literal"><span class="pre">&lt;:args:&gt;</span></tt></a></h3>
+<h3><a class="toc-backref" href="#id20" id="args" name="args"><tt class="docutils literal"><span class="pre">&lt;:args:&gt;</span></tt></a></h3>
 <pre class="literal-block">
 &lt;:args [arg1 arg2...] [arg3=val3 arg4=val4 ...]:&gt;
 </pre>
@@ -893,7 +926,7 @@ locals().update(extract_args(REQUEST.params.mixed(),
 </div>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id19" id="flow-control" name="flow-control">Flow Control</a></h2>
+<h2><a class="toc-backref" href="#id21" id="flow-control" name="flow-control">Flow Control</a></h2>
 <pre class="literal-block">
 &lt;:if expr:&gt;
 [&lt;:elif expr:&gt;] ...
@@ -989,7 +1022,7 @@ reverses the <tt class="docutils literal"><span class="pre">sequence_item</span>
 </blockquote>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id20" id="comments" name="comments">Comments</a></h2>
+<h2><a class="toc-backref" href="#id22" id="comments" name="comments">Comments</a></h2>
 <pre class="literal-block">
 &lt;:* ... *:&gt;
 &lt;:#:&gt;&lt;:/#:&gt;
@@ -1008,7 +1041,7 @@ that may be syntactically incorrect.</p>
 documentation to templates.</em></blockquote>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id21" id="component-tags" name="component-tags">Component Tags</a></h2>
+<h2><a class="toc-backref" href="#id23" id="component-tags" name="component-tags">Component Tags</a></h2>
 <pre class="literal-block">
 &lt;:component compname [arg1=value arg2=value ...] [__args__= argdict] [cache=no|yes|old|force] :&gt;
 &lt;:datacomp varname compname [arg1=value arg2=value ...] [__args__= argdict] [cache=no|yes|old|force] :&gt;
@@ -1043,7 +1076,7 @@ does not support writing data components in STML, and hence does not
 implement ``&lt;:return:&gt;``.</em></blockquote>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id22" id="layout-templates" name="layout-templates">Layout Templates</a></h2>
+<h2><a class="toc-backref" href="#id24" id="layout-templates" name="layout-templates">Layout Templates</a></h2>
 <p>STML supports sharing common layouts through layout templates and
 slots, a very simple system that accomplishes much of what other
 templating engines achieve through template inheritance.</p>
@@ -1075,7 +1108,7 @@ in will be available to any code that runs to render the slot.</p>
 the layout template; in typical use it is called without arguments at
 the very end of the document.</p>
 <div class="section">
-<h3><a class="toc-backref" href="#id23" id="slot-configuration-and-slotconf-pydcmp" name="slot-configuration-and-slotconf-pydcmp">Slot Configuration and <tt class="docutils literal"><span class="pre">slotconf.pydcmp</span></tt></a></h3>
+<h3><a class="toc-backref" href="#id25" id="slot-configuration-and-slotconf-pydcmp" name="slot-configuration-and-slotconf-pydcmp">Slot Configuration and <tt class="docutils literal"><span class="pre">slotconf.pydcmp</span></tt></a></h3>
 <p>To configure slots, create in the root directory of your site a file
 called <tt class="docutils literal"><span class="pre">slotconf.pydcmp</span></tt>, a Python data component that returns a
 slot dictionary.  Every key you wish to be able to override should be
@@ -1085,7 +1118,7 @@ data component will be called with one parameter, <tt class="docutils literal"><
 </div>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id24" id="logging" name="logging">Logging</a></h2>
+<h2><a class="toc-backref" href="#id26" id="logging" name="logging">Logging</a></h2>
 <pre class="literal-block">
 &lt;:debug msg [arg1 args2 ...]:&gt;
 &lt;:info msg [arg1 args2 ...]:&gt;
@@ -1121,7 +1154,7 @@ error(&quot;Darn, I was right!&quot;)
 </pre>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id25" id="using-other-tag-libraries" name="using-other-tag-libraries">Using Other Tag Libraries</a></h2>
+<h2><a class="toc-backref" href="#id27" id="using-other-tag-libraries" name="using-other-tag-libraries">Using Other Tag Libraries</a></h2>
 <pre class="literal-block">
 &lt;:use tagdict [prefix=name]:&gt;
 </pre>
@@ -1156,33 +1189,164 @@ colons in tag names.</em></blockquote>
 </div>
 </div>
 <div class="section">
-<h1><a class="toc-backref" href="#id26" id="skunk-web" name="skunk-web">skunk.web</a></h1>
+<h1><a class="toc-backref" href="#id28" id="skunk-web" name="skunk-web">skunk.web</a></h1>
 <p>This is the application server proper, implemented as a series of WSGI
 components: an active page implementation for STML, a static file
-server that supports <a class="reference" href="http://blog.lighttpd.net/articles/2006/07/02/x-sendfile">X-Sendfile</a>, and a controller framework.</p>
+server (with <a class="reference" href="http://blog.lighttpd.net/articles/2006/07/02/x-sendfile">X-Sendfile</a> support), a controller framework, services
+for authorization and sessions, and bootstrapping code that can launch
+a server.</p>
+<p>By default, <strong>skunk.web</strong> consists of four nested WSGI applications:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">ContextMiddleware</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">RoutingMiddleware</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">ControllerMiddleware</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">DispatchingFileServer</span></tt></li>
+</ul>
+<p>The <tt class="docutils literal"><span class="pre">ContextMiddleware</span></tt> initializes <tt class="docutils literal"><span class="pre">request</span></tt> and <tt class="docutils literal"><span class="pre">response</span></tt>
+attributes of a thread-local global object, <tt class="docutils literal"><span class="pre">skunk.web.Context</span></tt>.
+These are <tt class="docutils literal"><span class="pre">webob.Request</span></tt> and <tt class="docutils literal"><span class="pre">webob.Response</span></tt> objects,
+respectively.</p>
+<p><tt class="docutils literal"><span class="pre">RoutingMiddleware</span></tt> uses <a href="#id48" name="id49"><span class="problematic" id="id49">Routes_</span></a> to parse the request and populate
+the <tt class="docutils literal"><span class="pre">wsgi.routing_vars</span></tt> environment variable, as per the x-wsgiorg
+routing spec.  If you don't want to use <a href="#id50" name="id51"><span class="problematic" id="id51">Routes_</span></a>, you can swap this out
+with another middleware that performs routing (such as <a href="#id52" name="id53"><span class="problematic" id="id53">Selector_</span></a>).</p>
+<p><tt class="docutils literal"><span class="pre">ControllerMiddleware</span></tt> is the controller framework <em>per se</em>. It
+employs the notion of a controller which contains one or more actions,
+which are servlets that return HTTP responses.  For detail, see
+<a class="reference" href="#controllers">Controllers</a> below.</p>
+<p>Finally, <tt class="docutils literal"><span class="pre">DispatchingFileServer</span></tt> serves STML (and potentially other
+varieties of) active pages and static files.</p>
 <div class="section">
-<h2><a class="toc-backref" href="#id27" id="stml-active-pages" name="stml-active-pages">STML Active Pages</a></h2>
-<p>&#64;TBD.</p>
+<h2><a class="toc-backref" href="#id29" id="controllers" name="controllers">Controllers</a></h2>
+<p>A controller is any object, typically a module or class instance, with
+callable attributes exposed as actions (request handlers).</p>
+<p>Since the routing framework may allow clients to choose the name of
+the action, we follow the example of <a href="#id54" name="id55"><span class="problematic" id="id55">CherryPy_</span></a> and require that action
+methods be explicitly marked as exposed, by setting their <tt class="docutils literal"><span class="pre">exposed</span></tt>
+attribute to a true value:</p>
+<pre class="literal-block">
+# the controller framework will execute this,
+# as it is exposed
+def an_action():
+    return webob.Response(body=&quot;Hello, World!&quot;)
+an_action.explosed=True
+
+# it will not deign to execute this, however
+def wannabe():
+    return &quot;Greetings, universe!&quot;
+</pre>
+<p>This is normally done by using the <tt class="docutils literal"><span class="pre">&#64;expose()</span></tt> decorator:</p>
+<pre class="literal-block">
+from skunk.web import expose
+
+&#64;expose()
+def an_action():
+    return &quot;how convenient&quot;
+</pre>
+<p><tt class="docutils literal"><span class="pre">&#64;expose()</span></tt> can also be used to set attributes on the response:</p>
+<pre class="literal-block">
+&#64;expose(content_type='text/plain')
+def plain():
+    return &quot;how dry I am&quot;
+</pre>
+<p>The controller framework automatically tries to adapt return values to
+a WSGI application, most commonly a <tt class="docutils literal"><span class="pre">webob.Response</span></tt>.  If a callable
+is directly returned, no adaptation is necessary; the callable is
+assumed to be a WSGI application and is invoked as such.  Otherwise,
+the following types are adapted:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">None</span></tt>, in which case <tt class="docutils literal"><span class="pre">Context.response</span></tt> is returned</li>
+<li>a string, which is set to the body of <tt class="docutils literal"><span class="pre">Context.response</span></tt> and the
+latter is returned</li>
+<li>a unicode string (similar)</li>
+<li>if <tt class="docutils literal"><span class="pre">Context.response.content_type</span></tt> is <tt class="docutils literal"><span class="pre">application/json</span></tt> and the
+returned type is <tt class="docutils literal"><span class="pre">list</span></tt>, <tt class="docutils literal"><span class="pre">tuple</span></tt>, or <tt class="docutils literal"><span class="pre">dict</span></tt>, the returned
+data will be marshalled into <a href="#id56" name="id57"><span class="problematic" id="id57">JSON_</span></a> and put in <tt class="docutils literal"><span class="pre">Context.response</span></tt>,
+which is then returned.</li>
+<li>a list, tuple or generator becomes <tt class="docutils literal"><span class="pre">Context.response.app_iter</span></tt></li>
+<li>an integer is taken to be an HTTP status code and a default error
+response is generated.  An invalid code will cause an error.
+<em>N.B.</em>: <tt class="docutils literal"><span class="pre">Context.response</span></tt> is <em>not</em> used to generate the response;
+the purpose of this shortcut is to make it simple to send vanilla
+error codes, dispensing with any previous response initialization.</li>
+</ul>
+<p>Anything else is turned in a string with <tt class="docutils literal"><span class="pre">str()</span></tt>.</p>
+<p>It is also possible to generate a response by raising a
+<tt class="docutils literal"><span class="pre">webob.exc.HTTPException</span></tt>. Note that if you do this, or if you
+explicitly return a WSGI application other than <tt class="docutils literal"><span class="pre">Context.response</span></tt>,
+the latter object will not be used to serve the request, and any
+state it may have will be irrelevant.</p>
+<div class="section">
+<h3><a class="toc-backref" href="#id30" id="templating-with-template" name="templating-with-template">Templating with <tt class="docutils literal"><span class="pre">&#64;template()</span></tt></a></h3>
+<p>You can of course invoke a templating system manually from within a
+controller action, but as this is such a common thing to do, another
+decorator shortcut is provided:</p>
+<pre class="literal-block">
+&#64;expose()
+&#64;template()
+def hello_world():
+    return dict(message=&quot;Perhaps this isn't the best time to talk.&quot;)
+</pre>
+<p>More detail here -- &#64;TBD.</p>
+</div>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id28" id="controllers" name="controllers">Controllers</a></h2>
+<h2><a class="toc-backref" href="#id31" id="stml-active-pages" name="stml-active-pages">STML Active Pages</a></h2>
 <p>&#64;TBD</p>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id29" id="running-skunkweb-applications" name="running-skunkweb-applications">Running SkunkWeb Applications</a></h2>
-<p>Currently, SkunkWeb 4 has no automatic bootstrapping code; the code
-that actually launches and runs an application needs to be written by
-the application programmer.  This will probably change, but it will
-always be possible to assemble applications manually; several examples
-of this are available in the <tt class="docutils literal"><span class="pre">/examples</span></tt> directory of the source
-distribution.</p>
+<h2><a class="toc-backref" href="#id32" id="running-skunkweb-applications" name="running-skunkweb-applications">Running SkunkWeb Applications</a></h2>
+<p>Discuss here:</p>
+<ul class="simple">
+<li>conf variables for running a server, including <tt class="docutils literal"><span class="pre">wsgiPipeline</span></tt></li>
+<li>bootstrap()</li>
+</ul>
 </div>
 </div>
 <div class="section">
-<h1><a class="toc-backref" href="#id30" id="license" name="license">License</a></h1>
-<p>Satimol is available either under the GPL (v3 or later) or a BSD
+<h1><a class="toc-backref" href="#id33" id="license" name="license">License</a></h1>
+<p><strong>skunk.web</strong> is available either under the GPL (v3 or later) or a BSD
 license.  See COPYING and LICENSE in the source distribution for the
 exact wording of these licenses.</p>
+</div>
+<div class="system-messages section">
+<h1>Docutils System Messages</h1>
+<div class="system-message" id="id34">
+<p class="system-message-title">System Message: <a name="id34">ERROR/3</a> (<tt class="docutils">manual.txt</tt>, line 37); <em><a href="#id35">backlink</a></em></p>
+Unknown target name: &quot;setuptools&quot;.</div>
+<div class="system-message" id="id36">
+<p class="system-message-title">System Message: <a name="id36">ERROR/3</a> (<tt class="docutils">manual.txt</tt>, line 37); <em><a href="#id37">backlink</a></em></p>
+Unknown target name: &quot;easy_install&quot;.</div>
+<div class="system-message" id="id38">
+<p class="system-message-title">System Message: <a name="id38">ERROR/3</a> (<tt class="docutils">manual.txt</tt>, line 53); <em><a href="#id39">backlink</a></em></p>
+Unknown target name: &quot;setuptools&quot;.</div>
+<div class="system-message" id="id40">
+<p class="system-message-title">System Message: <a name="id40">ERROR/3</a> (<tt class="docutils">manual.txt</tt>, line 54); <em><a href="#id41">backlink</a></em></p>
+Unknown target name: &quot;decoratortools&quot;.</div>
+<div class="system-message" id="id42">
+<p class="system-message-title">System Message: <a name="id42">ERROR/3</a> (<tt class="docutils">manual.txt</tt>, line 55); <em><a href="#id43">backlink</a></em></p>
+Unknown target name: &quot;webob&quot;.</div>
+<div class="system-message" id="id44">
+<p class="system-message-title">System Message: <a name="id44">ERROR/3</a> (<tt class="docutils">manual.txt</tt>, line 56); <em><a href="#id45">backlink</a></em></p>
+Unknown target name: &quot;flup&quot;.</div>
+<div class="system-message" id="id46">
+<p class="system-message-title">System Message: <a name="id46">ERROR/3</a> (<tt class="docutils">manual.txt</tt>, line 57); <em><a href="#id47">backlink</a></em></p>
+Unknown target name: &quot;cherrypy&quot;.</div>
+<div class="system-message" id="id48">
+<p class="system-message-title">System Message: <a name="id48">ERROR/3</a> (<tt class="docutils">manual.txt</tt>, line 904); <em><a href="#id49">backlink</a></em></p>
+Unknown target name: &quot;routes&quot;.</div>
+<div class="system-message" id="id50">
+<p class="system-message-title">System Message: <a name="id50">ERROR/3</a> (<tt class="docutils">manual.txt</tt>, line 904); <em><a href="#id51">backlink</a></em></p>
+Unknown target name: &quot;routes&quot;.</div>
+<div class="system-message" id="id52">
+<p class="system-message-title">System Message: <a name="id52">ERROR/3</a> (<tt class="docutils">manual.txt</tt>, line 904); <em><a href="#id53">backlink</a></em></p>
+Unknown target name: &quot;selector&quot;.</div>
+<div class="system-message" id="id54">
+<p class="system-message-title">System Message: <a name="id54">ERROR/3</a> (<tt class="docutils">manual.txt</tt>, line 923); <em><a href="#id55">backlink</a></em></p>
+Unknown target name: &quot;cherrypy&quot;.</div>
+<div class="system-message" id="id56">
+<p class="system-message-title">System Message: <a name="id56">ERROR/3</a> (<tt class="docutils">manual.txt</tt>, line 962); <em><a href="#id57">backlink</a></em></p>
+Unknown target name: &quot;json&quot;.</div>
 </div>
 </div>
 <div class="footer">
