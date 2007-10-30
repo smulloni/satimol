@@ -23,8 +23,8 @@ class DiskSessionStore(SessionStore):
         try:
             fp=open(filename)
         except IOError, e:
-            if e.errno==errno.EENOENT:
-                return None
+            if e.errno==errno.ENOENT:
+                return None, None
             raise
         else:
             data=pickle.load(fp)
