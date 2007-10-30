@@ -34,7 +34,7 @@ class DiskSessionStore(SessionStore):
                 
     def _get_filename(self, session_id):
         parts=[self._session_directory]
-        parts.extend('-'.split(session_id))
+        parts.extend(session_id.split('-'))
         filename=os.path.normpath(os.path.join(*parts))
         if filename.startswith(self._session_directory):
             return filename
