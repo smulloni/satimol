@@ -35,9 +35,9 @@ Installation
 ============
 
 **skunk.web** uses setuptools_, so you can install it with
-`easy_install`_::
+``easy_install``::
 
-  easy_install skunkweb.web
+  easy_install skunk.web
 
 Or from a tarball or SVN checkout::
 
@@ -56,6 +56,11 @@ Dependencies
 * flup_ (for fcgi and scgi servers)
 * CherryPy_ (for its http server)
 
+.. _setuptools: http://pypi.python.org/pypi/setuptools
+.. _decoratortools: http://pypi.python.org/pypi/decoratortools
+.. _WebOb: http://pythonpaste.org/webob/
+.. _flup: http://www.saddi.com/software/flup
+.. _CherryPy: http://cherrypy.org/
 
 skunk.cache
 ===========
@@ -906,6 +911,9 @@ the ``wsgi.routing_vars`` environment variable, as per the x-wsgiorg
 routing spec.  If you don't want to use Routes_, you can swap this out
 with another middleware that performs routing (such as Selector_).
 
+.. _Routes: http://routes.groovie.org/
+.. _Selector: http://lukearno.com/projects/selector/
+
 ``ControllerMiddleware`` is the controller framework *per se*. It
 employs the notion of a controller which contains one or more actions,
 which are servlets that return HTTP responses.  For detail, see
@@ -971,6 +979,8 @@ the following types are adapted:
   error codes, dispensing with any previous response initialization.
 
 Anything else is turned in a string with ``str()``.
+
+.. _JSON: http://json.org/
 
 It is also possible to generate a response by raising a
 ``webob.exc.HTTPException``. Note that if you do this, or if you

@@ -3,10 +3,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="Docutils 0.4: http://docutils.sourceforge.net/" />
+<meta name="generator" content="Docutils 0.4.1: http://docutils.sourceforge.net/" />
 <title>SkunkWeb 4 Manual</title>
 <meta name="author" content="Jacob Smullyan" />
-<meta name="date" content="2007-09-09" />
+<meta name="date" content="2007-10-30" />
 <meta name="copyright" content="2004, 2007 Jacob Smullyan" />
 <style type="text/css">
 
@@ -314,9 +314,9 @@ ul.auto-toc {
 <tr><th class="docinfo-name">Contact:</th>
 <td><a class="first last reference" href="mailto:jsmullyan&#64;gmail.com">jsmullyan&#64;gmail.com</a></td></tr>
 <tr><th class="docinfo-name">Date:</th>
-<td>2007-09-09</td></tr>
+<td>2007-10-30</td></tr>
 <tr><th class="docinfo-name">Revision:</th>
-<td>187</td></tr>
+<td>214</td></tr>
 <tr><th class="docinfo-name">Copyright:</th>
 <td>2004, 2007 Jacob Smullyan</td></tr>
 </tbody>
@@ -390,10 +390,10 @@ applications.</li>
 </div>
 <div class="section">
 <h1><a class="toc-backref" href="#id3" id="installation" name="installation">Installation</a></h1>
-<p><strong>skunk.web</strong> uses <a href="#id34" name="id35"><span class="problematic" id="id35">setuptools_</span></a>, so you can install it with
-<a href="#id36" name="id37"><span class="problematic" id="id37">`easy_install`_</span></a>:</p>
+<p><strong>skunk.web</strong> uses <a class="reference" href="http://pypi.python.org/pypi/setuptools">setuptools</a>, so you can install it with
+<tt class="docutils literal"><span class="pre">easy_install</span></tt>:</p>
 <pre class="literal-block">
-easy_install skunkweb.web
+easy_install skunk.web
 </pre>
 <p>Or from a tarball or SVN checkout:</p>
 <pre class="literal-block">
@@ -406,11 +406,11 @@ python setup.py develop
 <div class="section">
 <h2><a class="toc-backref" href="#id4" id="dependencies" name="dependencies">Dependencies</a></h2>
 <ul class="simple">
-<li><a href="#id38" name="id39"><span class="problematic" id="id39">setuptools_</span></a></li>
-<li><a href="#id40" name="id41"><span class="problematic" id="id41">decoratortools_</span></a></li>
-<li><a href="#id42" name="id43"><span class="problematic" id="id43">WebOb_</span></a></li>
-<li><a href="#id44" name="id45"><span class="problematic" id="id45">flup_</span></a> (for fcgi and scgi servers)</li>
-<li><a href="#id46" name="id47"><span class="problematic" id="id47">CherryPy_</span></a> (for its http server)</li>
+<li><a class="reference" href="http://pypi.python.org/pypi/setuptools">setuptools</a></li>
+<li><a class="reference" href="http://pypi.python.org/pypi/decoratortools">decoratortools</a></li>
+<li><a class="reference" href="http://pythonpaste.org/webob/">WebOb</a></li>
+<li><a class="reference" href="http://www.saddi.com/software/flup">flup</a> (for fcgi and scgi servers)</li>
+<li><a class="reference" href="http://cherrypy.org/">CherryPy</a> (for its http server)</li>
 </ul>
 </div>
 </div>
@@ -1206,10 +1206,10 @@ a server.</p>
 attributes of a thread-local global object, <tt class="docutils literal"><span class="pre">skunk.web.Context</span></tt>.
 These are <tt class="docutils literal"><span class="pre">webob.Request</span></tt> and <tt class="docutils literal"><span class="pre">webob.Response</span></tt> objects,
 respectively.</p>
-<p><tt class="docutils literal"><span class="pre">RoutingMiddleware</span></tt> uses <a href="#id48" name="id49"><span class="problematic" id="id49">Routes_</span></a> to parse the request and populate
+<p><tt class="docutils literal"><span class="pre">RoutingMiddleware</span></tt> uses <a class="reference" href="http://routes.groovie.org/">Routes</a> to parse the request and populate
 the <tt class="docutils literal"><span class="pre">wsgi.routing_vars</span></tt> environment variable, as per the x-wsgiorg
-routing spec.  If you don't want to use <a href="#id50" name="id51"><span class="problematic" id="id51">Routes_</span></a>, you can swap this out
-with another middleware that performs routing (such as <a href="#id52" name="id53"><span class="problematic" id="id53">Selector_</span></a>).</p>
+routing spec.  If you don't want to use <a class="reference" href="http://routes.groovie.org/">Routes</a>, you can swap this out
+with another middleware that performs routing (such as <a class="reference" href="http://lukearno.com/projects/selector/">Selector</a>).</p>
 <p><tt class="docutils literal"><span class="pre">ControllerMiddleware</span></tt> is the controller framework <em>per se</em>. It
 employs the notion of a controller which contains one or more actions,
 which are servlets that return HTTP responses.  For detail, see
@@ -1221,7 +1221,7 @@ varieties of) active pages and static files.</p>
 <p>A controller is any object, typically a module or class instance, with
 callable attributes exposed as actions (request handlers).</p>
 <p>Since the routing framework may allow clients to choose the name of
-the action, we follow the example of <a href="#id54" name="id55"><span class="problematic" id="id55">CherryPy_</span></a> and require that action
+the action, we follow the example of <a class="reference" href="http://cherrypy.org/">CherryPy</a> and require that action
 methods be explicitly marked as exposed, by setting their <tt class="docutils literal"><span class="pre">exposed</span></tt>
 attribute to a true value:</p>
 <pre class="literal-block">
@@ -1261,7 +1261,7 @@ latter is returned</li>
 <li>a unicode string (similar)</li>
 <li>if <tt class="docutils literal"><span class="pre">Context.response.content_type</span></tt> is <tt class="docutils literal"><span class="pre">application/json</span></tt> and the
 returned type is <tt class="docutils literal"><span class="pre">list</span></tt>, <tt class="docutils literal"><span class="pre">tuple</span></tt>, or <tt class="docutils literal"><span class="pre">dict</span></tt>, the returned
-data will be marshalled into <a href="#id56" name="id57"><span class="problematic" id="id57">JSON_</span></a> and put in <tt class="docutils literal"><span class="pre">Context.response</span></tt>,
+data will be marshalled into <a class="reference" href="http://json.org/">JSON</a> and put in <tt class="docutils literal"><span class="pre">Context.response</span></tt>,
 which is then returned.</li>
 <li>a list, tuple or generator becomes <tt class="docutils literal"><span class="pre">Context.response.app_iter</span></tt></li>
 <li>an integer is taken to be an HTTP status code and a default error
@@ -1308,45 +1308,6 @@ def hello_world():
 <p><strong>skunk.web</strong> is available either under the GPL (v3 or later) or a BSD
 license.  See COPYING and LICENSE in the source distribution for the
 exact wording of these licenses.</p>
-</div>
-<div class="system-messages section">
-<h1>Docutils System Messages</h1>
-<div class="system-message" id="id34">
-<p class="system-message-title">System Message: <a name="id34">ERROR/3</a> (<tt class="docutils">manual.txt</tt>, line 37); <em><a href="#id35">backlink</a></em></p>
-Unknown target name: &quot;setuptools&quot;.</div>
-<div class="system-message" id="id36">
-<p class="system-message-title">System Message: <a name="id36">ERROR/3</a> (<tt class="docutils">manual.txt</tt>, line 37); <em><a href="#id37">backlink</a></em></p>
-Unknown target name: &quot;easy_install&quot;.</div>
-<div class="system-message" id="id38">
-<p class="system-message-title">System Message: <a name="id38">ERROR/3</a> (<tt class="docutils">manual.txt</tt>, line 53); <em><a href="#id39">backlink</a></em></p>
-Unknown target name: &quot;setuptools&quot;.</div>
-<div class="system-message" id="id40">
-<p class="system-message-title">System Message: <a name="id40">ERROR/3</a> (<tt class="docutils">manual.txt</tt>, line 54); <em><a href="#id41">backlink</a></em></p>
-Unknown target name: &quot;decoratortools&quot;.</div>
-<div class="system-message" id="id42">
-<p class="system-message-title">System Message: <a name="id42">ERROR/3</a> (<tt class="docutils">manual.txt</tt>, line 55); <em><a href="#id43">backlink</a></em></p>
-Unknown target name: &quot;webob&quot;.</div>
-<div class="system-message" id="id44">
-<p class="system-message-title">System Message: <a name="id44">ERROR/3</a> (<tt class="docutils">manual.txt</tt>, line 56); <em><a href="#id45">backlink</a></em></p>
-Unknown target name: &quot;flup&quot;.</div>
-<div class="system-message" id="id46">
-<p class="system-message-title">System Message: <a name="id46">ERROR/3</a> (<tt class="docutils">manual.txt</tt>, line 57); <em><a href="#id47">backlink</a></em></p>
-Unknown target name: &quot;cherrypy&quot;.</div>
-<div class="system-message" id="id48">
-<p class="system-message-title">System Message: <a name="id48">ERROR/3</a> (<tt class="docutils">manual.txt</tt>, line 904); <em><a href="#id49">backlink</a></em></p>
-Unknown target name: &quot;routes&quot;.</div>
-<div class="system-message" id="id50">
-<p class="system-message-title">System Message: <a name="id50">ERROR/3</a> (<tt class="docutils">manual.txt</tt>, line 904); <em><a href="#id51">backlink</a></em></p>
-Unknown target name: &quot;routes&quot;.</div>
-<div class="system-message" id="id52">
-<p class="system-message-title">System Message: <a name="id52">ERROR/3</a> (<tt class="docutils">manual.txt</tt>, line 904); <em><a href="#id53">backlink</a></em></p>
-Unknown target name: &quot;selector&quot;.</div>
-<div class="system-message" id="id54">
-<p class="system-message-title">System Message: <a name="id54">ERROR/3</a> (<tt class="docutils">manual.txt</tt>, line 923); <em><a href="#id55">backlink</a></em></p>
-Unknown target name: &quot;cherrypy&quot;.</div>
-<div class="system-message" id="id56">
-<p class="system-message-title">System Message: <a name="id56">ERROR/3</a> (<tt class="docutils">manual.txt</tt>, line 962); <em><a href="#id57">backlink</a></em></p>
-Unknown target name: &quot;json&quot;.</div>
 </div>
 </div>
 <div class="footer">
