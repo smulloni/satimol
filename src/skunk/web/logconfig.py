@@ -1,5 +1,4 @@
 """
-
 manages logging configuration.
 
 To configure logging, you set Configuration.logConfig to a data structure like the following:
@@ -15,27 +14,28 @@ To configure logging, you set Configuration.logConfig to a data structure like t
 the same logger can have multiple handlers.  Each handler has a level
 (can be inherited), a formatter.
 
-
-       
 """
 import logging
 
-DEFAULTS=dict(level=logging.WARN,
-              format='%(name)s %(asctime)s %(levelname)s %(message)s',
-              datefmt=None)
+from skunk.config import Configuration
 
-class ConfigurationError(Exception):
-    pass
+Configuration.setDefaults(logConfig={'' : dict(
+    level=logging.WARN,
+    format='%(name)s %(asctime)s %(levelname)s %(message)s',
+    datefmt=None)})
+
 
 def _setup_logging(logconfig):
-    for logname, configs in logconfig.iteritems():
-        logger=logging.getLogger(logname)
-        if isinstance(configs, dict):
-            configs=[configs]
-        for config in configs:
-            handler=_get_handler(config, logname)
-            logger.addHandler(handler)
-
+    if all(isinstance(d, (list, tuple, dict)) for d in logconfig.itervalues()):
+        for logname, configs in logconfig.iteritems():
+            logger=logging.getLogger(logname)
+            if isinstance(configs, dict):
+                configs=[configs]
+            for config in configs:
+                handler=_get_handler(config, logname)
+                logger.addHandler(handler)
+    else:
+        logging.basicConfig(**logconfig)
 
 def _get_handler(config, logname):
     handler=config.get('handler')
@@ -48,7 +48,7 @@ def _get_handler(config, logname):
             if filename:
                 handler=logging.FileHandler(filename)
     if not handler:
-        raise ConfigurationError("no handler specified for logger %s" % logname)
+        handler=logging.StreamHandler()
     level=config.get('level')
     if level:
         handler.setLevel(level)
@@ -63,7 +63,7 @@ def _get_handler(config, logname):
     return handler
 
 def init_service():
-    pass
+    _setup_logging(Configuration.logConfig)
     
 
             
