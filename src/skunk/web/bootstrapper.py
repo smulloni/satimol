@@ -17,6 +17,7 @@ import logging
 
 from skunk.config import Configuration
 from skunk.util.importutil import import_from_string
+from skunk.web.logconfig import _setup_logging
 from skunk.web.runner import run
 
 log=logging.getLogger(__name__)
@@ -85,6 +86,7 @@ def bootstrap(app=None,
     """
     if configfiles:
         Configuration.load(*configfiles)
+    _setup_logging(Configuration.logConfig)
     load_services()
     if not app:
         app=make_app()
