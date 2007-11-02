@@ -24,8 +24,17 @@ Configuration.setDefaults(logConfig={'' : dict(
     format='%(name)s %(asctime)s %(levelname)s %(message)s',
     datefmt=None)})
 
-
+def get_level(lvl):
+    if isinstance(lvl, str):
+        try:
+            lvl=logging._levelNames[lvl.upper()]
+        except KeyError:
+            raise ConfigurationError("unknown log level: %s" % lvl)
+    return lvl
+        
 def _setup_logging(logconfig):
+    if not logconfig:
+        return
     if all(isinstance(d, (list, tuple, dict)) for d in logconfig.itervalues()):
         for logname, configs in logconfig.iteritems():
             logger=logging.getLogger(logname)
@@ -35,6 +44,8 @@ def _setup_logging(logconfig):
                 handler=_get_handler(config, logname)
                 logger.addHandler(handler)
     else:
+        if 'level' in logconfig:
+            logconfig['level']=get_level(logconfig['level'])
         logging.basicConfig(**logconfig)
 
 def _get_handler(config, logname):
@@ -51,7 +62,7 @@ def _get_handler(config, logname):
         handler=logging.StreamHandler()
     level=config.get('level')
     if level:
-        handler.setLevel(level)
+        handler.setLevel(get_level(level))
     format=config.get('format')
     datefmt=config.get('datefmt')
     if format or datefmt:
@@ -62,8 +73,7 @@ def _get_handler(config, logname):
         handler.addFilter(filter)
     return handler
 
-def init_service():
-    _setup_logging(Configuration.logConfig)
+
     
 
             
