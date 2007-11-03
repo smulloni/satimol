@@ -18,7 +18,6 @@ from skunk.web import (bootstrap,
 
 
 log=logging.getLogger(__name__)
-logging.basicConfig(level=logging.DEBUG)
 
 CREATE_SQL="""\
 CREATE TABLE wikipage (
@@ -94,6 +93,7 @@ comproot=os.path.join(os.path.dirname(__file__), 'files')
 Configuration.load_kw(routes=routes,
                       componentRoot=comproot,
                       controllers=controllers,
+                      logConfig=dict(level='debug'),
                       showTraceback=True)
 
 def rollbackConnection(*args, **kwargs):

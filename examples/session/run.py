@@ -10,7 +10,6 @@ from skunk.web import Context, bootstrap, expose
 from skunk.web.sessions.diskstore import DiskSessionStore
 
 log=logging.getLogger(__name__)
-logging.basicConfig(level=logging.DEBUG)
 sessiondir=tempfile.mkdtemp()
 
 def cleanup():
@@ -20,6 +19,7 @@ def cleanup():
 atexit.register(cleanup)
 
 Configuration.load_kw(
+    logConfig={'level' : 'debug'},
     sessionEnabled=True,
     sessionStore=DiskSessionStore(sessiondir),
     sessionCookieSalt='fudgemeaweatherby',

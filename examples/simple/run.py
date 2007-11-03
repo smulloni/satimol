@@ -5,7 +5,6 @@ composing a WSGI application, and serving it (in this case with
 cherrypy's wsgi server, but any one can be used).
 """
 
-import logging
 import os
 
 from skunk.config import Configuration
@@ -38,11 +37,10 @@ class SimpleController(object):
             return ['Hello from a WSGI application']
         return an_app
 
-logging.basicConfig(level=logging.DEBUG)
-
 comproot=os.path.join(os.path.dirname(__file__), 'files')
 
 Configuration.load_kw(
+    logConfig=dict(level='debug'),
     componentRoot=comproot,
     routes=[
     (('robots', '/robots/:color'),

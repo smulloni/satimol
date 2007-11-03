@@ -1,10 +1,7 @@
 """
 This example shows how the <:args:> and <:redirect:> tags work.
 """
-import logging
 import os
-
-logging.basicConfig(level=logging.DEBUG)
 
 from skunk.config import Configuration
 from skunk.util.pathutil import relpath
@@ -14,6 +11,7 @@ comproot=relpath(__file__, 'files')
 
 Configuration.load_kw(componentRoot=comproot,
                       showTraceback=True,
+                      logConfig={'level' : 'debug'},
                       errorPage='/500.html')
 
 # we don't need a controller for this

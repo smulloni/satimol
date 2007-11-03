@@ -9,7 +9,6 @@ from skunk.web import Context, bootstrap, expose
 from skunk.web.sessions.pydostore import PyDOSessionStore, initDB
 
 log=logging.getLogger(__name__)
-logging.basicConfig(level=logging.DEBUG)
 
 dbdir=tempfile.mkdtemp()
 dbpath=os.path.join(dbdir, 'sessions.db')
@@ -26,6 +25,7 @@ def cleanup():
 atexit.register(cleanup)
 
 Configuration.load_kw(
+    logConfig={'level' : 'debug'},
     sessionEnabled=True,
     sessionStore=PyDOSessionStore(),
     sessionCookieSalt='fudgemeaweatherby',

@@ -1,10 +1,7 @@
-import logging
 import os
 
 from skunk.config import Configuration
 from skunk.web import bootstrap, expose, template
-
-logging.basicConfig(level=logging.DEBUG)
 
 @expose(content_type='text/plain')
 def helloworld(name):
@@ -17,6 +14,7 @@ def dingdong():
                 status='dead or missing')
 
 Configuration.load_kw(
+    logConfig=dict(level='debug'),
     componentRoot=os.path.join(os.path.dirname(__file__), 'files'),
     routes=[
     (('hi', 'helloworld/:name'),
