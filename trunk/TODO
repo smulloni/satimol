@@ -8,7 +8,6 @@
 - website
 - more examples
 - auth: digest auth
-- bootstrap: add logging configuration
 - paster-type script, with virtualenv, directory template, swipython script
 
 

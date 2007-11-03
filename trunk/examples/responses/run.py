@@ -1,4 +1,3 @@
-import logging
 import os
 
 from skunk.config import Configuration
@@ -11,9 +10,9 @@ class BlowController(object):
     def blowup(self):
         raise ValueError, "hey there!"
 
-logging.basicConfig(level=logging.DEBUG)
 comproot=os.path.join(os.path.dirname(__file__), 'files')
 Configuration.load_kw(componentRoot=comproot,
+                      logConfig={'level' : 'debug'},
                       errorPage='/500.html',
                       notFoundPage='/404.html',
                       routes=[

@@ -64,7 +64,6 @@ class HitController(object):
         
 
 
-logging.basicConfig(level=logging.DEBUG)
 log=logging.getLogger(__name__)
 
 def rollbackConnection(*args, **kwargs):
@@ -81,6 +80,7 @@ CleanupContextHook.append(rollbackConnection)
 
 comproot=os.path.join(os.path.dirname(__file__), 'files')
 Configuration.load_kw(componentRoot=comproot,
+                      logConfig=dict(level='debug'),
                       routes=[
     (('hits', '/hits'), {'controller' : 'hits', 'action' : 'show_hits'}),
     ],
