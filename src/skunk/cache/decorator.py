@@ -33,6 +33,7 @@ Example usage:
 """
 
 from skunk.cache.policy import YES
+from skunk.config import Configuration
 from skunk.util.decorators import rewrap
 
 _default=object()
