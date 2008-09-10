@@ -8,7 +8,7 @@ from skunk.cache.base import Cache
 class DjangoCache(Cache):
 
     def _retrieve(self, canonicalName, cacheKey):
-        return djCache.get((canonicalName, cacheKey), NULL)
+        return djCache.get((canonicalName, cacheKey))
 
     def _store(self, entry, canonicalName, cacheKey):
         now=time.time()
