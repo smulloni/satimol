@@ -7,13 +7,20 @@ import os
 import re
 from threading import local
 
+
+class _scope_local(local):
+    def __init__(self, manager):
+        self.__dict__.update(manager._defaults)
+    
+
 class ScopeManager(object):
 
     def __init__(self):
-        # the attributes accessed by the __getattr__ hook
-        self._data=local()
+
         # the defaults
         self._defaults={}
+        # the attributes accessed by the __getattr__ hook
+        self._data=_scope_local(self)        
         # user configuration 
         self._userconfig={}
         # the context
